@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  artmux-web:
+    container_name: artmux-web
+    image: nginx:alpine
+    restart: unless-stopped
+    ports:
+      - "4343:80"
+    volumes:
+      - ./public/:/usr/share/nginx/html:ro
