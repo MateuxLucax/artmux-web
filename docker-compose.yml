@@ -1,11 +1,13 @@
 version: "3"
 
 services:
-  artmux-web:
-    container_name: artmux-web
-    image: nginx:alpine
+  artmux-server:
+    container_name: artmux-server
+    image: php:8.1-apache
+    hostname: server
     restart: unless-stopped
-    ports:
-      - "4343:80"
+    tty: true
+    ports:   
+      - 4343:80
     volumes:
-      - ./public/:/usr/share/nginx/html:ro
+      - ./public:/var/www/html
