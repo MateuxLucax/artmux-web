@@ -5,23 +5,32 @@ require('../header.php');
 
 <body>
   <main class="container">
+
+    <?php
+    $pagMenu = 'nova';
+    require('menu.php');
+    ?>
+
     <div class="card">
-      <div class="card-header">
-        Nova obra
-      </div>
       <form id="form-nova-obra"">
         <div class="card-body">
-          <div class="mb-3">
-            <label for="title" class="form-label">Título</label>
-            <input required name="title" id="title" type="text" class="form-control"/>
+          <div class="mb-3 row">
+            <label for="title" class="form-label col-sm-2">Título</label>
+            <div class="col-sm-10">
+              <input required name="title" id="title" type="text" class="form-control"/>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="observations" class="form-label">Observações</label>
-            <textarea name="observations" id="observations" class="form-control"></textarea>
+          <div class="mb-3 row">
+            <label for="observations" class="form-label col-sm-2">Observações</label>
+            <div class="col-sm-10">
+              <textarea name="observations" id="observations" class="form-control"></textarea>
+            </div>
           </div>
-          <div class="mb-3">
-            <label for="image" class="form-label">Imagem</label>
-            <input required type="file" name="image" id="image" class="form-control">
+          <div class="row">
+            <label for="image" class="form-label col-sm-2">Imagem</label>
+            <div class="col-sm-10">
+              <input required type="file" name="image" id="image" class="form-control">
+            </div>
           </div>
         </div>
         <div class="card-footer text-center">
