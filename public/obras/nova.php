@@ -58,7 +58,6 @@ require('../header.php');
     fetch('http://localhost:4000/artworks/', {
       method: 'POST',
       body: formData,
-      mode: 'no-cors'
     })
     .then(res => {
       console.log(res)
