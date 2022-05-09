@@ -8,6 +8,6 @@ services:
     restart: unless-stopped
     tty: true
     ports:   
-      - 4343:80
+      - ${PORT}:80
     volumes:
       - ./public:/var/www/html
