@@ -8,6 +8,14 @@ require('../header.php');
   <?php require('menu.php') ?>
 
   <div class="card mb-3">
+    <div class="card-header text-right">
+      <button class="btn btn-danger">
+        <i class="fas fa-trash"></i>
+      </button>
+      <a id="link-alterar" class="btn btn-primary" href="#">
+        <i class="fas fa-edit"></i>
+      </a>
+    </div>
     <div class="card-body">
 
       <!-- TODO animação? -->
@@ -24,16 +32,16 @@ require('../header.php');
       </div>
     
       <div class="mb-3 row">
-        <label for="title" class="col-sm-2 form-label">Título</label>
+        <label for="title=" class="col-sm-2 form-label">Título</label>
         <div class="col-sm-10">
-          <input id="obra-title" type="text" name="title" class="form-control" placeholder="Título da obra">
+          <input readonly id="obra-titulo" type="text" name="title" class="form-control-plaintext" placeholder="Título da obra">
         </div>
       </div>
 
-      <div class="mb-3 row">
-        <label for="observations" class="col-sm-2 form-label">Observações</label>
+      <div id="obra-observacoes-container" class="mb-3 row d-none">
+        <label class="col-sm-2 form-label">Observações</label>
         <div class="col-sm-10">
-          <textarea id="obra-observations" name="" id="" class="form-control" placeholder="Sem observações"></textarea>
+          <textarea readonly id="obra-observacoes" name="observations" class="form-control-plaintext" placeholder="Sem observações"></textarea>
         </div>
       </div>
 
@@ -44,7 +52,7 @@ require('../header.php');
         <span id="obra-data-criacao" class="col-sm-10 text-muted"></span>
       </div>
 
-      <div class="row obra-data-atualizacao-container d-none">
+      <div id="obra-data-atualizacao-container" class="mt-3 row d-none">
         <label class="col-sm-2">
           Atualizada em
         </label>
@@ -67,7 +75,6 @@ require('../header.php');
   fetch(`http://localhost:4000/artworks/${slug}`)
   .then(res => {
     console.log(res)
-    console.log(res)
     if (res.status != 200 && res.status != 304) {
       throw 'Resposta não-ok'
     }
@@ -76,33 +83,27 @@ require('../header.php');
   .then(carregarObra)
   .catch(err => {
     console.error(err)
-    // TODO agendar alerta swal, redirecionar para página anterior
+    // TODO agendar alerta swal, redirecionar para página anterior clicando no 'ok'
   })
 
   // TODO colocar num arquivo acessível p/ todas as páginas
-  function formatarData(data) {
-    const pad = (n, s) => String(s).padStart(n, '0');
-    const d = pad(2, data.getDate())
-    const m = pad(2, data.getMonth())
-    const y = data.getFullYear()
-    const h = pad(2, data.getHours())
-    const i = pad(2, data.getMinutes())
-    return `${d}/${m}/${y} ${h}:${i}`
-  }
+
 
   function carregarObra(obra) {
-    const elem = (x) => document.getElementById(x)
-    elem('loading').classList.add('d-none')
-    console.log(obra)
-    elem('obra-title').value = obra.title
-    elem('obra-observations').value = obra.observations
-    elem('obra-img').src = 'http://localhost:4000' + obra.imagePaths.medium
-    elem('obra-img-link-full').href = 'http://localhost:4000' + obra.imagePaths.original
-    elem('obra-data-criacao').innerHTML = formatarData(new Date(obra.createdAt))
-    elem('obra-data-atualizacao').innerHTML = formatarData(new Date(obra.updatedAt))
-    if (obra.createdAt != obra.updatedAt) {
-      elem('obra-data-atualizacao-container').classList.remove('d-none')
+    q.id('loading').classList.add('d-none')
+    q.id('obra-titulo').value = obra.title
+    if (obra.observations != '') {
+      q.id('obra-observacoes-container').classList.remove('d-none')
+      q.id('obra-observacoes').value = obra.observations
     }
+    q.id('obra-img').src = 'http://localhost:4000' + obra.imagePaths.medium
+    q.id('obra-img-link-full').href = 'http://localhost:4000' + obra.imagePaths.original
+    q.id('obra-data-criacao').innerHTML = formatarData(new Date(obra.createdAt))
+    q.id('obra-data-atualizacao').innerHTML = formatarData(new Date(obra.updatedAt))
+    if (obra.createdAt != obra.updatedAt) {
+      q.show(q.id('obra-data-atualizacao-container'))
+    }
+    q.id('link-alterar').href = `/obras/alterar.php?obra=${slug}`
   }
 </script>
 

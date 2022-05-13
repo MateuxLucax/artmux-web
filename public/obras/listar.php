@@ -48,8 +48,6 @@ require('../header.php');
 </body>
 
 <script>
-  const elem = (id) => document.getElementById(id)
-
   fetch('http://localhost:4000/artworks/')
   .then(res => {
     if (res.status != 200 && res.status != 304) {
@@ -58,23 +56,23 @@ require('../header.php');
     return res.json()
   })
   .then(obras => {
-    elem('loading').classList.add('d-none')
+    q.id('loading').classList.add('d-none')
     obras.forEach(carregarObra)
   })
   .catch(err => {
     console.error(err)
   })
 
-  const containerObras = elem('container-obras')
-  const obraPrototipo = elem('obra-prototipo')
+  const containerObras = q.id('container-obras')
+  const obraPrototipo = q.id('obra-prototipo')
 
   function carregarObra(obra) {
     const elemObra = obraPrototipo.cloneNode(true)
-    elemObra.classList.remove('d-none')
+    q.show(elemObra)
     elemObra.removeAttribute('id')
-    elemObra.getElementsByClassName('obra-img')[0].src = 'http://localhost:4000' + obra.imagePaths.thumbnail
-    elemObra.getElementsByClassName('obra-title')[0].innerText = obra.title
-    elemObra.getElementsByClassName('obra-link')[0].href = '/obras/detalhe.php?obra=' + obra.slug
+    q.classIn('obra-img', elemObra)[0].src = 'http://localhost:4000' + obra.imagePaths.thumbnail
+    q.classIn('obra-title', elemObra)[0].innerText = obra.title
+    q.classIn('obra-link', elemObra)[0].href = '/obras/detalhe.php?obra=' + obra.slug
     containerObras.append(elemObra)
   }
 

@@ -20,4 +20,6 @@
   <link rel="stylesheet" href="/static/css/main.css">
 
   <meta name="theme-color" content="#f5f5f5">
+
+  <script src="/static/js/lib.js"></script>
 </head>
