@@ -68,8 +68,12 @@ require('../header.php');
   const params = new URLSearchParams(location.search)
   const slug = params.get('obra')
   if (!slug) {
-    console.error('Não foi passado parâmetro &obra')
-    // TODO alerta swal cujo botão "ok" redireciona para a página anterior
+    agendarAlertaSwal({
+      title: 'Erro',
+      icon: 'warning',
+      text: 'Não conseguimos abrir a página de detalhe da obra porque a URL estava incompleta'
+    })
+    history.back()
   }
 
   fetch(`http://localhost:4000/artworks/${slug}`)
@@ -83,11 +87,12 @@ require('../header.php');
   .then(carregarObra)
   .catch(err => {
     console.error(err)
-    // TODO agendar alerta swal, redirecionar para página anterior clicando no 'ok'
+    Swal.fire({
+      title: 'Aviso',
+      icon: 'warning',
+      text: 'Não existe obra que corresponde aos parâmetros informados. Verifique se a URL foi modificada. Tente novamente mais tarde.'
+    }).then(() => history.back())
   })
-
-  // TODO colocar num arquivo acessível p/ todas as páginas
-
 
   function carregarObra(obra) {
     q.id('loading').classList.add('d-none')

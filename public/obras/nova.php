@@ -59,12 +59,24 @@ require('../header.php');
       method: 'POST',
       body: formData,
     })
-    .then(res => {
-      console.log(res)
-      return res.json()
+    .then(res => res.json()) // TODO handle different status codes
+    .then(json => {
+      const { slug } = json;
+      agendarAlertaSwal({
+        title: 'Sucesso',
+        text: 'A obra foi cadastrada com sucesso.',
+        icon: 'success'
+      })
+      location.assign(`/obras/detalhe.php?obra=${slug}`);
     })
-    .then(console.log)
-    .catch(console.error)
+    .catch(err => {
+      console.error(err)
+      Swal.fire({
+        title: 'Erro do sistema',
+        text: 'Não conseguimos incluir a obra. Tente novamente mais tarde.',
+        icon: 'error'
+      })
+    })
   }
 </script>
 

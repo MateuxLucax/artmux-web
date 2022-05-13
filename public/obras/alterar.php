@@ -102,12 +102,24 @@ require('../header.php');
   function submitAlterarObra(formData) {
     console.log([...formData])
     fetch(`http://localhost:4000/artworks/${slug}`, { method:'PATCH', body:formData, })
-    .then(res => {
-      // TODO sucesso -> redirecionar para obra, com alerta agendado
-      console.log(res)
-      return res.json()
+    .then(res => res.json())  // TODO handle different status codes
+    .then(json => {
+      const { slug } = json;
+      agendarAlertaSwal({
+        icon: 'success',
+        title: 'Sucesso',
+        text: 'A obra foi alterada com sucesso.'
+      })
+      location.assign(`/obras/detalhe.php?obra=${slug}`)
     })
-    .then(console.log).catch(console.error)
+    .catch(err => {
+      console.error(err)
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro do sistema',
+        text: 'Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.'
+      })
+    })
   }
 </script>
 

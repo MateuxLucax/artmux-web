@@ -21,5 +21,7 @@
 
   <meta name="theme-color" content="#f5f5f5">
 
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/static/js/agendar-alerta-swal.js"></script>
   <script src="/static/js/lib.js"></script>
 </head>
