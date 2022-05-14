@@ -146,14 +146,18 @@ require('../header.php');
   const formBusca = q.id('form-busca')
 
   formBusca.onsubmit = ev => {
+    ev.preventDefault()
+    const pagina
+      = formBusca['obras-por-pagina'].value == formBusca['obras-por-pagina-anterior'].value
+      ? Number(formBusca.pagina.value)
+      : 1
     const filtros = {
       ordenacao: formBusca.ordenacao.value,
       direcao: formBusca.direcao.value,
       obrasPorPagina: Number(formBusca['obras-por-pagina'].value),
-      pagina: Number(formBusca.pagina.value)
+      pagina: pagina
     }
     sessionStorage.setItem('filtros-obras', JSON.stringify(filtros))
-    ev.preventDefault()
     location.reload()
   }
 
