@@ -26,19 +26,19 @@ require('../header.php');
           <div class="col-sm-2">
             <label for="input-imagem"> Imagem </label><br>
             <small><a id="link-remover-imagem" class="text-muted" href="#">Remover</a></small>
-            <small><a id="link-repor-imagem" class="text-muted d-none" href="#">Repôr</a></small>
+            <small><a id="link-restaur-imagem" class="text-muted d-none" href="#">Restaurar</a></small>
           </div>
           <div class="col-sm-10">
             <a href="#" id="link-obra-full" title="Ver no tamanho original">
-              <img id="img-obra" style="cursor: zoom-in"/>
+              <img id="img-obra"/>
             </a>
             <input type="file" id="input-imagem" class="form-control d-none"/>
           </div>
         </div>
       </div>
       <div class="card-footer text-center">
-        <button type="submit" class="btn btn-success btn-lg"">Alterar</button>
-        <button class="btn btn-secondary btn-lg" onclick="history.back()">Cancelar</button>
+        <button type="submit" class="btn btn-success"">Alterar</button>
+        <button class="btn btn-secondary" onclick="history.back()">Cancelar</button>
       </div>
     </form>
   </div>
@@ -72,24 +72,24 @@ require('../header.php');
     q.id('link-obra-full').href = 'http://localhost:4000' + obra.imagePaths.original
   }
 
-  const lnRemovImagem = q.id('link-remover-imagem')
-  const lnReporImagem = q.id('link-repor-imagem')
+  const lnRemoverImagem = q.id('link-remover-imagem')
+  const lnRestaurImagem = q.id('link-restaur-imagem')
   const inputImagem = q.id('input-imagem')
   const elemImagem = q.id('img-obra')
 
-  lnRemovImagem.onclick = ev => {
+  lnRemoverImagem.onclick = ev => {
     if (ev.button != 0) return
     ev.preventDefault()
-    q.hide(lnRemovImagem); q.hide(elemImagem)
-    q.show(lnReporImagem); q.show(inputImagem)
+    q.hide(lnRemoverImagem); q.hide(elemImagem)
+    q.show(lnRestaurImagem); q.show(inputImagem)
     inputImagem.setAttribute('name', 'image'); inputImagem.setAttribute('required', 'required')
   }
 
-  lnReporImagem.onclick = ev => {
+  lnRestaurImagem.onclick = ev => {
     if (ev.button != 0) return
     ev.preventDefault()
-    q.show(lnRemovImagem); q.show(elemImagem)
-    q.hide(lnReporImagem); q.hide(inputImagem)
+    q.show(lnRemoverImagem); q.show(elemImagem)
+    q.hide(lnRestaurImagem); q.hide(inputImagem)
     inputImagem.removeAttribute('name'); inputImagem.removeAttribute('required')
   }
 

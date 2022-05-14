@@ -8,8 +8,8 @@ require('../header.php');
   <?php require('menu.php') ?>
 
   <div class="card mb-3">
-    <div class="card-header text-right">
-      <button class="btn btn-danger">
+    <div class="card-header" style="text-align: right;">
+      <button id="btn-excluir" class="btn btn-danger">
         <i class="fas fa-trash"></i>
       </button>
       <a id="link-alterar" class="btn btn-primary" href="#">
@@ -20,10 +20,6 @@ require('../header.php');
 
       <!-- TODO animação? -->
       <p id="loading">Carregando...</p>
-
-      <!-- TODO nessa mesma tela cada campo é editável, dinamicamente vira input habilitado e no evento
-           de blur é feita a request para atualizar o campo
-           Exceto na imagem -->
 
       <div class="mb-4 text-center">
         <a id="obra-img-link-full" title="Ver no tamanho original">
@@ -108,7 +104,62 @@ require('../header.php');
     if (obra.createdAt != obra.updatedAt) {
       q.show(q.id('obra-data-atualizacao-container'))
     }
+
+    if (obra.editable) {
+      habilitarBotoes(slug);
+    } else {
+      desabilitarBotoes();
+    }
+  }
+
+  function habilitarBotoes(slug) {
     q.id('link-alterar').href = `/obras/alterar.php?obra=${slug}`
+
+    q.id('btn-excluir').onclick = ev => {
+      if (ev.button != 0) return;
+      Swal.fire({
+        text: 'Tem certeza de que deseja excluir essa obra?',
+        icon: 'question',
+        showConfirmButton: true,
+        confirmButtonText: 'Excluir',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar'
+      })
+      .then(result => {
+        if (result.isConfirmed) {
+          fazerExclusao(slug)
+        }
+      })
+    }
+  }
+
+  function fazerExclusao(slug) {
+    fetch(`http://localhost:4000/artworks/${slug}`, { method: 'DELETE' })
+    .then(res => {
+      if (!res.ok) throw 'Resposta não-ok'
+      agendarAlertaSwal({
+        title: 'Sucesso',
+        text: 'Obra excluída com sucesso',
+        icon: 'success'
+      })
+      location.assign('/obras/listar.php')
+    })
+    .catch(err => {
+      console.error(err)
+      Swal.fire({
+        title: 'Erro',
+        text: 'Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.',
+        icon: 'error'
+      })
+    })
+  }
+
+  function desabilitarBotoes() {
+    const linkAlterar = q.id('link-alterar')
+    linkAlterar.setAttribute('disabled', 'disabled')
+    linkAlterar.classList.add('disabled')
+    q.id('btn-excluir').setAttribute('disabled', 'disabled');
+    // TODO colocar tooltip em volta explicando pq: tem publicação associada E que foi postada efetivamente em alguma rede social
   }
 </script>
 
