@@ -4,7 +4,7 @@
 
 // Little library of functions to make these common functions easier to type
 // q for query, like jQuery
-const q = {
+const q = Object.assign(Object.create(null), {
 
   /**
    * Alias for document.getElementById
@@ -61,8 +61,26 @@ const q = {
   toggle: function(e) {
     if (e.classList.contains('d-none')) e.classList.remove('d-none');
     else e.classList.add('d-none');
+  },
+
+  /**
+   * Creates an element with given tag, classes and attributes, and
+   * appends it to the given parent element.
+   * @param {string} tag 
+   * @param {string[]} classes 
+   * @param {HTMLElement} parent 
+   * @param {object} attributes 
+   * @returns HTMLElement
+   */
+  create: function(tag, classes=[], parent=null, attributes={}) {
+    const elem = document.createElement(tag);
+    parent?.append(elem);
+    if (classes.length > 0)
+        elem.classList.add(...classes);
+    Object.assign(elem, attributes);
+    return elem;
   }
-}
+})
 
 /**
  * Recebe objeto Date e retorna como string no formato DD/MM/YYYY HH:ii

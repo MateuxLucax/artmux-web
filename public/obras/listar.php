@@ -30,15 +30,81 @@ require('../header.php');
 
   <div id="msg-sem-obras" class="alert alert-info d-none">
     Você ainda não cadastrou nenhuma obra. <br>
-    Isso é um erro? <a href="#" id="link-reset-filtros">Clique aqui</a>.<br>
+    Isso é um erro? <a href="#" id="link-reset-busca">Clique aqui</a>.<br>
     Não deu certo? Tente novamente mais tarde ou entre em contato.
   </div>
+
+  <!-- TODO filtros:
+       o único filtro no card principal é o de título
+       os outros deverão ir num card abaixo, de filtros adicionais, que deve ficar recolhido
+       esse card também deverá ter abas para separar os filtros, tipo
+       datas | tags | redes-->
 
   <div class="mb-3 card d-none" id="card-busca">
     <div class="card-body">
       <form id="form-busca">
 
         <input type="hidden" id="pagina" name="pagina">
+
+        <div class="row mb-3">
+          <div class="col-lg-4">
+            <label for="titulo-operador" class="form-label">Título</label>
+            <select name="titulo-operador" id="titulo-operador" class="form-control">
+              <option value="contains" selected="selected">Contém</option>
+              <option value="equalTo">Igual a</option>
+              <option value="startsWith">Inicia com</option>
+              <option value="endsWith">Termina com</option>
+            </select>
+          </div>
+          <div class="col-lg-8">
+            <label for="titulo-busca" class="form-label">&nbsp;</label>
+            <input type="text" name="titulo-busca" id="titulo-busca" class="form-control">
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-lg-4">
+            <label for="data-criacao-operador" class="form-label">Data de criação</label>
+            <select name="data-criacao-operador" id="data-criacao-operador" class="form-control">
+              <option value="after" selected="selected">Depois de</option>
+              <option value="before">Antes de</option>
+              <option value="equalTo">Igual a</option>
+              <option value="between">Entre</option>
+            </select>
+          </div>
+          <div class="col-lg-8">
+            <label for="data-criacao-busca" class="form-label">&nbsp;</label>
+            <input type="date" name="data-criacao-busca" id="data-criacao-busca" class="form-control">
+            <div class="input-group d-none" id="data-criacao-intervalo">
+              <span class="input-group-text">de</span>
+              <input type="date" name="data-criacao-busca-1" class="form-control">
+              <span class="input-group-text">até</span>
+              <input type="date" name="data-criacao-busca-2" class="form-control">
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-lg-4">
+            <label for="data-atualizacao-operador" class="form-label">Data de atualização</label>
+            <select name="data-atualizacao-operador" id="data-atualizacao-operador" class="form-control">
+              <option value="after" selected="selected">Depois de</option>
+              <option value="before">Antes de</option>
+              <option value="equalTo">Igual a</option>
+              <option value="between">Entre</option>
+            </select>
+          </div>
+          <div class="col-lg-8">
+            <label for="data-atualizacao-busca" class="form-label">&nbsp;</label>
+            <input type="date" name="data-atualizacao-busca" id="data-atualizacao-busca" class="form-control">
+            <div class="input-group d-none" id="data-atualizacao-intervalo">
+              <span class="input-group-text">de</span>
+              <input type="date" name="data-atualizacao-busca-1" class="form-control">
+              <span class="input-group-text">até</span>
+              <input type="date" name="data-atualizacao-busca-2" class="form-control">
+            </div>
+          </div>
+        </div>
 
         <div class="row">
           <div class="col-10 col-lg-5 mb-3 mb-lg-0">
@@ -143,6 +209,28 @@ require('../header.php');
     input.value = clamp(3 * Math.floor(val / 3), input.getAttribute('min'), input.getAttribute('max'))
   }
 
+  q.id('data-criacao-operador').onchange = ev => {
+    const val = ev.target.value
+    if (val == 'between') {
+      q.hide(q.id('data-criacao-busca'))
+      q.show(q.id('data-criacao-intervalo'))
+    } else {
+      q.show(q.id('data-criacao-busca'))
+      q.hide(q.id('data-criacao-intervalo'))
+    }
+  }
+
+  q.id('data-atualizacao-operador').onchange = ev => {
+    const val = ev.target.value
+    if (val == 'between') {
+      q.hide(q.id('data-atualizacao-busca'))
+      q.show(q.id('data-atualizacao-intervalo'))
+    } else {
+      q.show(q.id('data-atualizacao-busca'))
+      q.hide(q.id('data-atualizacao-intervalo'))
+    }
+  }
+
   const formBusca = q.id('form-busca')
 
   formBusca.onsubmit = ev => {
@@ -151,18 +239,18 @@ require('../header.php');
       = formBusca['obras-por-pagina'].value == formBusca['obras-por-pagina-anterior'].value
       ? Number(formBusca.pagina.value)
       : 1
-    const filtros = {
+    const busca = {
       ordenacao: formBusca.ordenacao.value,
       direcao: formBusca.direcao.value,
       obrasPorPagina: Number(formBusca['obras-por-pagina'].value),
       pagina: pagina
     }
-    sessionStorage.setItem('filtros-obras', JSON.stringify(filtros))
+    sessionStorage.setItem('busca-obras', JSON.stringify(busca))
     location.reload()
   }
 
   const callbackPaginacao = pagenum => {
-    const filtros = {
+    const busca = {
       ordenacao: formBusca.ordenacao.value,
       direcao: formBusca.direcao.value,
       obrasPorPagina: Number(formBusca['obras-por-pagina-anterior'].value),
@@ -174,26 +262,26 @@ require('../header.php');
     // página, de forma que aparecem páginas 1 e 2 na paginação. Se ele trocar para 6 obras por 
     // página e ir para a página 2, iremos tentar carregar as obras 7ª a 12ª, sendo que não existem.
     // TODO desabilitar a paginação quando o usuário mudar o campo de obras por página, e só reabilitar quando ele deixar na quantidade anterior, porque senão parece que o sistema ignorou ele
-    sessionStorage.setItem('filtros-obras', JSON.stringify(filtros))
+    sessionStorage.setItem('busca-obras', JSON.stringify(busca))
     location.reload()
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    const filtrosJSON = sessionStorage.getItem('filtros-obras')
-    const filtros = filtrosJSON ? JSON.parse(filtrosJSON) : {
+    const buscaJSON = sessionStorage.getItem('busca-obras')
+    const busca = buscaJSON ? JSON.parse(buscaJSON) : {
       ordenacao: 'created_at',
       direcao: 'desc',
       obrasPorPagina: 6,
       pagina: 1
     }
 
-    const filtrosAPI = new URLSearchParams()
-    filtrosAPI.append('order', filtros.ordenacao)
-    filtrosAPI.append('direction', filtros.direcao)
-    filtrosAPI.append('perPage', filtros.obrasPorPagina)
-    filtrosAPI.append('page', filtros.pagina)
+    const buscaAPI = new URLSearchParams()
+    buscaAPI.append('order', busca.ordenacao)
+    buscaAPI.append('direction', busca.direcao)
+    buscaAPI.append('perPage', busca.obrasPorPagina)
+    buscaAPI.append('page', busca.pagina)
     
-    fetch(`http://localhost:4000/artworks/?${filtrosAPI.toString()}`)
+    fetch(`http://localhost:4000/artworks/?${buscaAPI.toString()}`)
     .then(res => {
       if (res.status != 200 && res.status != 304) {
         throw res
@@ -206,12 +294,12 @@ require('../header.php');
         q.show(q.id('msg-sem-obras'))
       } else {
         q.show(q.id('card-busca'))
-        q.id('pagina').value = filtros.pagina
-        q.id('ordenacao').value = filtros.ordenacao
-        q.id('direcao').value = filtros.direcao
-        ajustarIconeDirecao(filtros.direcao)
-        q.id('obras-por-pagina').value = filtros.obrasPorPagina
-        q.id('obras-por-pagina-anterior').value = filtros.obrasPorPagina
+        q.id('pagina').value = busca.pagina
+        q.id('ordenacao').value = busca.ordenacao
+        q.id('direcao').value = busca.direcao
+        ajustarIconeDirecao(busca.direcao)
+        q.id('obras-por-pagina').value = busca.obrasPorPagina
+        q.id('obras-por-pagina-anterior').value = busca.obrasPorPagina
         
 
         q.show(q.id('card-obras'))
@@ -219,8 +307,8 @@ require('../header.php');
         const paginacao = q.id('paginacao')
         var paginacaoCriada = appendPagination(
           paginacao,
-          filtros.pagina,
-          filtros.obrasPorPagina,
+          busca.pagina,
+          busca.obrasPorPagina,
           totalObras,
           callbackPaginacao
         )
@@ -239,12 +327,11 @@ require('../header.php');
     })
   })
 
-  q.id('link-reset-filtros').onclick = ev => {
-    sessionStorage.removeItem('filtros-obras')
+  q.id('link-reset-busca').onclick = ev => {
+    sessionStorage.removeItem('busca-obras')
     ev.preventDefault()
     location.reload()
   }
-
 </script>
 
 <?php require('../footer.php') ?>
