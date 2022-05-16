@@ -28,83 +28,13 @@ require('../header.php');
   ?>
 
 
-  <div id="msg-sem-obras" class="alert alert-info d-none">
-    Você ainda não cadastrou nenhuma obra. <br>
-    Isso é um erro? <a href="#" id="link-reset-busca">Clique aqui</a>.<br>
-    Não deu certo? Tente novamente mais tarde ou entre em contato.
-  </div>
-
-  <!-- TODO filtros:
-       o único filtro no card principal é o de título
-       os outros deverão ir num card abaixo, de filtros adicionais, que deve ficar recolhido
-       esse card também deverá ter abas para separar os filtros, tipo
-       datas | tags | redes-->
-
-  <div class="mb-3 card d-none" id="card-busca">
+  <div class="mb-3 card" id="card-busca">
     <div class="card-body">
       <form id="form-busca">
 
         <input type="hidden" id="pagina" name="pagina">
 
-        <div class="row mb-3">
-          <div class="col-lg-4">
-            <label for="titulo-operador" class="form-label">Título</label>
-            <select name="titulo-operador" id="titulo-operador" class="form-control">
-              <option value="contains" selected="selected">Contém</option>
-              <option value="equalTo">Igual a</option>
-              <option value="startsWith">Inicia com</option>
-              <option value="endsWith">Termina com</option>
-            </select>
-          </div>
-          <div class="col-lg-8">
-            <label for="titulo-busca" class="form-label">&nbsp;</label>
-            <input type="text" name="titulo-busca" id="titulo-busca" class="form-control">
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-lg-4">
-            <label for="data-criacao-operador" class="form-label">Data de criação</label>
-            <select name="data-criacao-operador" id="data-criacao-operador" class="form-control">
-              <option value="after" selected="selected">Depois de</option>
-              <option value="before">Antes de</option>
-              <option value="equalTo">Igual a</option>
-              <option value="between">Entre</option>
-            </select>
-          </div>
-          <div class="col-lg-8">
-            <label for="data-criacao-busca" class="form-label">&nbsp;</label>
-            <input type="date" name="data-criacao-busca" id="data-criacao-busca" class="form-control">
-            <div class="input-group d-none" id="data-criacao-intervalo">
-              <span class="input-group-text">de</span>
-              <input type="date" name="data-criacao-busca-1" class="form-control">
-              <span class="input-group-text">até</span>
-              <input type="date" name="data-criacao-busca-2" class="form-control">
-            </div>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-lg-4">
-            <label for="data-atualizacao-operador" class="form-label">Data de atualização</label>
-            <select name="data-atualizacao-operador" id="data-atualizacao-operador" class="form-control">
-              <option value="after" selected="selected">Depois de</option>
-              <option value="before">Antes de</option>
-              <option value="equalTo">Igual a</option>
-              <option value="between">Entre</option>
-            </select>
-          </div>
-          <div class="col-lg-8">
-            <label for="data-atualizacao-busca" class="form-label">&nbsp;</label>
-            <input type="date" name="data-atualizacao-busca" id="data-atualizacao-busca" class="form-control">
-            <div class="input-group d-none" id="data-atualizacao-intervalo">
-              <span class="input-group-text">de</span>
-              <input type="date" name="data-atualizacao-busca-1" class="form-control">
-              <span class="input-group-text">até</span>
-              <input type="date" name="data-atualizacao-busca-2" class="form-control">
-            </div>
-          </div>
-        </div>
+        <div id="container-filtros"></div>
 
         <div class="row">
           <div class="col-10 col-lg-5 mb-3 mb-lg-0">
@@ -147,6 +77,12 @@ require('../header.php');
     </div>
   </div>
 
+  <div id="msg-sem-obras" class="alert alert-info d-none">
+    Você ainda não cadastrou nenhuma obra. <br>
+    Isso é um erro? <a href="#" id="link-reset-busca">Clique aqui</a>.<br>
+    Não deu certo? Tente novamente mais tarde ou entre em contato.
+  </div>
+
   <div class="card d-none" id="card-obras">
     <div class="card-body">
       <div id="container-obras">
@@ -169,6 +105,25 @@ require('../header.php');
 </main>
 
 <script>
+
+  const filtroNome = new StringSearchFilter('Nome')
+  const filtroDataCriacao = new DateSearchFilter('Data de criação')
+  const filtroDataAtualizacao = new DateSearchFilter('Data de atualização')
+
+  filtroNome.element().classList.add('mb-3')
+  filtroDataCriacao.element().classList.add('mb-3')
+  filtroDataAtualizacao.element().classList.add('mb-3')
+
+  const containerFiltros = q.id('container-filtros')
+  containerFiltros.append(filtroNome.element())
+  containerFiltros.append(filtroDataCriacao.element())
+  containerFiltros.append(filtroDataAtualizacao.element())
+
+  /**
+   * Carrega uma obra recebida da API no DOM dentro do #container-obras
+   * @param {object} obra
+   * @return void
+   */
   function carregarObra(obra) {
     const elemObra = q.id('obra-prototipo').cloneNode(true)
     q.show(elemObra)
@@ -179,6 +134,11 @@ require('../header.php');
     q.id('container-obras').append(elemObra)
   }
 
+  /**
+   * Dada 'asc' ou 'desc', mostra o ícone correspondente no botão de direção da ordenação do formulário
+   * @param {string} dir 'asc' ou 'desc'
+   * @return void
+   */
   function ajustarIconeDirecao(dir) {
     if (dir == 'asc') {
       q.show(q.id('icon-asc'))
@@ -209,36 +169,18 @@ require('../header.php');
     input.value = clamp(3 * Math.floor(val / 3), input.getAttribute('min'), input.getAttribute('max'))
   }
 
-  q.id('data-criacao-operador').onchange = ev => {
-    const val = ev.target.value
-    if (val == 'between') {
-      q.hide(q.id('data-criacao-busca'))
-      q.show(q.id('data-criacao-intervalo'))
-    } else {
-      q.show(q.id('data-criacao-busca'))
-      q.hide(q.id('data-criacao-intervalo'))
-    }
-  }
-
-  q.id('data-atualizacao-operador').onchange = ev => {
-    const val = ev.target.value
-    if (val == 'between') {
-      q.hide(q.id('data-atualizacao-busca'))
-      q.show(q.id('data-atualizacao-intervalo'))
-    } else {
-      q.show(q.id('data-atualizacao-busca'))
-      q.hide(q.id('data-atualizacao-intervalo'))
-    }
-  }
-
   const formBusca = q.id('form-busca')
 
   formBusca.onsubmit = ev => {
     ev.preventDefault()
+
     const pagina
       = formBusca['obras-por-pagina'].value == formBusca['obras-por-pagina-anterior'].value
       ? Number(formBusca.pagina.value)
       : 1
+    // Um comportamento melhor seria mudar para a página, sob a nova paginação,
+    // que tem +- as mesmas obras sendo visualizadas na paginação atual
+      
     const busca = {
       ordenacao: formBusca.ordenacao.value,
       direcao: formBusca.direcao.value,
@@ -293,14 +235,12 @@ require('../header.php');
       if (obras.length == 0) {
         q.show(q.id('msg-sem-obras'))
       } else {
-        q.show(q.id('card-busca'))
         q.id('pagina').value = busca.pagina
         q.id('ordenacao').value = busca.ordenacao
         q.id('direcao').value = busca.direcao
         ajustarIconeDirecao(busca.direcao)
         q.id('obras-por-pagina').value = busca.obrasPorPagina
         q.id('obras-por-pagina-anterior').value = busca.obrasPorPagina
-        
 
         q.show(q.id('card-obras'))
         obras.forEach(carregarObra)

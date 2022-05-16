@@ -25,13 +25,23 @@ const q = Object.assign(Object.create(null), {
   },
 
   /**
-   * Alias for parent.getElementsByCLassName
+   * Alias for parent.getElementsByClassName
    * @param {string} klass 
    * @param {HTMLElement} parent 
    * @returns HTMLElement
    */
   classIn: function(klass, parent) {
     return parent.getElementsByClassName(klass);
+  },
+
+  /**
+   * Alias for parent.getElementsByTagName
+   * @param {string} tag 
+   * @param {HTMLElement} parent 
+   * @returns HTMLElement
+   */
+  tagIn: function(tag, parent) {
+    return parent.getElementsByTagName(tag)
   },
 
   // Note that these functions cannot be used generally.
@@ -103,84 +113,3 @@ function clamp(x, min, max) {
   return x;
 }
 
-/**
- * Creates a pagination element, appends it to the given container, and calls the
- * given callback each time you click a page, sending as argument the corresponding
- * page number. Returns whether the pagination was really appended to the container; it
- * will not do that if it's not necessary (i.e. totalResults <= resultPerPage).
- * 
- * @param {HTMLElement} container 
- * @param {number} currentPage 
- * @param {number} resultsPerPage 
- * @param {number} totalResults 
- * @param {function} callback 
- * @returns boolean
- */
-function appendPagination(container, currentPage, resultsPerPage, totalResults, callback) {
-  if (totalResults <= resultsPerPage) {
-    return false
-  }
-
-  const ul = document.createElement('ul')
-  ul.classList.add('pagination')
-  ul.classList.add('justify-content-end')
-  ul.classList.add('mb-0')
-
-  const lastPage = Math.ceil(totalResults / resultsPerPage)
-
-  const pageToHtml = Object.assign(Object.create(null), {
-    'first': '<i class="fas fa-angle-double-left"></i>',
-    'previous': '<i class="fas fa-angle-left"></i>',
-    'next': '<i class="fas fa-angle-right"></i>',
-    'last': '<i class="fas fa-angle-double-right"></i>'
-  })
-
-  const pageToPagenumFunction = Object.assign(Object.create(null), {
-    'first': () => 1,
-    'previous': p => p-1,
-    'next': p => p+1,
-    'last': () => lastPage
-  })
-
-  const item = page => {
-    const a = document.createElement('a')
-    a.href = '#'
-    a.classList.add('page-link')
-    a.innerHTML = pageToHtml[page] ?? page
-    a.onclick = ev => {
-      if (ev.button != 0) return true
-      if (callback) {
-        callback(page in pageToPagenumFunction ? pageToPagenumFunction[page](currentPage) : Number(page))
-      }
-      return false
-    }
-    const li = document.createElement('li')
-    li.classList.add('page-item')
-    if (page == currentPage) {
-      li.classList.add('active')
-    }
-    li.append(a)
-    return li
-  }
-
-  if (currentPage > 1) {
-    ul.append(item('previous'))
-    if (currentPage > 2) {
-      ul.append(item('first'))
-    }
-  }
-
-  for (let i = Math.max(1, currentPage-2); i <= Math.min(currentPage+2, lastPage); i++) {
-    ul.append(item(i))
-  }
-
-  if (currentPage < lastPage) {
-    ul.append(item('next'))
-    if (currentPage + 1 < lastPage) {
-      ul.append(item('last'))
-    }
-  }
-
-  container.append(ul)
-  return true
-}

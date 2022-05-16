@@ -24,7 +24,8 @@
   <meta name="theme-color" content="#f5f5f5">
 
   <script src="/static/js/agendar-alerta-swal.js"></script>
-  <script src="/static/js/lib.js"></script>
+  <script src="/static/js/lib.js"></script> <!-- components depends on lib! -->
+  <script src="/static/js/components.js"></script>
 </head>
 
 <body>
