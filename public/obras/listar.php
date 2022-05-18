@@ -62,8 +62,8 @@ require('../header.php');
           <div class="col-lg-4">
             <label for="obras-por-pagina" class="form-label">Obras por página</label>
             <input id="obras-por-pagina" name="obras-por-pagina" class="form-control"
-                   type="number" min="3" max="999" step="3">
-            <input type="hidden" name="obras-por-pagina-anterior" id="obras-por-pagina-anterior">
+                   type="number" min="3" max="999" step="3" value="6">
+            <input type="hidden" name="obras-por-pagina-anterior" id="obras-por-pagina-anterior" value="6">
           </div>
           <div class="col-lg-2">
             <label for="btn-buscar" class="form-label">&nbsp;</label>
