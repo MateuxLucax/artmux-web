@@ -82,13 +82,21 @@ const q = Object.assign(Object.create(null), {
    * @param {object} attributes 
    * @returns HTMLElement
    */
-  create: function(tag, classes=[], parent=null, attributes={}) {
+  elem: function(tag, classes=[], parent=null, attributes={}) {
     const elem = document.createElement(tag);
     parent?.append(elem);
     if (classes.length > 0)
         elem.classList.add(...classes);
     Object.assign(elem, attributes);
     return elem;
+  },
+
+  /**
+   * Remove todos os nodos filhos do elemento dado
+   * @param {HTMLElement} e 
+   */
+  empty(e) {
+    while (e.firstChild) e.firstChild.remove();
   }
 })
 

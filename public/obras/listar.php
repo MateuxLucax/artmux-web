@@ -95,9 +95,7 @@ require('../header.php');
           <p class="obra-title"></p>
         </div>
       </div>
-      <nav id="paginacao" class="d-none mt-3">
-        <ul class="pagination justify-content-end mb-0">
-        </ul>
+      <nav id="container-paginacao" class="d-none mt-3">
       </nav>
     </div>
   </div>
@@ -106,18 +104,23 @@ require('../header.php');
 
 <script>
 
-  const filtroNome = new StringSearchFilter('Nome')
-  const filtroDataCriacao = new DateSearchFilter('Data de criação')
-  const filtroDataAtualizacao = new DateSearchFilter('Data de atualização')
+  const filtroTitulo = new StringSearchFilter('title', 'Título')
+  const filtroDataCriacao = new DateSearchFilter('created_at', 'Data de criação')
+  const filtroDataAtualizacao = new DateSearchFilter('updated_at', 'Data de atualização')
 
-  filtroNome.element().classList.add('mb-3')
+  const filtros = [filtroTitulo, filtroDataCriacao, filtroDataAtualizacao];
+
+  filtroTitulo.element().classList.add('mb-3')
   filtroDataCriacao.element().classList.add('mb-3')
   filtroDataAtualizacao.element().classList.add('mb-3')
 
   const containerFiltros = q.id('container-filtros')
-  containerFiltros.append(filtroNome.element())
+  containerFiltros.append(filtroTitulo.element())
   containerFiltros.append(filtroDataCriacao.element())
   containerFiltros.append(filtroDataAtualizacao.element())
+
+  // Essa parte dos filtros tá meio repetitiva, mas melhor não generalizar ainda porque vão vir outros filtros
+  // que provavelmente não vão ficar no mesmo lugar
 
   /**
    * Carrega uma obra recebida da API no DOM dentro do #container-obras
@@ -169,35 +172,41 @@ require('../header.php');
     input.value = clamp(3 * Math.floor(val / 3), input.getAttribute('min'), input.getAttribute('max'))
   }
 
+  //
+  // Submissão do formulário de busca
+  //
+
   const formBusca = q.id('form-busca')
 
-  formBusca.onsubmit = ev => {
-    ev.preventDefault()
-
-    const pagina
-      = formBusca['obras-por-pagina'].value == formBusca['obras-por-pagina-anterior'].value
-      ? Number(formBusca.pagina.value)
-      : 1
-    // Um comportamento melhor seria mudar para a página, sob a nova paginação,
-    // que tem +- as mesmas obras sendo visualizadas na paginação atual
-      
-    const busca = {
+  /**
+   * Retorna representação atual do formulário de busca como objeto
+   */
+  function getBuscaFormulario() {
+    return {
       ordenacao: formBusca.ordenacao.value,
       direcao: formBusca.direcao.value,
       obrasPorPagina: Number(formBusca['obras-por-pagina'].value),
-      pagina: pagina
+      pagina: Number(formBusca.pagina.value),
+      filtros: filtros.flatMap(filtro => filtro.value() ?? [])
+    }
+  }
+
+  formBusca.onsubmit = ev => {
+    ev.preventDefault()
+    const busca = getBuscaFormulario();
+    if (formBusca['obras-por-pagina'].value != formBusca['obras-por-pagina-anterior'].value) {
+      busca.pagina = 1;
+      // Por exemplo: usuário tem 5 obras, atualmente listando 3 obras por página, na página 2.
+      // Se ele trocar para 6 obras por página, não podemos ficar na página 2, porque só tem uma página agora.
     }
     sessionStorage.setItem('busca-obras', JSON.stringify(busca))
     location.reload()
   }
 
   const callbackPaginacao = pagenum => {
-    const busca = {
-      ordenacao: formBusca.ordenacao.value,
-      direcao: formBusca.direcao.value,
-      obrasPorPagina: Number(formBusca['obras-por-pagina-anterior'].value),
-      pagina: Number(pagenum)
-    }
+    const busca = getBuscaFormulario();
+    busca.pagina = Number(pagenum);
+    busca.obrasPorPagina = Number(formBusca['obras-por-pagina-anterior'].value);
     // Os links de paginação foram criados conforme a quantidade de obras por página anterior.
     // Se o usuário mudar a quantidade no formulário e usarmos essa quantidade ao trocar de página,
     // podem acontecer erros. Por exemplo: o usuário tem 5 obras e atualmente mostra 3 obras por
@@ -207,6 +216,12 @@ require('../header.php');
     sessionStorage.setItem('busca-obras', JSON.stringify(busca))
     location.reload()
   }
+  // TODO! em vez de salvar a busca na sessão e recarregar a página simplesmente recriar os elementos no DOM correspondentes à pesquisa;
+  // ter que recarregar a página é justamente uma limitação do server side rendering (tipo com php e tal), e eu to artificialmente recriando isso em js tipo ???
+
+  //
+  // Abertura da página após a submissão do formulário de busca
+  //
 
   document.addEventListener('DOMContentLoaded', () => {
     const buscaJSON = sessionStorage.getItem('busca-obras')
@@ -214,7 +229,8 @@ require('../header.php');
       ordenacao: 'created_at',
       direcao: 'desc',
       obrasPorPagina: 6,
-      pagina: 1
+      pagina: 1,
+      filtros: []
     }
 
     const buscaAPI = new URLSearchParams()
@@ -222,7 +238,8 @@ require('../header.php');
     buscaAPI.append('direction', busca.direcao)
     buscaAPI.append('perPage', busca.obrasPorPagina)
     buscaAPI.append('page', busca.pagina)
-    
+    busca.filtros.forEach(filtro => buscaAPI.append('filter', filtro))  // Assim que se passa array por get com o urlsearchparams
+
     fetch(`http://localhost:4000/artworks/?${buscaAPI.toString()}`)
     .then(res => {
       if (res.status != 200 && res.status != 304) {
@@ -244,16 +261,17 @@ require('../header.php');
 
         q.show(q.id('card-obras'))
         obras.forEach(carregarObra)
-        const paginacao = q.id('paginacao')
-        var paginacaoCriada = appendPagination(
-          paginacao,
-          busca.pagina,
+
+        const containerPaginacao = q.id('container-paginacao');
+        const paginacao = new Pagination(
+          containerPaginacao,
           busca.obrasPorPagina,
           totalObras,
           callbackPaginacao
-        )
-        if (paginacaoCriada) {
-          q.show(paginacao)
+        );
+        if (paginacao.isNecessary()) {
+          paginacao.setCurrentPage(busca.pagina);
+          q.show(containerPaginacao)
         }
       }
     })
