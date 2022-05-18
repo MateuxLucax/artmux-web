@@ -1,3 +1,5 @@
+'use strict';
+
 class Pagination {
 
   #pageToHtml = Object.assign(Object.create(null), {
@@ -14,22 +16,16 @@ class Pagination {
     'last': () => lastPage
   });
 
-  constructor(container, resultsPerPage, totalResults, onClickPage) {
-    this.resultsPerPage = resultsPerPage;
-    this.totalResults = totalResults;
+  constructor(container, onClickPage) {
     this.onClickPage = onClickPage;
     this.ulPagination = q.elem(
       'ul', ['pagination', 'justify-content-end', 'mb-0'], container
     );
   }
 
-  isNecessary() {
-    // i.e. if there is more than one page
-    return this.totalResults > this.resultsPerPage;
-  }
-
-  setCurrentPage(currentPage) {
-    if (!this.isNecessary()) {
+  refresh(currentPage, resultsPerPage, totalResults) {
+    if (totalResults <= resultsPerPage) {
+      q.hide(this.ulPagination);
       return;
     }
 
@@ -43,7 +39,7 @@ class Pagination {
         href: '#',
         innerHTML: this.#pageToHtml[page] ?? page,
         onclick: ev => {
-          if (ev.button != 0) return true;
+          if (ev.button != 0) return;
           if (this.onClickPage) {
             this.onClickPage(
               page in this.#pageToPagenumFunction
@@ -51,7 +47,7 @@ class Pagination {
               : Number(page)
             );
           }
-          return false;
+          ev.preventDefault();
         }
       });
       return li;
@@ -64,7 +60,7 @@ class Pagination {
       }
     }
 
-    const lastPage = Math.ceil(this.totalResults / this.resultsPerPage);
+    const lastPage = Math.ceil(totalResults / resultsPerPage);
 
     for (
       let i = Math.max(1, currentPage - 2);
@@ -80,6 +76,8 @@ class Pagination {
         this.ulPagination.append(makeLi('last'));
       }
     }
+
+    q.show(this.ulPagination);
   }
 
 }
