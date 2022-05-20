@@ -32,8 +32,6 @@ require('../header.php');
     <div class="card-body">
       <form id="form-busca">
 
-        <input type="hidden" id="pagina" name="pagina">
-
         <div id="container-filtros"></div>
 
         <div class="row">
@@ -105,6 +103,7 @@ require('../header.php');
 </main>
 
 <script>
+  'use strict';
 
   //
   // Inicialização dos componentes
@@ -152,7 +151,7 @@ require('../header.php');
       ordenacao: formBusca.ordenacao.value,
       direcao: formBusca.direcao.value,
       obrasPorPagina: Number(formBusca['obras-por-pagina'].value),
-      pagina: Number(formBusca.pagina.value),
+      pagina: 1,
       filtros: filtros.flatMap(filtro => filtro.value() ?? [])
     }
   }
@@ -219,7 +218,7 @@ require('../header.php');
     buscaAPI.append('direction', busca.direcao)
     buscaAPI.append('perPage', busca.obrasPorPagina)
     buscaAPI.append('page', busca.pagina)
-    busca.filtros.forEach(filtro => buscaAPI.append('filter', filtro))
+    busca.filtros.forEach(filtro => buscaAPI.append('filters', JSON.stringify(filtro)))
     
     const msgSemObras = q.id('msg-sem-obras');
     const containerObras = q.id('container-obras');
