@@ -230,13 +230,12 @@ require('../header.php');
       return res.json();
     })
     .then(ret => {
-      q.empty(containerObras);
-
       const { totalWorks: totalObras, works: obras } = ret;
       if (obras.length == 0) {
         q.hide(cardObras);
         q.show(msgSemObras);
       } else {
+        q.empty(containerObras);
         q.show(cardObras);
         q.hide(msgSemObras);
 

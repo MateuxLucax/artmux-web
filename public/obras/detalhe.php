@@ -37,7 +37,14 @@ require('../header.php');
       <div id="obra-observacoes-container" class="mb-3 row d-none">
         <label class="col-sm-2 form-label">Observações</label>
         <div class="col-sm-10">
-          <textarea readonly id="obra-observacoes" name="observations" class="form-control-plaintext" placeholder="Sem observações"></textarea>
+          <textarea readonly id="obra-observacoes" name="observations" class="form-control" placeholder="Sem observações"></textarea>
+        </div>
+      </div>
+
+      <div id="obra-tags-container" class="mb-3 row d-none">
+        <label class="col-sm-2 form-label">Tags</label>
+        <div class="col-sm-10">
+          <h5 id="tags-container"></h5>
         </div>
       </div>
 
@@ -45,14 +52,18 @@ require('../header.php');
         <label class="col-sm-2">
           Criada em
         </label>
-        <span id="obra-data-criacao" class="col-sm-10 text-muted"></span>
+        <div class="col-sm-10">
+          <input readonly id="obra-data-criacao" class="form-control-plaintext text-muted">
+        </div>
       </div>
 
       <div id="obra-data-atualizacao-container" class="mt-3 row d-none">
         <label class="col-sm-2">
           Atualizada em
         </label>
-        <span id="obra-data-atualizacao" class="col-sm-10 text-muted"></span>
+        <div class="col-sm-10">
+          <input readonly id="obra-data-atualizacao" class="form-control-plaintext text-muted">
+        </div>
       </div>
 
     </div>
@@ -84,31 +95,42 @@ require('../header.php');
   .catch(err => {
     console.error(err)
     Swal.fire({
-      title: 'Aviso',
-      icon: 'warning',
-      text: 'Não existe obra que corresponde aos parâmetros informados. Verifique se a URL foi modificada. Tente novamente mais tarde.'
+      title: 'Erro do sistema',
+      icon: 'error',
+      text: 'Erro ao carregar a obra. Tente novamente mais tarde.'
     }).then(() => history.back())
   })
 
   function carregarObra(obra) {
-    q.id('loading').classList.add('d-none')
+    q.hide(q.id('loading'));
     q.id('obra-titulo').value = obra.title
     if (obra.observations != '') {
-      q.id('obra-observacoes-container').classList.remove('d-none')
+      q.show(q.id('obra-observacoes-container'))
       q.id('obra-observacoes').value = obra.observations
+    }
+    if (obra.tags.length > 0) {
+      q.show(q.id('obra-tags-container'))
+      carregarTags(obra.tags)
     }
     q.id('obra-img').src = 'http://localhost:4000' + obra.imagePaths.medium
     q.id('obra-img-link-full').href = 'http://localhost:4000' + obra.imagePaths.original
-    q.id('obra-data-criacao').innerHTML = formatarData(new Date(obra.createdAt))
-    q.id('obra-data-atualizacao').innerHTML = formatarData(new Date(obra.updatedAt))
+    q.id('obra-data-criacao').value = formatarData(new Date(obra.createdAt))
+    q.id('obra-data-atualizacao').value = formatarData(new Date(obra.updatedAt))
     if (obra.createdAt != obra.updatedAt) {
-      q.show(q.id('obra-data-atualizacao-container'))
+      q.show(q.id('obra-data-atualizacao-container'));
     }
 
     if (obra.editable) {
       habilitarBotoes(slug);
     } else {
       desabilitarBotoes();
+    }
+  }
+
+  function carregarTags(tags) {
+    const containerTags = q.id('tags-container');
+    for (const { name } of tags) {
+      q.elem('span', ['badge', 'text-bg-primary', 'me-1'], containerTags, { innerText: name });
     }
   }
 
@@ -133,6 +155,14 @@ require('../header.php');
     }
   }
 
+  function desabilitarBotoes() {
+    const linkAlterar = q.id('link-alterar')
+    linkAlterar.setAttribute('disabled', 'disabled')
+    linkAlterar.classList.add('disabled')
+    q.id('btn-excluir').setAttribute('disabled', 'disabled');
+    // TODO colocar tooltip em volta explicando pq: tem publicação associada E que foi postada efetivamente em alguma rede social
+  }
+
   function fazerExclusao(slug) {
     fetch(`http://localhost:4000/artworks/${slug}`, { method: 'DELETE' })
     .then(res => {
@@ -152,14 +182,6 @@ require('../header.php');
         icon: 'error'
       })
     })
-  }
-
-  function desabilitarBotoes() {
-    const linkAlterar = q.id('link-alterar')
-    linkAlterar.setAttribute('disabled', 'disabled')
-    linkAlterar.classList.add('disabled')
-    q.id('btn-excluir').setAttribute('disabled', 'disabled');
-    // TODO colocar tooltip em volta explicando pq: tem publicação associada E que foi postada efetivamente em alguma rede social
   }
 </script>
 

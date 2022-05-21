@@ -3,6 +3,12 @@ $titulo = 'Nova obra';
 require('../header.php');
 ?>
 
+<!-- Trazer só nas páginas que precisam, porque o unpkg é meio lento -->
+<link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+<script src="https://unpkg.com/@yaireo/tagify"></script>
+<script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<script src="/static/js/tagify.js"></script>
+
 <main class="container">
 
   <?php
@@ -25,10 +31,16 @@ require('../header.php');
             <input required name="title" id="title" type="text" class="form-control"/>
           </div>
         </div>
-        <div class="row">
+        <div class="mb-3 row">
           <label for="observations" class="form-label col-sm-2">Observações</label>
           <div class="col-sm-10">
             <textarea name="observations" id="observations" class="form-control"></textarea>
+          </div>
+        </div>
+        <div class="row">
+          <label for="tags" class="form-label col-sm-2">Tags</label>
+          <div class="col-sm-10">
+            <input type="text" id="tags" class="form-control"/>
           </div>
         </div>
       </div>
@@ -45,10 +57,30 @@ require('../header.php');
 </main>
 
 <script>
+  const tagInput = new ArtworkTagInput(q.id('tags'));
+
+  fetch('http://localhost:4000/tags/')
+  .then(res => {
+    if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
+    return res.json();
+  })
+  .then(tags => tagInput.whitelist = tags)
+  .catch(err => {
+    console.error(err)
+    Swal.fire({
+      title: 'Erro do sistema',
+      text: 'Não foi possível carregar as suas tags. Tente novamente mais tarde.',
+      icon: 'error'
+    });
+  });
+
   const form = document.getElementById('form-nova-obra')
   form.onsubmit = event => {
     event.preventDefault()
-    submitNovaObra(new FormData(form))
+    const fd = new FormData(form);
+    fd.delete('tags');
+    fd.append('tags', JSON.stringify(tagInput.value));
+    submitNovaObra(fd);
   }
 
   function submitNovaObra(formData) {
@@ -56,7 +88,10 @@ require('../header.php');
       method: 'POST',
       body: formData,
     })
-    .then(res => res.json()) // TODO handle different status codes
+    .then(res => {
+      if (res.status != 201) throw ['Resposta não-ok', res];
+      return res.json();
+    })
     .then(json => {
       const { slug } = json;
       agendarAlertaSwal({

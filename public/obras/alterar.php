@@ -3,6 +3,12 @@ $titulo = 'Alterar obra';
 require('../header.php');
 ?>
 
+<!-- Trazer só nas páginas que precisam, porque o unpkg é meio lento -->
+<link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
+<script src="https://unpkg.com/@yaireo/tagify"></script>
+<script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<script src="/static/js/tagify.js"></script>
+
 <main class="container">
 
   <?php require('menu.php') ?>
@@ -11,15 +17,21 @@ require('../header.php');
     <form id="form-alterar-obra" onsubmit="submitFormAlterarObra">
       <div class="card-body">
         <div class="mb-3 row">
-          <label for="input-titulo" class="col-sm-2 form-label">Título</label>
+          <label for="titulo" class="col-sm-2 form-label">Título</label>
           <div class="col-sm-10">
-            <input required type="text" name="title" class="form-control" id="input-titulo" placeholder="Sem título"/>
+            <input required type="text" name="title" class="form-control" id="titulo" placeholder="Sem título"/>
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="input-observacoes" class="col-sm-2 form-label">Observações</label>
+          <label for="tags" class="col-sm-2 form-label">Tags</label>
           <div class="col-sm-10">
-            <textarea name="observations" class="form-control" id="input-observacoes" placeholder="Sem observações"></textarea>
+            <input type="text" name="tags" id="tags" class="form-control" autocomplete="off">
+          </div>
+        </div>
+        <div class="mb-3 row">
+          <label for="observacoes" class="col-sm-2 form-label">Observações</label>
+          <div class="col-sm-10">
+            <textarea name="observations" class="form-control" id="observacoes" placeholder="Sem observações"></textarea>
           </div>
         </div>
         <div class="mb-3 row">
@@ -49,27 +61,41 @@ require('../header.php');
   const params = new URLSearchParams(location.search)
   const slug = params.get('obra')
   if (!slug) {
-    // TODO alerta swal, redirecionar no botão de 'ok'
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro do sistema',
+      text: 'Erro ao carregar a obra. A URL não foi acessada corretamente. Tente novamente mais tarde.'
+    }).then(() => history.back());
   }
+
+  const tagInput = new ArtworkTagInput(q.id('tags'));
+
+  fetch('http://localhost:4000/tags/')
+  .then(res => res.json())
+  .then(tags => tagInput.whitelist = tags);
+
 
   fetch(`http://localhost:4000/artworks/${slug}`)
   .then(res => {
-    if (res.status != 200 && res.status != 304) {
-      throw 'Resposta não-ok'
-    }
-    return res.json()
+    if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
+    return res.json();
   })
   .then(carregarObra)
   .catch(err => {
     console.error(err)
-    // TODO agendar alerta swal, redirecionar no 'ok'
+    Swal.fire({
+      icon: 'error',
+      title: 'Erro do sistema',
+      text: 'Erro ao carregar a obra. Tente novamente mais tarde.'
+    }).then(() => history.back());
   })
 
   function carregarObra(obra) {
-    q.id('input-titulo').value = obra.title
-    q.id('input-observacoes').value = obra.observations
+    q.id('titulo').value = obra.title
+    q.id('observacoes').value = obra.observations
     q.id('img-obra').src = 'http://localhost:4000' + obra.imagePaths.thumbnail
     q.id('link-obra-full').href = 'http://localhost:4000' + obra.imagePaths.original
+    tagInput.value = obra.tags;
   }
 
   const lnRemoverImagem = q.id('link-remover-imagem')
@@ -96,13 +122,18 @@ require('../header.php');
   const form = q.id('form-alterar-obra')
   form.onsubmit = ev => {
     ev.preventDefault();
-    submitAlterarObra(new FormData(form))
+    const fd = new FormData(form);
+    fd.delete('tags');
+    fd.append('tags', JSON.stringify(tagInput.value))
+    submitAlterarObra(fd);
   }
 
   function submitAlterarObra(formData) {
-    console.log([...formData])
     fetch(`http://localhost:4000/artworks/${slug}`, { method:'PATCH', body:formData, })
-    .then(res => res.json())  // TODO handle different status codes
+    .then(res => {
+      if (res.status != 200) throw ['Resposta não-ok', res];
+      return res.json();
+    })
     .then(json => {
       const { slug } = json;
       agendarAlertaSwal({
