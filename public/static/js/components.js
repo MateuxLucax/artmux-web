@@ -4,16 +4,9 @@ class Pagination {
 
   #pageToHtml = Object.assign(Object.create(null), {
     'first': '<i class="fas fa-angle-double-left"></i>',
-    'previous': '<i class="fas fa-angle-left"></i>',
-    'next': '<i class="fas fa-angle-right"></i>',
-    'last': '<i class="fas fa-angle-double-right"></i>'
-  });
-
-  #pageToPagenumFunction = Object.assign(Object.create(null), {
-    'first': () => 1,
-    'previous': p => p-1,
-    'next': p => p+1,
-    'last': () => lastPage
+    'prev':  '<i class="fas fa-angle-left"></i>',
+    'next':  '<i class="fas fa-angle-right"></i>',
+    'last':  '<i class="fas fa-angle-double-right"></i>'
   });
 
   constructor(container, onClickPage) {
@@ -31,9 +24,12 @@ class Pagination {
 
     q.empty(this.ulPagination);
 
-    const makeLi = page => {
+    const lastPage = Math.ceil(totalResults / resultsPerPage);
+
+    const makeLi = (page, disabled) => {
       const liClass = ['page-item'];
       if (page == currentPage) liClass.push('active')
+      if (disabled) liClass.push('disabled');
       const li = q.elem('li', liClass);
       q.elem('a', ['page-link'], li, {
         href: '#',
@@ -41,11 +37,15 @@ class Pagination {
         onclick: ev => {
           if (ev.button != 0) return;
           if (this.onClickPage) {
-            this.onClickPage(
-              page in this.#pageToPagenumFunction
-              ? this.#pageToPagenumFunction[page](currentPage)
-              : Number(page)
-            );
+            let pagenum;
+            switch (page) {
+              case 'first': pagenum = 1; break;
+              case 'prev':  pagenum = currentPage - 1; break;
+              case 'next':  pagenum = currentPage + 1; break;
+              case 'last':  pagenum = lastPage; break;
+              default:      pagenum = Number(page); break;
+            }
+            this.onClickPage(pagenum);
           }
           ev.preventDefault();
         }
@@ -53,14 +53,8 @@ class Pagination {
       return li;
     };
 
-    if (currentPage > 1) {
-      this.ulPagination.append(makeLi('previous'));
-      if (currentPage > 2) {
-        this.ulPagination.append(makeLi('first'));
-      }
-    }
-
-    const lastPage = Math.ceil(totalResults / resultsPerPage);
+    this.ulPagination.append(makeLi('first', currentPage <= 1));
+    this.ulPagination.append(makeLi('prev',  currentPage <= 1));
 
     for (
       let i = Math.max(1, currentPage - 2);
@@ -70,12 +64,8 @@ class Pagination {
       this.ulPagination.append(makeLi(i));
     }
 
-    if (currentPage < lastPage) {
-      this.ulPagination.append(makeLi('next'));
-      if (currentPage + 1 < lastPage) {
-        this.ulPagination.append(makeLi('last'));
-      }
-    }
+    this.ulPagination.append(makeLi('next', currentPage >= lastPage));
+    this.ulPagination.append(makeLi('last', currentPage >= lastPage));
 
     q.show(this.ulPagination);
   }

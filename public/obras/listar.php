@@ -82,6 +82,9 @@ require('../header.php');
   <div class="card d-none" id="card-obras">
     <div class="card-body" style="min-height: 256px;">
 
+      <nav id="container-paginacao" class="mb-3">
+      </nav>
+
       <!-- Fora do container-obras, porque ele é esvaziado a cada busca -->
       <div id="obra-prototipo" class="obra card text-center d-none" style="padding: 10px">
         <div class="text-center">
@@ -95,8 +98,6 @@ require('../header.php');
       <div id="container-obras">
 
       </div>
-      <nav id="container-paginacao" class="mt-3">
-      </nav>
     </div>
   </div>
 
@@ -115,17 +116,13 @@ require('../header.php');
 
   const filtros = [filtroTitulo, filtroDataCriacao, filtroDataAtualizacao];
 
-  filtroTitulo.element().classList.add('mb-3')
-  filtroDataCriacao.element().classList.add('mb-3')
-  filtroDataAtualizacao.element().classList.add('mb-3')
-
   const containerFiltros = q.id('container-filtros')
-  containerFiltros.append(filtroTitulo.element())
-  containerFiltros.append(filtroDataCriacao.element())
-  containerFiltros.append(filtroDataAtualizacao.element())
 
-  // Essa parte dos filtros tá meio repetitiva, mas melhor não generalizar ainda porque vão vir outros filtros
-  // que provavelmente não vão ficar no mesmo lugar
+  for (const filtro of filtros) {
+    const elem = filtro.element();
+    elem.classList.add('mb-3');
+    containerFiltros.append(elem);
+  }
 
   const paginacao = new Pagination(q.id('container-paginacao'), newPageNum => {
     const busca = getBuscaFormulario();
@@ -219,10 +216,11 @@ require('../header.php');
     buscaAPI.append('perPage', busca.obrasPorPagina)
     buscaAPI.append('page', busca.pagina)
     busca.filtros.forEach(filtro => buscaAPI.append('filters', JSON.stringify(filtro)))
+    console.log(buscaAPI.toString());
     
     const msgSemObras = q.id('msg-sem-obras');
+    const cardObras = q.id('card-obras');
     const containerObras = q.id('container-obras');
-    q.hide(msgSemObras);
 
     fetch(`http://localhost:4000/artworks/?${buscaAPI.toString()}`)
     .then(res => {
@@ -236,8 +234,12 @@ require('../header.php');
 
       const { totalWorks: totalObras, works: obras } = ret;
       if (obras.length == 0) {
+        q.hide(cardObras);
         q.show(msgSemObras);
       } else {
+        q.show(cardObras);
+        q.hide(msgSemObras);
+
         q.id('obras-por-pagina-anterior').value = busca.obrasPorPagina;
 
         q.show(q.id('card-obras'));
