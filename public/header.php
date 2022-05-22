@@ -34,6 +34,7 @@
   <script src="/static/js/agendar-alerta-swal.js"></script>
   <script src="/static/js/lib.js"></script>
   <script src="/static/js/components.js"></script> <!-- components depends on libs and tagify -->
+  <script src="/static/js/filter-components.js"></script> <!-- filter-components depends on components -->
 </head>
 
 <body>
