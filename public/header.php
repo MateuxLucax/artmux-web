@@ -27,9 +27,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Nunito:wght@400;900&display=swap" rel="stylesheet" />
 
+  <link href="/static/css/tagify.css" rel="stylesheet" type="text/css" />
+  <link href="/static/css/tagify-custom.css" rel="stylesheet" type="text/css" />
+
+  <script src="/static/js/tagify.min.js"></script>
   <script src="/static/js/agendar-alerta-swal.js"></script>
-  <script src="/static/js/lib.js"></script> <!-- components depends on lib! -->
-  <script src="/static/js/components.js"></script>
+  <script src="/static/js/lib.js"></script>
+  <script src="/static/js/components.js"></script> <!-- components depends on libs and tagify -->
 </head>
 
 <body>

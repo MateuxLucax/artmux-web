@@ -3,12 +3,6 @@ $titulo = 'Alterar obra';
 require('../header.php');
 ?>
 
-<!-- Trazer só nas páginas que precisam, porque o unpkg é meio lento -->
-<link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
-<script src="https://unpkg.com/@yaireo/tagify"></script>
-<script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
-<script src="/static/js/tagify.js"></script>
-
 <main class="container">
 
   <?php require('menu.php') ?>
@@ -68,7 +62,7 @@ require('../header.php');
     }).then(() => history.back());
   }
 
-  const tagInput = new ArtworkTagInput(q.id('tags'));
+  const tagInput = new TagInput(q.id('tags'));
 
   fetch('http://localhost:4000/tags/')
   .then(res => res.json())

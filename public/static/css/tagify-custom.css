@@ -1,0 +1,18 @@
+/* This makes the tagify input look like a bootstrap input */
+
+.tagify.form-control {
+  --tags-border-color: var(--bs-gray-400);
+  --tags-hover-border-color: var(--bs-gray-400);
+  --tags-focus-border-color: #86b7fe;
+}
+
+.tagify.tagify--focus {
+  box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tagify, .tagify.tagify--focus {
+    transition: none;
+  }
+}
