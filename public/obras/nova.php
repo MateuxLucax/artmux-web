@@ -26,15 +26,15 @@ require('../header.php');
           </div>
         </div>
         <div class="mb-3 row">
-          <label for="observations" class="form-label col-sm-2">Observações</label>
-          <div class="col-sm-10">
-            <textarea name="observations" id="observations" class="form-control"></textarea>
-          </div>
-        </div>
-        <div class="row">
           <label for="tags" class="form-label col-sm-2">Tags</label>
           <div class="col-sm-10">
             <input type="text" id="tags" class="form-control"/>
+          </div>
+        </div>
+        <div class="row">
+          <label for="observations" class="form-label col-sm-2">Observações</label>
+          <div class="col-sm-10">
+            <textarea name="observations" id="observations" class="form-control"></textarea>
           </div>
         </div>
       </div>
