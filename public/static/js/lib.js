@@ -4,7 +4,7 @@
 
 // Little library of functions to make these common functions easier to type
 // q for query, like jQuery
-const q = Object.assign(Object.create(null), {
+const q = {
 
   /**
    * Alias for document.getElementById
@@ -98,7 +98,7 @@ const q = Object.assign(Object.create(null), {
   empty(e) {
     while (e.firstChild) e.firstChild.remove();
   }
-})
+}
 
 /**
  * Recebe objeto Date e retorna como string no formato DD/MM/YYYY HH:ii

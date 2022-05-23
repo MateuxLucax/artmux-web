@@ -2,12 +2,12 @@
 
 class Pagination {
 
-  #pageToHtml = Object.assign(Object.create(null), {
+  #pageToHtml =  {
     'first': '<i class="fas fa-angle-double-left"></i>',
     'prev':  '<i class="fas fa-angle-left"></i>',
     'next':  '<i class="fas fa-angle-right"></i>',
     'last':  '<i class="fas fa-angle-double-right"></i>'
-  });
+  };
 
   constructor(container, onClickPage) {
     this.onClickPage = onClickPage;
