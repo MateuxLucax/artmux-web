@@ -16,6 +16,14 @@ const q = {
   },
 
   /**
+   * Alias for document.querySelector(qry)
+   * @param {string} qry 
+   */
+  sel: function(qry) {
+    return document.querySelector(qry);
+  },
+
+  /**
    * Alias for document.getElementsByClassName
    * @param {string} klass 
    * @returns 

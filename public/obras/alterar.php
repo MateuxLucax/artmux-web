@@ -138,7 +138,6 @@ require('../header.php');
       const { slug } = json;
       agendarAlertaSwal({
         icon: 'success',
-        title: 'Sucesso',
         text: 'A obra foi alterada com sucesso.'
       })
       location.assign(`/obras/detalhe.php?obra=${slug}`)

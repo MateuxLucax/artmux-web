@@ -95,7 +95,6 @@ require('../header.php');
     .then(json => {
       const { slug } = json;
       agendarAlertaSwal({
-        title: 'Sucesso',
         text: 'A obra foi cadastrada com sucesso.',
         icon: 'success'
       })

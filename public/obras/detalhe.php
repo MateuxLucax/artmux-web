@@ -170,7 +170,6 @@ require('../header.php');
     .then(res => {
       if (!res.ok) throw 'Resposta não-ok'
       agendarAlertaSwal({
-        title: 'Sucesso',
         text: 'Obra excluída com sucesso',
         icon: 'success'
       })
@@ -179,7 +178,7 @@ require('../header.php');
     .catch(err => {
       console.error(err)
       Swal.fire({
-        title: 'Erro',
+        title: 'Erro do sistem',
         text: 'Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.',
         icon: 'error'
       })
