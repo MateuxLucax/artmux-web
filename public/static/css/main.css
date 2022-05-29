@@ -1,5 +1,5 @@
-.max-width-540 {
-  max-width: 540px;
+.max-width-480 {
+  max-width: 480px;
 }
 
 html {
@@ -8,6 +8,7 @@ html {
 
 .nunito {
   font-family: 'Nunito', sans-serif;
+  font-weight: normal;
 }
 
 .nunito-black {
@@ -17,4 +18,5 @@ html {
 
 .nunito-sans {
   font-family: 'Nunito Sans', sans-serif;
+  font-weight: normal;
 }
