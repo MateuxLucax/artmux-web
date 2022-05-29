@@ -22,7 +22,7 @@ require('../header.php');
         <div class="mb-3 row">
           <label for="title" class="form-label col-sm-2">Título</label>
           <div class="col-sm-10">
-            <input required name="title" id="title" type="text" class="form-control"/>
+            <input placeholder="Sem título" name="title" id="title" type="text" class="form-control"/>
           </div>
         </div>
         <div class="mb-3 row">
@@ -72,6 +72,10 @@ require('../header.php');
   form.onsubmit = event => {
     event.preventDefault()
     const fd = new FormData(form);
+    if (fd.get('title').trim() == '') {
+      fd.delete('title');
+      fd.append('title', 'Sem título');
+    }
     fd.delete('tags');
     fd.append('tags', JSON.stringify(tagInput.value));
     submitNovaObra(fd);

@@ -13,7 +13,7 @@ require('../header.php');
         <div class="mb-3 row">
           <label for="titulo" class="col-sm-2 form-label">Título</label>
           <div class="col-sm-10">
-            <input required type="text" name="title" class="form-control" id="titulo" placeholder="Sem título"/>
+            <input type="text" name="title" class="form-control" id="titulo" placeholder="Sem título"/>
           </div>
         </div>
         <div class="mb-3 row">
@@ -117,6 +117,10 @@ require('../header.php');
   form.onsubmit = ev => {
     ev.preventDefault();
     const fd = new FormData(form);
+    if (fd.get('title').trim() == '') {
+      fd.delete('title');
+      fd.append('title', 'Sem título');
+    }
     fd.delete('tags');
     fd.append('tags', JSON.stringify(tagInput.value))
     submitAlterarObra(fd);

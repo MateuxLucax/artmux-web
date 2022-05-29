@@ -120,11 +120,11 @@ require('../header.php');
       q.show(q.id('obra-data-atualizacao-container'));
     }
 
-    if (obra.editable) {
+    // if (obra.editable) {
       habilitarBotoes(slug);
-    } else {
-      desabilitarBotoes();
-    }
+    // } else {
+      // desabilitarBotoes();
+    // }
   }
 
   function carregarTags(tags) {

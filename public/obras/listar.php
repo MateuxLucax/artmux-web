@@ -230,7 +230,7 @@ require('../header.php');
       return res.json();
     })
     .then(ret => {
-      const { totalWorks: totalObras, works: obras } = ret;
+      const { total: totalObras, artworks: obras } = ret;
       if (obras.length == 0) {
         q.hide(cardObras);
         q.show(msgSemObras);
