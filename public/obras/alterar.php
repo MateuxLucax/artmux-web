@@ -51,6 +51,8 @@ require('../header.php');
 
 </main>
 
+<?php require('../scripts.php') ?>
+
 <script>
   const params = new URLSearchParams(location.search)
   const slug = params.get('obra')

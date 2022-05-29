@@ -103,6 +103,8 @@ require('../header.php');
 
 </main>
 
+<?php require('../scripts.php') ?>
+
 <script>
   'use strict';
 

@@ -50,6 +50,8 @@ require('../header.php');
   </div>
 </main>
 
+<?php require('../scripts.php') ?>
+
 <script>
   const tagInput = new TagInput(q.id('tags'));
 
