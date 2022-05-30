@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  artmux-server:
+    container_name: artmux-server
+    build:
+      context: .
+      dockerfile: ./docker/prod/Dockerfile
+    hostname: server
+    restart: unless-stopped
+    tty: true
+    ports:   
+      - ${PORT}:80

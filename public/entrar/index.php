@@ -19,7 +19,7 @@
             <label class="form-check-label" for="keepLoggedIn">manter conectado</label>
         </div>
         <div class="d-grid gap-2 mx-auto">
-            <button class="btn btn-primary" type="submit">entrar</button>
+            <button class="btn btn-primary" id="login-btn" type="submit">entrar</button>
         </div>
 
         <p class="align-center mt-4 text-center">
@@ -37,6 +37,7 @@
 
 <script>
     const form  = q.id('login');
+    const loginButton = q.id('login-btn');
     let loading = false;
 
     form.addEventListener('submit', async (e) => {
@@ -44,6 +45,8 @@
 
         if (!loading) {
             loading = true;
+            loginButton.disabled = true;
+            loginButton.innerText = `entrando...`;
 
             const username = form.username.value;
             const password = form.password.value;
@@ -80,9 +83,11 @@
                     confirmButtonText: 'ok',
                     confirmButtonColor: '#0d6efd'
                 });
+            } finally {
+                loading = false;
+                loginButton.disabled = false;
+                loginButton.innerText = `entrar`;
             }
-
-            loading = false;
         }
     });
 </script>
