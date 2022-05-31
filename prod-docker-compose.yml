@@ -3,6 +3,7 @@ version: "3"
 services:
   artmux-server:
     container_name: artmux-server
+    image: artmux-server-prod
     build:
       context: .
       dockerfile: ./docker/prod/Dockerfile
