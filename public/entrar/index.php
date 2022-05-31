@@ -8,14 +8,14 @@
     <form class="mb-auto" id="login" method="POST">
         <div class="form-group my-auto">
             <label for="username">usuário</label>
-            <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu">
+            <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
         </div>
         <div class="form-group mt-2">
             <label for="password">senha</label>
-            <input type="password" class="form-control" id="password" placeholder="********">
+            <input type="password" class="form-control" id="password" placeholder="********" required />
         </div> 
         <div class="form-check my-4">
-            <input type="checkbox" class="form-check-input" id="keepLoggedIn">
+            <input type="checkbox" class="form-check-input" id="keepLoggedIn" />
             <label class="form-check-label" for="keepLoggedIn">manter conectado</label>
         </div>
         <div class="d-grid gap-2 mx-auto">
@@ -61,10 +61,8 @@
             try {
                 const response = await request.post('auth/signin', data);
                 const body = await response.json();
-                console.log(body);
                 if (response.status === 200) {
                     storage.setToken(body.token, keepLoggedIn);
-                    store.setUser(username, body.token);
                     window.location.href = '/me';
                 } else {
                     Swal.fire({
