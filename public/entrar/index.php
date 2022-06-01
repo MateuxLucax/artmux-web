@@ -8,18 +8,18 @@
     <form class="mb-auto" id="login" method="POST">
         <div class="form-group my-auto">
             <label for="username" class="form-label">usuário</label>
-            <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu">
+            <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
         </div>
         <div class="form-group mt-2">
             <label for="password" class="form-label">senha</label>
-            <input type="password" class="form-control" id="password" placeholder="********">
+            <input type="password" class="form-control" id="password" placeholder="********" required />
         </div> 
         <div class="form-check my-4">
-            <input type="checkbox" class="form-check-input" id="keepLoggedIn">
+            <input type="checkbox" class="form-check-input" id="keepLoggedIn" />
             <label class="form-check-label" for="keepLoggedIn">manter conectado</label>
         </div>
         <div class="d-grid gap-2 mx-auto">
-            <button class="btn btn-primary" type="submit">entrar</button>
+            <button class="btn btn-primary" id="login-btn" type="submit">entrar</button>
         </div>
 
         <p class="align-center mt-4 text-center">
@@ -37,6 +37,7 @@
 
 <script>
     const form  = q.id('login');
+    const loginButton = q.id('login-btn');
     let loading = false;
 
     form.addEventListener('submit', async (e) => {
@@ -44,6 +45,8 @@
 
         if (!loading) {
             loading = true;
+            loginButton.disabled = true;
+            loginButton.innerText = `entrando...`;
 
             const username = form.username.value;
             const password = form.password.value;
@@ -58,10 +61,8 @@
             try {
                 const response = await request.post('auth/signin', data);
                 const body = await response.json();
-                console.log(body);
                 if (response.status === 200) {
                     storage.setToken(body.token, keepLoggedIn);
-                    store.setUser(username, body.token);
                     window.location.href = '/me';
                 } else {
                     Swal.fire({
@@ -80,9 +81,11 @@
                     confirmButtonText: 'ok',
                     confirmButtonColor: '#0d6efd'
                 });
+            } finally {
+                loading = false;
+                loginButton.disabled = false;
+                loginButton.innerText = `entrar`;
             }
-
-            loading = false;
         }
     });
 </script>

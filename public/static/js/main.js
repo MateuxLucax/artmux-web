@@ -1,25 +1,12 @@
 const store = {
   user: {
-    name: null,
     token: null
-  },
-
-  setUser: (name, token) => {
-    console.log([name, token]);
-    store.user = { name, token };
-    console.log(store.user);
-  },
-
-  clearUser: () => {
-    store.user = {
-      name: null,
-      token: null
-    };
   }
 }
 
 const storage = {
   setToken: (token, persist) => {
+    store.user.token = token;
     if (persist) {
       localStorage.setItem('token', token);
     } else {
@@ -28,6 +15,7 @@ const storage = {
   },
 
   removeToken: () => {
+    store.user.token;
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
   },
@@ -53,7 +41,6 @@ const request = {
 
   treatResponse: async (response) => {
     if (response.status === 401) {
-      store.clearUser();
       storage.removeToken();
       window.location.replace('/entrar');
       return null;
@@ -85,15 +72,17 @@ const request = {
   },
 
   auth: {
-    get: async (url) => {
+    get: async (url, headers = {}) => {
       return request.treatResponse(await request.get(url, {
-        'Authorization': `Bearer ${storage.getToken()}`
+        'Authorization': `Bearer ${storage.getToken()}`,
+        ...headers
       }));
     },
 
-    post: async (url, data) => {
+    post: async (url, data, headers = {}) => {
       return request.treatResponse(await request.post(url, data, {
-        'Authorization': `Bearer ${storage.getToken()}`
+        'Authorization': `Bearer ${storage.getToken()}`,
+        ...headers
       }));
     }
   }
