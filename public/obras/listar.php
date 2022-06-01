@@ -120,10 +120,9 @@ require('../header.php');
 
   const containerFiltros = q.id('container-filtros')
 
-  for (const filtro of filtros) {
-    const elem = filtro.element();
-    elem.classList.add('mb-3');
-    containerFiltros.append(elem);
+  for (const { element } of filtros) {
+    element.classList.add('mb-3');
+    containerFiltros.append(element);
   }
 
   const paginacao = new Pagination(q.id('container-paginacao'), newPageNum => {
@@ -151,7 +150,7 @@ require('../header.php');
       direcao: formBusca.direcao.value,
       obrasPorPagina: Number(formBusca['obras-por-pagina'].value),
       pagina: 1,
-      filtros: filtros.flatMap(filtro => filtro.value() ?? [])
+      filtros: filtros.flatMap(({ value }) => value ?? [])
     }
   }
 
@@ -243,7 +242,6 @@ require('../header.php');
 
         q.id('obras-por-pagina-anterior').value = busca.obrasPorPagina;
 
-        q.show(q.id('card-obras'));
         obras.forEach(carregarObra);
 
         paginacao.refresh(busca.pagina, busca.obrasPorPagina, totalObras);

@@ -5,11 +5,11 @@ class SearchFilter {
   constructor(name, labelText, operatorOptions, inputType, defaultValue) {
     this.name = name  // Returned in the value() for identification
 
-    const row = q.elem('div', ['row'])
-    const operatorCol = q.elem('div', ['col-lg-4'], row)
-    q.elem('label', ['form-label'], operatorCol, { innerText: labelText })
+    const row = q.make('div', ['row'])
+    const operatorCol = q.make('div', ['col-lg-4'], row)
+    q.make('label', ['form-label'], operatorCol, { innerText: labelText })
 
-    this.operatorSelect = q.elem('select', ['form-control'], operatorCol)
+    this.operatorSelect = q.make('select', ['form-control'], operatorCol)
     for (const operator in operatorOptions) {
       const attributes = {
         value: operator,
@@ -18,13 +18,13 @@ class SearchFilter {
       if (defaultValue.operator == operator) {
         attributes.selected = 'selected'
       }
-      q.elem('option', [], this.operatorSelect, attributes)
+      q.make('option', [], this.operatorSelect, attributes)
     }
 
-    this.inputCol = q.elem('div', ['col-lg-8'], row)
-    q.elem('label', ['form-label'], this.inputCol, { innerText: ' ' })
+    this.inputCol = q.make('div', ['col-lg-8'], row)
+    q.make('label', ['form-label'], this.inputCol, { innerText: ' ' })
 
-    this.input = q.elem('input', ['form-control'], this.inputCol, {
+    this.input = q.make('input', ['form-control'], this.inputCol, {
       type: inputType,
       value: defaultValue.value,
     })
@@ -32,11 +32,11 @@ class SearchFilter {
     this.elem = row
   }
 
-  element() {
+  get element() {
     return this.elem
   }
 
-  setValue(value) {
+  set value(value) {
     this.input.value = value.value;
     for (option of q.tagIn('option', this.operatorSelect)) {
       if (option.value == value.operator) {
@@ -46,7 +46,7 @@ class SearchFilter {
     }
   }
 
-  value() {
+  get value() {
     const val = this.input.value
     if (val.trim() == '') {
       return null
@@ -89,11 +89,11 @@ class DateSearchFilter extends SearchFilter {
         operator: 'equalTo' }
     )
 
-    this.intervalInputGroup = q.elem('div', ['input-group', 'd-none'], this.inputCol)
-    q.elem('span', ['input-group-text'], this.intervalInputGroup, { innerText: 'de' })
-    this.inputFrom = q.elem('input', ['form-control'], this.intervalInputGroup, { type: 'date' })
-    q.elem('span', ['input-group-text'], this.intervalInputGroup, { innerText: 'até' })
-    this.inputTo = q.elem('input', ['form-control'], this.intervalInputGroup, { type: 'date' })
+    this.intervalInputGroup = q.make('div', ['input-group', 'd-none'], this.inputCol)
+    q.make('span', ['input-group-text'], this.intervalInputGroup, { innerText: 'de' })
+    this.inputFrom = q.make('input', ['form-control'], this.intervalInputGroup, { type: 'date' })
+    q.make('span', ['input-group-text'], this.intervalInputGroup, { innerText: 'até' })
+    this.inputTo = q.make('input', ['form-control'], this.intervalInputGroup, { type: 'date' })
 
     this.operatorSelect.onchange = ev => {
       this._toggleIntervalInput(ev.target.value)
@@ -110,7 +110,7 @@ class DateSearchFilter extends SearchFilter {
     }
   }
 
-  setValue(value) {
+  set value(value) {
     if (value == null) {
       return;
     }
@@ -123,9 +123,9 @@ class DateSearchFilter extends SearchFilter {
     }
   }
 
-  value() {
+  get value() {
     if (this.operatorSelect.value != 'between') {
-      return super.value();
+      return super.value;
     }
     const from = this.inputFrom.value
     const to = this.inputTo.value

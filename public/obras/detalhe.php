@@ -132,7 +132,7 @@ require('../header.php');
   function carregarTags(tags) {
     const containerTags = q.id('tags-container');
     for (const { name } of tags) {
-      q.elem('span', ['badge', 'text-bg-primary', 'me-1'], containerTags, { innerText: name });
+      q.make('span', ['badge', 'text-bg-primary', 'me-1'], containerTags, { innerText: name });
     }
   }
 

@@ -11,7 +11,7 @@ class Pagination {
 
   constructor(container, onClickPage) {
     this.onClickPage = onClickPage;
-    this.ulPagination = q.elem(
+    this.ulPagination = q.make(
       'ul', ['pagination', 'justify-content-end', 'mb-0'], container
     );
   }
@@ -28,26 +28,25 @@ class Pagination {
 
     const makeLi = (page, disabled) => {
       const liClass = ['page-item'];
-      if (page == currentPage) liClass.push('active')
+      if (page == currentPage) liClass.push('active');
       if (disabled) liClass.push('disabled');
-      const li = q.elem('li', liClass);
-      q.elem('a', ['page-link'], li, {
+      const li = q.make('li', liClass);
+      q.make('a', ['page-link'], li, {
         href: '#',
         innerHTML: this.#pageToHtml[page] ?? page,
         onclick: ev => {
           if (ev.button != 0) return;
-          if (this.onClickPage) {
-            let pagenum;
-            switch (page) {
-              case 'first': pagenum = 1; break;
-              case 'prev':  pagenum = currentPage - 1; break;
-              case 'next':  pagenum = currentPage + 1; break;
-              case 'last':  pagenum = lastPage; break;
-              default:      pagenum = Number(page); break;
-            }
-            this.onClickPage(pagenum);
-          }
           ev.preventDefault();
+          if (!this.onClickPage) return;
+          let pagenum;
+          switch (page) {
+            case 'first': pagenum = 1; break;
+            case 'prev':  pagenum = currentPage - 1; break;
+            case 'next':  pagenum = currentPage + 1; break;
+            case 'last':  pagenum = lastPage; break;
+            default:      pagenum = Number(page); break;
+          }
+          this.onClickPage(pagenum);
         }
       });
       return li;
@@ -60,9 +59,7 @@ class Pagination {
       let i = Math.max(1, currentPage - 2);
       i <= Math.min(currentPage + 2, lastPage);
       i++
-    ) {
-      this.ulPagination.append(makeLi(i));
-    }
+    ) this.ulPagination.append(makeLi(i));
 
     this.ulPagination.append(makeLi('next', currentPage >= lastPage));
     this.ulPagination.append(makeLi('last', currentPage >= lastPage));

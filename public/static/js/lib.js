@@ -90,7 +90,7 @@ const q = {
    * @param {object} attributes 
    * @returns HTMLElement
    */
-  elem: function(tag, classes=[], parent=null, attributes={}) {
+  make: function(tag, classes=[], parent=null, attributes={}) {
     const elem = document.createElement(tag);
     parent?.append(elem);
     if (classes.length > 0)

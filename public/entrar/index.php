@@ -7,11 +7,11 @@
     </section>
     <form class="mb-auto" id="login" method="POST">
         <div class="form-group my-auto">
-            <label for="username">usuário</label>
+            <label for="username" class="form-label">usuário</label>
             <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu">
         </div>
         <div class="form-group mt-2">
-            <label for="password">senha</label>
+            <label for="password" class="form-label">senha</label>
             <input type="password" class="form-control" id="password" placeholder="********">
         </div> 
         <div class="form-check my-4">
