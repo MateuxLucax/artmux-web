@@ -39,6 +39,26 @@ const request = {
 
   baseUrl: 'https://api.artmux.gargantua.one/',
 
+  /**
+   * @param {RequestInfo} url 
+   * @param {RequestInit} init 
+   * @returns Response
+   */
+  fetch: (url, init = {}) => {
+    return fetch(request.baseUrl + url, init);
+  },
+
+  /**
+   * @param {RequestInfo} url 
+   * @param {RequestInit} init 
+   * @returns Response
+   */
+  fetchAuth: (url, init = {}) => {
+    return request.fetch(url, Object.assign(init, {
+      headers: { 'Authorization': `Bearer ${storage.getToken()}` }
+    }));
+  },
+
   treatResponse: async (response) => {
     if (response.status === 401) {
       storage.removeToken();

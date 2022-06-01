@@ -85,7 +85,8 @@ require('../header.php');
     history.back()
   }
 
-  fetch(`http://localhost:4000/artworks/${slug}`)
+  request
+  .fetchAuth(`artworks/${slug}`)
   .then(res => {
     console.log(res)
     if (res.status != 200 && res.status != 304) {
@@ -103,7 +104,7 @@ require('../header.php');
     }).then(() => history.back())
   })
 
-  function carregarObra(obra) {
+  async function carregarObra(obra) {
     q.hide(q.id('loading'));
     q.id('obra-titulo').value = obra.title
     if (obra.observations != '') {
@@ -114,8 +115,8 @@ require('../header.php');
       q.show(q.id('obra-tags-container'))
       carregarTags(obra.tags)
     }
-    q.id('obra-img').src = 'http://localhost:4000' + obra.imagePaths.medium
-    q.id('obra-img-link-full').href = 'http://localhost:4000' + obra.imagePaths.original
+    q.id('obra-img').src = await imageBlobUrl(obra.imagePaths.medium);
+    q.id('obra-img-link-full').href = await imageBlobUrl(obra.imagePaths.original);
     q.id('obra-data-criacao').value = formatarData(new Date(obra.createdAt))
     q.id('obra-data-atualizacao').value = formatarData(new Date(obra.updatedAt))
     if (obra.createdAt != obra.updatedAt) {
@@ -166,7 +167,8 @@ require('../header.php');
   }
 
   function fazerExclusao(slug) {
-    fetch(`http://localhost:4000/artworks/${slug}`, { method: 'DELETE' })
+    request
+    .fetchAuth(`artworks/${slug}`, { method: 'DELETE' })
     .then(res => {
       if (!res.ok) throw 'Resposta não-ok'
       agendarAlertaSwal({

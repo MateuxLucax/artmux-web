@@ -89,7 +89,7 @@ require('../header.php');
       <div id="obra-prototipo" class="obra card text-center d-none" style="padding: 10px">
         <div class="text-center">
           <a class="obra-link" href="">
-            <img style="max-width: 256px; max-height: 256px; object-fit: contain;" class="obra-img" src=""/>
+            <img style="max-width: 256px; max-height: 256px; object-fit: contain;" class="obra-img"/>
           </a>
         </div>
         <p class="obra-title"></p>
@@ -159,11 +159,11 @@ require('../header.php');
    * @param {object} obra
    * @return void
    */
-  function carregarObra(obra) {
+  async function carregarObra(obra) {
     const elemObra = q.id('obra-prototipo').cloneNode(true)
     q.show(elemObra)
     elemObra.removeAttribute('id')
-    q.classIn('obra-img', elemObra)[0].src = 'http://localhost:4000' + obra.imagePaths.thumbnail
+    q.classIn('obra-img', elemObra)[0].src = await imageBlobUrl(obra.imagePaths.thumbnail);
     q.classIn('obra-title', elemObra)[0].innerText = obra.title
     q.classIn('obra-link', elemObra)[0].href = '/obras/detalhe.php?obra=' + obra.slug
     q.id('container-obras').append(elemObra)
@@ -217,17 +217,15 @@ require('../header.php');
     buscaAPI.append('perPage', busca.obrasPorPagina)
     buscaAPI.append('page', busca.pagina)
     busca.filtros.forEach(filtro => buscaAPI.append('filters', JSON.stringify(filtro)))
-    console.log(buscaAPI.toString());
     
     const msgSemObras = q.id('msg-sem-obras');
     const cardObras = q.id('card-obras');
     const containerObras = q.id('container-obras');
 
-    fetch(`http://localhost:4000/artworks/?${buscaAPI.toString()}`)
+    request
+    .fetchAuth(`artworks/?${buscaAPI.toString()}`)
     .then(res => {
-      if (res.status != 200 && res.status != 304) {
-        throw res;
-      }
+      if (res.status != 200 && res.status != 304) throw res;
       return res.json();
     })
     .then(ret => {

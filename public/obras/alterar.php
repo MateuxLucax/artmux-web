@@ -66,12 +66,14 @@ require('../header.php');
 
   const tagInput = new TagInput(q.id('tags'));
 
-  fetch('http://localhost:4000/tags/')
+  request
+  .fetchAuth('tags')
   .then(res => res.json())
   .then(tags => tagInput.whitelist = tags);
 
 
-  fetch(`http://localhost:4000/artworks/${slug}`)
+  request
+  .fetchAuth(`artworks/${slug}`)
   .then(res => {
     if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
     return res.json();
@@ -86,11 +88,11 @@ require('../header.php');
     }).then(() => history.back());
   })
 
-  function carregarObra(obra) {
+  async function carregarObra(obra) {
     q.id('titulo').value = obra.title
     q.id('observacoes').value = obra.observations
-    q.id('img-obra').src = 'http://localhost:4000' + obra.imagePaths.thumbnail
-    q.id('link-obra-full').href = 'http://localhost:4000' + obra.imagePaths.original
+    q.id('img-obra').src = await imageBlobUrl(obra.imagePaths.thumbnail);
+    q.id('link-obra-full').href = await imageBlobUrl(obra.imagePaths.original);
     tagInput.value = obra.tags;
   }
 
@@ -129,7 +131,8 @@ require('../header.php');
   }
 
   function submitAlterarObra(formData) {
-    fetch(`http://localhost:4000/artworks/${slug}`, { method:'PATCH', body:formData, })
+    request
+    .fetchAuth(`artworks/${slug}`, { method:'PATCH', body:formData, })
     .then(res => {
       if (res.status != 200) throw ['Resposta não-ok', res];
       return res.json();

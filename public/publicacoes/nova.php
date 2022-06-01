@@ -47,7 +47,9 @@
       text: form.text.value.trim(),
       artworks: []
     };
-    fetch('http://localhost:4000/publications', {
+    
+    request
+    .fetchAuth('publications', {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' }

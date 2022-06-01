@@ -129,3 +129,11 @@ function clamp(x, min, max) {
   return x;
 }
 
+async function imageBlobUrl(imageUrl) {
+  const res = await request.fetchAuth(imageUrl);
+  const type = res.headers.get('content-type');
+  const buf = await res.arrayBuffer();
+  const arr = new Uint8Array(buf);
+  const blob = new Blob([arr], {type});
+  return window.URL.createObjectURL(blob)
+}
