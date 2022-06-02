@@ -223,7 +223,7 @@ require('../header.php');
     const containerObras = q.id('container-obras');
 
     request
-    .fetchAuth(`artworks/?${buscaAPI.toString()}`)
+    .authFetch(`artworks/?${buscaAPI.toString()}`)
     .then(res => {
       if (res.status != 200 && res.status != 304) throw res;
       return res.json();

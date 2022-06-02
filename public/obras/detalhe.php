@@ -86,7 +86,7 @@ require('../header.php');
   }
 
   request
-  .fetchAuth(`artworks/${slug}`)
+  .authFetch(`artworks/${slug}`)
   .then(res => {
     console.log(res)
     if (res.status != 200 && res.status != 304) {
@@ -168,7 +168,7 @@ require('../header.php');
 
   function fazerExclusao(slug) {
     request
-    .fetchAuth(`artworks/${slug}`, { method: 'DELETE' })
+    .authFetch(`artworks/${slug}`, { method: 'DELETE' })
     .then(res => {
       if (!res.ok) throw 'Resposta não-ok'
       agendarAlertaSwal({

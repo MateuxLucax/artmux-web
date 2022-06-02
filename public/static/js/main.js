@@ -53,10 +53,16 @@ const request = {
    * @param {RequestInit} init 
    * @returns Response
    */
-  fetchAuth: (url, init = {}) => {
-    return request.fetch(url, Object.assign(init, {
+  authFetch: (url, init = {}) => {
+    const response = request.fetch(url, Object.assign(init, {
       headers: { 'Authorization': `Bearer ${storage.getToken()}` }
     }));
+    if (response.status == 401) {
+      storage.removeToken();
+      window.location.replace('/entrar');
+      return null;
+    }
+    return response;
   },
 
   treatResponse: async (response) => {

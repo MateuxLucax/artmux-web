@@ -21,7 +21,11 @@
           </div>
         </div>
 
-        <!-- TODO seleçao de obras para adicionar na publicação -->
+        <div class="row mb-3">
+          <label class="form-label col-sm-2">Obras</label>
+          <div class="col-sm-10" id="container-input-obras">
+          </div>
+        </div>
 
       </div>
       <div class="card-footer text-center">
@@ -36,20 +40,21 @@
 <?php require('../scripts.php') ?>
 
 <script>
+  const artworksInput = new ArtworksInput();
+  q.id('container-input-obras').append(artworksInput.element);
+
   const form = q.sel('form');
 
   form.onsubmit = event => {
     event.preventDefault();
     let title = form.title.value.trim();
     if (title == '') title = 'Sem título';
-    const body = {
-      title,
-      text: form.text.value.trim(),
-      artworks: []
-    };
-    
+    const text = form.text.value.trim();
+    const artworks = artworksInput.value;
+    const body = { title, text, artworks };
+
     request
-    .fetchAuth('publications', {
+    .authFetch('publications', {
       method: 'POST',
       body: JSON.stringify(body),
       headers: { 'Content-Type': 'application/json' }

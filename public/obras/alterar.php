@@ -67,13 +67,13 @@ require('../header.php');
   const tagInput = new TagInput(q.id('tags'));
 
   request
-  .fetchAuth('tags')
+  .authFetch('tags')
   .then(res => res.json())
   .then(tags => tagInput.whitelist = tags);
 
 
   request
-  .fetchAuth(`artworks/${slug}`)
+  .authFetch(`artworks/${slug}`)
   .then(res => {
     if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
     return res.json();
@@ -132,7 +132,7 @@ require('../header.php');
 
   function submitAlterarObra(formData) {
     request
-    .fetchAuth(`artworks/${slug}`, { method:'PATCH', body:formData, })
+    .authFetch(`artworks/${slug}`, { method:'PATCH', body:formData, })
     .then(res => {
       if (res.status != 200) throw ['Resposta não-ok', res];
       return res.json();

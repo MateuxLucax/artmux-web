@@ -101,3 +101,52 @@ class TagInput {
     return this.tagify.value.map(this.#tagify2our);
   }
 }
+
+
+class ArtworksInput {
+
+  // Just so we avoid the arbitrary restriction that there cannot be two in the same page
+  // TODO actually ditch the data attribute stuff and use the boostrap Modal class or wtv for doing this (then also remove this instance counter since it'll be useless)
+  static _INSTANCE_COUNTER = 0;
+
+  constructor() {
+    const card = q.make('div', ['card']);
+    const head = q.make('div', ['card-header'], card);
+    head.style['text-align'] = 'right';
+    const body = q.make('div', ['card-body'], card);
+
+    const modalID = 'artworks-input-modal-' + ArtworksInput._INSTANCE_COUNTER;
+
+    const modal = q.make('div', ['modal', 'modal-xl'], card, { id: modalID, tabindex: -1 });
+    const modalDialog = q.make('div', ['modal-dialog'], modal);
+    const modalContent = q.make('div', ['modal-content'], modalDialog);
+
+    const modalHeader = q.make('div', ['modal-header'], modalContent)
+    q.make('h5', ['modal-title'], modalHeader).append('Adicionar obras')
+    const modalClose = q.make('button', ['btn-close'], modalHeader, { type: 'button' });
+    modalClose.setAttribute('data-bs-dismiss', 'modal');
+
+    const modalBody = q.make('div', ['modal-body'], modalContent);
+    const modalFooter = q.make('div', ['modal-footer'], modalContent);
+
+    const addButton = q.make('button', ['btn', 'btn-primary'], head, { type: 'button', });
+    addButton.setAttribute('data-bs-toggle', 'modal');
+    addButton.setAttribute('data-bs-target', '#' + modalID);
+    q.make('i', ['fas', 'fa-plus-circle'], addButton);
+    addButton.append('\xa0Adicionar obras');  // 0xA0 is code for &nbsp;
+
+    this.card = card;
+    ArtworksInput._INSTANCE_COUNTER++;
+  }
+
+  // Value = array of artwork slugs
+
+  set value(artworks) {
+  }
+
+  get value() {
+
+  }
+
+  get element() { return this.card; }
+}

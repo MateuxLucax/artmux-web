@@ -18,15 +18,35 @@ const q = {
   /**
    * Alias for document.querySelector(qry)
    * @param {string} qry 
+   * @returns Element
    */
   sel: function(qry) {
     return document.querySelector(qry);
   },
 
   /**
+   * Alias for document.querySelectorAll(qry)
+   * @param {string} qry 
+   * @returns NodeList
+   */
+  all: function(qry) {
+    return document.querySelectorAll(qry);
+  },
+
+  /**
+   * Alias for document.querySelectorAll(qry).forEach(fn)
+   * @param {string} qry 
+   * @param {(value: Element, key: number, parent: Element) => void} fn
+   * @returns void
+   */
+  each: function(qry, fn) {
+    document.querySelectorAll(qry).forEach(fn);
+  },
+
+  /**
    * Alias for document.getElementsByClassName
    * @param {string} klass 
-   * @returns 
+   * @returns HTMLCollection
    */
   class: function(klass) {
     return document.getElementsByClassName(klass)
@@ -93,8 +113,7 @@ const q = {
   make: function(tag, classes=[], parent=null, attributes={}) {
     const elem = document.createElement(tag);
     parent?.append(elem);
-    if (classes.length > 0)
-        elem.classList.add(...classes);
+    if (classes.length > 0) elem.classList.add(...classes);
     Object.assign(elem, attributes);
     return elem;
   },
@@ -130,7 +149,7 @@ function clamp(x, min, max) {
 }
 
 async function imageBlobUrl(imageUrl) {
-  const res = await request.fetchAuth(imageUrl);
+  const res = await request.authFetch(imageUrl);
   const type = res.headers.get('content-type');
   const buf = await res.arrayBuffer();
   const arr = new Uint8Array(buf);

@@ -56,7 +56,7 @@ require('../header.php');
   const tagInput = new TagInput(q.id('tags'));
 
   request
-  .fetchAuth('tags')
+  .authFetch('tags')
   .then(res => {
     if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
     return res.json();
@@ -86,7 +86,7 @@ require('../header.php');
 
   function submitNovaObra(formData) {
     request
-    .fetchAuth('artworks', { method: 'POST', body: formData, })
+    .authFetch('artworks', { method: 'POST', body: formData, })
     .then(res => {
       if (res.status != 201) throw ['Resposta não-ok', res];
       return res.json();
