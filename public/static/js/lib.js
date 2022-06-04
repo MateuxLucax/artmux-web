@@ -148,11 +148,22 @@ function clamp(x, min, max) {
   return x;
 }
 
-async function imageBlobUrl(imageUrl) {
-  const res = await request.authFetch(imageUrl);
-  const type = res.headers.get('content-type');
-  const buf = await res.arrayBuffer();
-  const arr = new Uint8Array(buf);
-  const blob = new Blob([arr], {type});
-  return window.URL.createObjectURL(blob)
-}
+const imageBlobUrl = (function() {
+  // With the cache, reloading an image inside a page won't create a new blob for it
+  const cache = {};
+  return async function(imageEndpoint) {
+    if (cache.hasOwnProperty(imageEndpoint)) {
+      console.log('Image blob cache hit');
+      return cache[imageEndpoint];
+    } else {
+      console.log('Image blob cache miss');
+      const res  = await request.authFetch(imageEndpoint);
+      const type = res.headers.get('content-type');
+      const buf  = await res.arrayBuffer();
+      const blob = new Blob([new Uint8Array(buf)], {type});
+      const url  = window.URL.createObjectURL(blob);
+      cache[imageEndpoint] = url;
+      return url;
+    }
+  }
+})();
