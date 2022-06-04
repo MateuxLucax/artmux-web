@@ -5,7 +5,7 @@
         <img src="/static/img/artmux.svg" alt="artmux logo">
         <h1 class="text-primary text-center nunito-black">cadastrar</h1>
     </section>
-    <form class="mb-auto" method="POST" id="signup-form" novalidate>
+    <form class="mb-auto" method="POST" novalidate>
         <div class="form-group my-auto">
             <label for="username" class="form-label">usuário</label>
             <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
@@ -49,81 +49,78 @@
 <?php require('../scripts.php'); ?>
 
 <script>
-    const form  = q.id('signup-form');
+    const form  = q.sel('form');
     const submitButton = q.id('submit-btn');
     let loading = false;
 
     form.addEventListener('submit', async event => {
         event.preventDefault();
-        let valid = true;
 
-        const password = form.password.value;
-        const passwordConfirmation = form.passwordConfirmation.value;
-
-        if (password !== passwordConfirmation) {
-            form.passwordConfirmation.classList.add('is-invalid');
-            form.password.classList.add('is-invalid');
-            event.stopPropagation();
-            valid = false;
-        } 
-
-        if (!form.email.validity.valid) {
-            form.email.classList.add('is-invalid');
-            event.stopPropagation();
-            valid = false;
-        } 
-
-        if (valid) {
-            form.passwordConfirmation.classList.remove('is-invalid');
-            form.password.classList.remove('is-invalid');
-            form.email.classList.remove('is-invalid');
-            await sendForm();
-        }
-    })
-
-    const sendForm = async () => {
         if (!loading) {
             loading = true;
-            submitButton.disabled = true;
-            submitButton.innerText = `cadastrando...`;
+            let valid = true;
 
-            const username = form.username.value;
-            const email = form.email.value;
-            const password = form.password.value;
+            const { username, email, password, passwordConfirmation } = form;
 
-            const data = {
+            if (password.value !== passwordConfirmation.value) {
+                passwordConfirmation.classList.add('is-invalid');
+                password.classList.add('is-invalid');
+                event.stopPropagation();
+                valid = false;
+            } else {
+                passwordConfirmation.classList.remove('is-invalid');
+                password.classList.remove('is-invalid');
+            }
+
+            if (!email.validity.valid) {
+                email.classList.add('is-invalid');
+                event.stopPropagation();
+                valid = false;
+            } else {
+                email.classList.remove('is-invalid');
+            }
+
+            if (valid) {
+                await sendForm(username.value, email.value, password.value);
+            }
+
+            loading = false;
+        }
+    });
+
+    const sendForm = async (username, email, password) => {
+        submitButton.disabled = true;
+        submitButton.innerText = 'cadastrando...';
+
+        try {
+            const response = await request.post('auth/signup', {
                 username,
                 email,
                 password
-            };
-
-            try {
-                const response = await request.post('auth/signup', data);
-                const body = await response.json();
-                if (response.status === 200) {
-                    window.location.href = '/entrar';
-                } else {
-                    Swal.fire({
-                        title: 'Não foi possível cadastrar',
-                        text: body.message,
-                        icon: 'warning',
-                        confirmButtonText: 'ok',
-                        confirmButtonColor: '#0d6efd'
-                    });
-                }
-            } catch (error) {
+            });
+            const body = await response.json();
+            if (response.status === 200) {
+                window.location.href = '/entrar';
+            } else {
                 Swal.fire({
-                    title: 'Erro',
-                    text: error.message,
-                    icon: 'error',
+                    title: 'Não foi possível cadastrar',
+                    text: body.message,
+                    icon: 'warning',
                     confirmButtonText: 'ok',
                     confirmButtonColor: '#0d6efd'
                 });
-            } finally {
-                loading = false;
-                submitButton.disabled = false;
-                submitButton.innerText = `cadastrar`;
             }
+        } catch (error) {
+            Swal.fire({
+                title: 'Erro',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'ok',
+                confirmButtonColor: '#0d6efd'
+            });
+        } finally {
+            submitButton.disabled = false;1
+            submitButton.innerText = 'cadastrar';
         }
     }
 </script>
