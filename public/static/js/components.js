@@ -103,6 +103,75 @@ class TagInput {
 }
 
 
+class ArtworkGrid {
+
+  #element;
+  #artworksContainer;
+  #emptyMessage;
+  #artworks = [];
+  #artworkCallback;
+
+  constructor(artworkCallback = () => undefined) {
+    this.#artworkCallback = artworkCallback;
+    this.#element = q.make('div');
+    this.#artworksContainer = q.make('div', [], this.#element);
+    this.#artworksContainer.style['display'] = 'grid';
+    this.#artworksContainer.style['grid-template-columns'] = '1fr 1fr 1fr';
+    this.#artworksContainer.style['grid-gap'] = '20px';
+    this.#emptyMessage = q.make('div', ['alert', 'alert-info', 'd-none'], null, {
+      innerText: 'Nenhuma das obras cadastradas satisfaz os critérios de busca informados.'
+    });
+    
+  }
+
+  display(artworks) {
+    q.empty(this.#artworksContainer);
+    this.#artworks = [];
+    if (artworks.length == 0) {
+      q.show(this.#emptyMessage);
+    } else {
+      q.hide(this.#emptyMessage);
+      for (const artwork of artworks) {
+        const element = this.#makeArtworkElement(artwork);
+        this.#artworks.push({ artwork, element });
+        this.#artworksContainer.append(element);
+        this.#artworkCallback(artwork, element);
+      }
+    }
+  }
+
+  #makeArtworkElement(artwork) {
+    const element = q.make('div', ['card', 'text-center'], null);
+    element.style['padding'] = '10px';
+    const div = q.make('div', ['text-center'], element);
+    const img = q.make('img', [], div);
+    imageBlobUrl(artwork.imagePaths.thumbnail).then(url => img.src = url);
+    img.style['max-width'] = 'min(100%, 256px)';
+    img.style['max-height'] = 'min(100%, 256px)';
+    img.style['object-fit'] = 'contain';
+    q.make('p', [], element, { innerText: artwork.title });
+    element.addEventListener('mouseenter', () => {
+      element.style['filter'] = 'brightness(0.95)';
+      img.style['filter'] = 'brightness(calc(1/0.95))';
+    });
+    element.addEventListener('mouseleave', () => {
+      element.style['filter'] = 'brightness(1)';
+      img.style['filter'] = 'brightness(1)';
+    });
+    return element;
+  }
+
+  get artworks() {
+    return this.#artworks;
+  }
+
+  get element() {
+    return this.#element;
+  }
+
+}
+
+
 class ArtworksInput {
 
   // Just so we avoid the arbitrary restriction that there cannot be two in the same page
