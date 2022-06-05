@@ -54,9 +54,11 @@ const request = {
    * @returns Response
    */
   authFetch: (url, init = {}) => {
-    const response = request.fetch(url, Object.assign(init, {
-      headers: { 'Authorization': `Bearer ${storage.getToken()}` }
-    }));
+    init.headers = init.headers ?? {};
+    Object.assign(init.headers, {
+      'Authorization': `Bearer ${storage.getToken()}` 
+    });
+    const response = request.fetch(url, init);
     if (response.status == 401) {
       storage.removeToken();
       window.location.replace('/entrar');
