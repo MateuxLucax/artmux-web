@@ -111,17 +111,16 @@ class ArtworkGrid {
   #artworks = [];
   #artworkCallback;
 
-  constructor(artworkCallback = () => undefined) {
+  constructor(artworkCallback = () => undefined, options = {}) {
     this.#artworkCallback = artworkCallback;
     this.#element = q.make('div');
     this.#artworksContainer = q.make('div', [], this.#element);
     this.#artworksContainer.style['display'] = 'grid';
     this.#artworksContainer.style['grid-template-columns'] = '1fr 1fr 1fr';
     this.#artworksContainer.style['grid-gap'] = '20px';
-    this.#emptyMessage = q.make('div', ['alert', 'alert-info', 'd-none'], null, {
-      innerText: 'Nenhuma das obras cadastradas satisfaz os critérios de busca informados.'
+    this.#emptyMessage = q.make('div', ['alert', 'alert-info', 'd-none', 'mb-0'], this.#element, {
+      innerText: options.emptyMessage ?? 'Nenhuma das obras cadastradas satisfaz os critérios de busca informados.'
     });
-    
   }
 
   display(artworks) {
@@ -194,8 +193,9 @@ class ArtworksInput {
         const withoutRemoved = selectedArtworksGrid.artworks.filter(x => x.artwork.id != artwork.id).map(x => x.artwork);
         selectedArtworksGrid.display(withoutRemoved);
       });
-    });
+    }, { emptyMessage: 'Nenhuma obra selecionada' });
     body.append(selectedArtworksGrid.element);
+    selectedArtworksGrid.display([]);
 
     this.#card = card;
 
@@ -218,13 +218,6 @@ class ArtworksInput {
 
     modal.addEventListener('hidden.bs.modal', () => {
       selectedArtworksGrid.display([...this.#selectedArtworks.values()]);
-      for (const { element } of selectedArtworksGrid.artworks) {
-        element.style['cursor'] = 'pointer';
-        element.onmouseenter = 
-        element.onmouseleave = () => 
-        element.onclick = () => {
-        }
-      }
     });
 
     const inputGroup = q.make('div', ['input-group', 'mb-3'], modalBody)
