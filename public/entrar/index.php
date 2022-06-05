@@ -5,7 +5,7 @@
         <img src="/static/img/artmux.svg" alt="artmux logo">
         <h1 class="text-primary text-center nunito-black">entrar</h1>
     </section>
-    <form class="mb-auto" id="login" method="POST">
+    <form class="mb-auto" method="POST">
         <div class="form-group my-auto">
             <label for="username" class="form-label">usuário</label>
             <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
@@ -36,7 +36,7 @@
 <?php require('../scripts.php'); ?>
 
 <script>
-    const form  = q.id('login');
+    const form  = q.sel('form');
     const loginButton = q.id('login-btn');
     let loading = false;
 
@@ -48,18 +48,14 @@
             loginButton.disabled = true;
             loginButton.innerText = `entrando...`;
 
-            const username = form.username.value;
-            const password = form.password.value;
-            const keepLoggedIn = form.keepLoggedIn.checked;
-
-            const data = {
-                username,
-                password,
-                keepLoggedIn
-            };
+            const { username, password, keepLoggedIn } = form;
 
             try {
-                const response = await request.post('auth/signin', data);
+                const response = await request.post('auth/signin', {
+                    username.value,
+                    password.value,
+                    keepLoggedIn.value
+                });
                 const body = await response.json();
                 if (response.status === 200) {
                     storage.setToken(body.token, keepLoggedIn);

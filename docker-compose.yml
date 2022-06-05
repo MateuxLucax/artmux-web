@@ -10,4 +10,4 @@ services:
     ports:   
       - ${PORT}:80
     volumes:
-      - ./public:/var/www/html
+      - ./public:/var/www/html:ro
