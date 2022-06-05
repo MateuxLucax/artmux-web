@@ -174,48 +174,125 @@ class ArtworkGrid {
 
 class ArtworksInput {
 
-  // Just so we avoid the arbitrary restriction that there cannot be two in the same page
-  // TODO actually ditch the data attribute stuff and use the boostrap Modal class or wtv for doing this (then also remove this instance counter since it'll be useless)
-  static _INSTANCE_COUNTER = 0;
+  #selectedArtworks = new Map();
+  #card;
+  #foundArtworksGrid;
 
-  constructor() {
+  constructor(value) {
     const card = q.make('div', ['card']);
     const head = q.make('div', ['card-header'], card);
     head.style['text-align'] = 'right';
     const body = q.make('div', ['card-body'], card);
 
-    const modalID = 'artworks-input-modal-' + ArtworksInput._INSTANCE_COUNTER;
+    const selectedArtworksGrid = new ArtworkGrid((artwork, element) => {
+      element.style['cursor'] = 'pointer';
+      element.addEventListener('mouseenter', () => { element.style['background-color'] = 'rgba(196, 64, 0, 0.15)'; })
+      element.addEventListener('mouseleave', () => { element.style['background-color'] = ''; });
+      element.addEventListener('click', () => {
+        this.#selectedArtworks.delete(artwork.id);
+        // A little clunky since we don't have a .remove() method, but whatever
+        const withoutRemoved = selectedArtworksGrid.artworks.filter(x => x.artwork.id != artwork.id).map(x => x.artwork);
+        selectedArtworksGrid.display(withoutRemoved);
+      });
+    });
+    body.append(selectedArtworksGrid.element);
 
-    const modal = q.make('div', ['modal', 'modal-xl'], card, { id: modalID, tabindex: -1 });
+    this.#card = card;
+
+    const modal = q.make('div', ['modal', 'modal-xl'], card, { tabindex: -1 });
     const modalDialog = q.make('div', ['modal-dialog'], modal);
     const modalContent = q.make('div', ['modal-content'], modalDialog);
 
     const modalHeader = q.make('div', ['modal-header'], modalContent)
     q.make('h5', ['modal-title'], modalHeader).append('Adicionar obras')
-    const modalClose = q.make('button', ['btn-close'], modalHeader, { type: 'button' });
-    modalClose.setAttribute('data-bs-dismiss', 'modal');
-
-    const modalBody = q.make('div', ['modal-body'], modalContent);
-    const modalFooter = q.make('div', ['modal-footer'], modalContent);
+    const closeButton = q.make('button', ['btn-close'], modalHeader, { type: 'button' });
 
     const addButton = q.make('button', ['btn', 'btn-primary'], head, { type: 'button', });
-    addButton.setAttribute('data-bs-toggle', 'modal');
-    addButton.setAttribute('data-bs-target', '#' + modalID);
-    q.make('i', ['fas', 'fa-plus-circle'], addButton);
-    addButton.append('\xa0Adicionar obras');  // 0xA0 is code for &nbsp;
+    addButton.append('Adicionar obras');
 
-    this.card = card;
-    ArtworksInput._INSTANCE_COUNTER++;
+    const bsModal = new bootstrap.Modal(modal);
+    addButton.addEventListener('click', () => { bsModal.show(); });
+    closeButton.addEventListener('click', () => { bsModal.hide(); });
+
+    const modalBody = q.make('div', ['modal-body'], modalContent);
+
+    modal.addEventListener('hidden.bs.modal', () => {
+      selectedArtworksGrid.display([...this.#selectedArtworks.values()]);
+      for (const { element } of selectedArtworksGrid.artworks) {
+        element.style['cursor'] = 'pointer';
+        element.onmouseenter = 
+        element.onmouseleave = () => 
+        element.onclick = () => {
+        }
+      }
+    });
+
+    const inputGroup = q.make('div', ['input-group', 'mb-3'], modalBody)
+    const searchIconSpan = q.make('span', ['input-group-text'], inputGroup);
+    q.make('i', ['fas', 'fa-search'], searchIconSpan);
+    const searchBar = q.make('input', ['form-control'], inputGroup);
+    
+    this.#foundArtworksGrid = new ArtworkGrid((artwork, element) => {
+      element.style['cursor'] = 'pointer';
+      element.style['background-color'] = this.#selectedArtworks.has(artwork.id) ? 'rgba(0, 196, 128, 0.15)' : '';
+      element.onclick = () => {
+        if (!this.#selectedArtworks.has(artwork.id)) {
+          this.#selectedArtworks.set(artwork.id, artwork);
+          element.style['background-color'] = 'rgba(0, 196, 128, 0.15)';
+        } else {
+          this.#selectedArtworks.delete(artwork.id);
+          element.style['background-color'] = '';
+        }
+      }
+    });
+
+    modalBody.append(this.#foundArtworksGrid.element);
+
+    modal.addEventListener('show.bs.modal', () => { this.search('') });
+
+    var searchTimeout;
+    searchBar.addEventListener('keydown', () => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        this.search(searchBar.value);
+      }, 500);
+    });
   }
 
-  // Value = array of artwork slugs
+  async search(title) {
+    const params = new URLSearchParams();
+    params.append('page', 1);
+    params.append('perPage', 9);
+    params.append('order', 'updated_at');
+    params.append('direction', 'desc');
 
-  set value(artworks) {
+    title = title.trim();
+    if (title != '') {
+      params.append('filters', JSON.stringify({
+        name: 'title',
+        operator: 'contains',
+        value: title
+      }));
+    }
+
+    request
+    .authFetch(`artworks/?${params.toString()}`)
+    .then(res => {
+      if (res.status != 200 && res.status != 304) throw ['Non-ok response', res];
+      return res.json();
+    })
+    .then(ret => {
+      const { artworks } = ret;
+      this.#foundArtworksGrid.display(artworks);
+    })
+    .catch(console.error);
   }
 
   get value() {
-
+    return [...this.#selectedArtworks.keys()];
   }
 
-  get element() { return this.card; }
+  get element() {
+    return this.#card;
+  }
 }
