@@ -153,10 +153,8 @@ const imageBlobUrl = (function() {
   const cache = {};
   return async function(imageEndpoint) {
     if (cache.hasOwnProperty(imageEndpoint)) {
-      console.log('Image blob cache hit');
       return cache[imageEndpoint];
     } else {
-      console.log('Image blob cache miss');
       const res  = await request.authFetch(imageEndpoint);
       const type = res.headers.get('content-type');
       const buf  = await res.arrayBuffer();

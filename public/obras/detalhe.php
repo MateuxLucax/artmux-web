@@ -28,7 +28,7 @@ require('../header.php');
       </div>
     
       <div class="mb-3 row">
-        <label for="title=" class="col-sm-2 form-label">Título</label>
+        <label for="title" class="col-sm-2 form-label">Título</label>
         <div class="col-sm-10">
           <input readonly id="obra-titulo" type="text" name="title" class="form-control-plaintext" placeholder="Título da obra">
         </div>
