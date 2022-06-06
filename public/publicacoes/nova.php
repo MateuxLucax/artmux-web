@@ -73,11 +73,7 @@
     })
     .catch(err => {
       console.error(err);
-      Swal.fire({
-        text: 'Ocorreu um erro ao criar a publicação. Tente novamente mais tarde.',
-        icon: 'error',
-        title: 'Erro do sistema'
-      });
+      alertarErroSistema('Ocorreu um erro ao criar a publicação. Tente novamente mais tarde.');
     })
   }
 </script>

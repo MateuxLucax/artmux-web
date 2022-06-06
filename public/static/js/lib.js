@@ -167,3 +167,27 @@ const imageBlobUrl = (function() {
     }
   }
 })();
+
+function pedirConfirmacaoExclusao(mensagem, callbackExclusao) {
+  Swal.fire({
+    text: mensagem,
+    icon: 'question',
+    showConfirmButton: true,
+    confirmButtonText: 'Excluir',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar'
+  })
+  .then(result => {
+    if (result.isConfirmed) {
+      callbackExclusao();
+    }
+  })
+}
+
+function alertarErroSistema(msg) {
+  return Swal.fire({
+    icon: 'error',
+    title: 'Erro do sistema',
+    text: msg
+  });
+}

@@ -247,11 +247,8 @@ require('../header.php');
     })
     .catch(err => {
       console.error(err)
-      Swal.fire({
-        title: 'Erro do sistema',
-        icon: 'error',
-        text: 'Não conseguimos carregar as suas obras. Tente novamente mais tarde.'
-      }).then(() => history.back())
+      alertarErroSistema('Não conseguimos carregar as suas obras. Tente novamente mais tarde.')
+      .then(() => history.back())
     })
   }
 </script>

@@ -64,11 +64,7 @@ require('../header.php');
   .then(tags => tagInput.whitelist = tags)
   .catch(err => {
     console.error(err)
-    Swal.fire({
-      title: 'Erro do sistema',
-      text: 'Não foi possível carregar as suas tags. Tente novamente mais tarde.',
-      icon: 'error'
-    });
+    alertarErroSistema('Não foi possível carregar as suas tags. Tente novamente mais tarde.');
   });
 
   const form = document.getElementById('form-nova-obra')
@@ -93,19 +89,12 @@ require('../header.php');
     })
     .then(json => {
       const { slug } = json;
-      agendarAlertaSwal({
-        text: 'A obra foi cadastrada com sucesso.',
-        icon: 'success'
-      })
+      agendarAlertaSucesso('A obra foi cadastrada com sucesso.');
       location.assign(`/obras/detalhe.php?obra=${slug}`);
     })
     .catch(err => {
       console.error(err)
-      Swal.fire({
-        title: 'Erro do sistema',
-        text: 'Não conseguimos incluir a obra. Tente novamente mais tarde.',
-        icon: 'error'
-      })
+      alertarErroSistema('Não conseguimos incluir a obra. Tente novamente mais tarde.')
     })
   }
 </script>

@@ -57,11 +57,8 @@ require('../header.php');
   const params = new URLSearchParams(location.search)
   const slug = params.get('obra')
   if (!slug) {
-    Swal.fire({
-      icon: 'error',
-      title: 'Erro do sistema',
-      text: 'Erro ao carregar a obra. A URL não foi acessada corretamente. Tente novamente mais tarde.'
-    }).then(() => history.back());
+    alertarErroSistema('Erro ao carregar a obra. A URL não foi acessada corretamente. Tente novamente mais tarde.')
+    .then(() => history.back());
   }
 
   const tagInput = new TagInput(q.id('tags'));
@@ -81,11 +78,8 @@ require('../header.php');
   .then(carregarObra)
   .catch(err => {
     console.error(err)
-    Swal.fire({
-      icon: 'error',
-      title: 'Erro do sistema',
-      text: 'Erro ao carregar a obra. Tente novamente mais tarde.'
-    }).then(() => history.back());
+    alertarErroSistema( 'Erro ao carregar a obra. Tente novamente mais tarde.')
+    .then(() => history.back());
   })
 
   async function carregarObra(obra) {
@@ -147,11 +141,7 @@ require('../header.php');
     })
     .catch(err => {
       console.error(err)
-      Swal.fire({
-        icon: 'error',
-        title: 'Erro do sistema',
-        text: 'Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.'
-      })
+      alertarErroSistema( 'Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.');
     })
   }
 </script>

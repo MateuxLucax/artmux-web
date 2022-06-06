@@ -97,11 +97,8 @@ require('../header.php');
   .then(carregarObra)
   .catch(err => {
     console.error(err)
-    Swal.fire({
-      title: 'Erro do sistema',
-      icon: 'error',
-      text: 'Erro ao carregar a obra. Tente novamente mais tarde.'
-    }).then(() => history.back())
+    alertarErroSistema('Erro ao carregar a obra. Tente novamente mais tarde.')
+    .then(() => history.back())
   })
 
   async function carregarObra(obra) {
@@ -142,19 +139,10 @@ require('../header.php');
 
     q.id('btn-excluir').onclick = ev => {
       if (ev.button != 0) return;
-      Swal.fire({
-        text: 'Tem certeza de que deseja excluir essa obra?',
-        icon: 'question',
-        showConfirmButton: true,
-        confirmButtonText: 'Excluir',
-        showCancelButton: true,
-        cancelButtonText: 'Cancelar'
-      })
-      .then(result => {
-        if (result.isConfirmed) {
-          fazerExclusao(slug)
-        }
-      })
+      pedirConfirmacaoExclusao(
+        'Tem certeza de que deseja excluir essa obra?',
+        () => { fazerExclusao(slug) }
+      );
     }
   }
 
