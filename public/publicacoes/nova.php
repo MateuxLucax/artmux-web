@@ -65,10 +65,7 @@
     })
     .then(json => {
       const { slug } = json;
-      agendarAlertaSwal({
-        text: 'Publicação criada com sucesso',
-        icon: 'success'
-      });
+      agendarAlertaSucesso('Publicação criada com sucesso');
       location.assign(`/publicacoes/detalhe.php?pub=${slug}`);
     })
     .catch(err => {

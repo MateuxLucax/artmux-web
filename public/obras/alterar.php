@@ -133,10 +133,7 @@ require('../header.php');
     })
     .then(json => {
       const { slug } = json;
-      agendarAlertaSwal({
-        icon: 'success',
-        text: 'A obra foi alterada com sucesso.'
-      })
+      agendarAlertaSucesso('A obra foi alterada com sucesso.');
       location.assign(`/obras/detalhe.php?obra=${slug}`)
     })
     .catch(err => {

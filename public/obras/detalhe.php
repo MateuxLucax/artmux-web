@@ -77,7 +77,7 @@ require('../header.php');
   const params = new URLSearchParams(location.search)
   const slug = params.get('obra')
   if (!slug) {
-    agendarAlertaSwal({
+    agendarAlerta({
       title: 'Erro',
       icon: 'warning',
       text: 'Não conseguimos abrir a página de detalhe da obra porque a URL estava incompleta'
@@ -159,10 +159,7 @@ require('../header.php');
     .authFetch(`artworks/${slug}`, { method: 'DELETE' })
     .then(res => {
       if (!res.ok) throw 'Resposta não-ok'
-      agendarAlertaSwal({
-        text: 'Obra excluída com sucesso',
-        icon: 'success'
-      })
+      agendarAlertaSucesso('Obra excluída com sucesso');
       location.assign('/obras/listar.php')
     })
     .catch(err => {
