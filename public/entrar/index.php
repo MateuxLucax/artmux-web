@@ -52,9 +52,9 @@
 
             try {
                 const response = await request.post('auth/signin', {
-                    username.value,
-                    password.value,
-                    keepLoggedIn.value
+                    username: username.value,
+                    password: password.value,
+                    keepLoggedIn: keepLoggedIn.value
                 });
                 const body = await response.json();
                 if (response.status === 200) {
