@@ -173,17 +173,23 @@ class ArtworkGrid {
 
 class ArtworksInput {
 
-  #selectedArtworks = new Map();
-  #card;
+  #selectedArtworks;
+  #element;
   #foundArtworksGrid;
 
-  constructor(value) {
+  constructor(value = []) {
+    this.#selectedArtworks = new Map();
+    for (const artwork of value) {
+      this.#selectedArtworks.set(artwork.id, artwork);
+    }
+
     const card = q.make('div', ['card']);
     const head = q.make('div', ['card-header'], card);
     head.style['text-align'] = 'right';
     const body = q.make('div', ['card-body'], card);
 
     const selectedArtworksGrid = new ArtworkGrid((artwork, element) => {
+      element.title = 'Clique para remover a obra';
       element.style['cursor'] = 'pointer';
       element.addEventListener('mouseenter', () => { element.style['background-color'] = 'rgba(196, 64, 0, 0.15)'; })
       element.addEventListener('mouseleave', () => { element.style['background-color'] = ''; });
@@ -195,9 +201,9 @@ class ArtworksInput {
       });
     }, { emptyMessage: 'Nenhuma obra selecionada' });
     body.append(selectedArtworksGrid.element);
-    selectedArtworksGrid.display([]);
+    selectedArtworksGrid.display(value);
 
-    this.#card = card;
+    this.#element = card;
 
     const modal = q.make('div', ['modal', 'modal-xl'], card, { tabindex: -1 });
     const modalDialog = q.make('div', ['modal-dialog'], modal);
@@ -226,6 +232,7 @@ class ArtworksInput {
     const searchBar = q.make('input', ['form-control'], inputGroup);
     
     this.#foundArtworksGrid = new ArtworkGrid((artwork, element) => {
+      element.title = 'Clique para adicionar a obra';
       element.style['cursor'] = 'pointer';
       element.style['background-color'] = this.#selectedArtworks.has(artwork.id) ? 'rgba(0, 196, 128, 0.15)' : '';
       element.onclick = () => {
@@ -286,6 +293,6 @@ class ArtworksInput {
   }
 
   get element() {
-    return this.#card;
+    return this.#element;
   }
 }

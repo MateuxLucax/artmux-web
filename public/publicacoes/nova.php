@@ -66,7 +66,7 @@
     .then(json => {
       const { slug } = json;
       agendarAlertaSucesso('Publicação criada com sucesso');
-      location.assign(`/publicacoes/detalhe.php?pub=${slug}`);
+      location.assign(`/publicacoes/detalhe.php?publicacao=${slug}`);
     })
     .catch(err => {
       console.error(err);
