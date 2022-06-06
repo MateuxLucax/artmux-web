@@ -124,6 +124,15 @@ const q = {
    */
   empty(e) {
     while (e.firstChild) e.firstChild.remove();
+  },
+  
+  /**
+   * Replaces 'o' with 'n' in the DOM
+   * @param {Node} o 
+   * @param {Node} n 
+   */
+  replace(o, n) {
+    o.parentNode.replaceChild(n, o);
   }
 }
 
