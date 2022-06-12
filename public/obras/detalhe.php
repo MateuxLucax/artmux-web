@@ -69,6 +69,31 @@ require('../header.php');
     </div>
   </div>
 
+  <div class="card mb-3">
+    <div class="card-header">
+      Publicações em que esta obra aparece
+    </div>
+    <div class="card-body">
+      <div id="msg-sem-publicacoes" class="d-none alert alert-info mb-0">
+        Essa obra não aparece em nenhuma publicação.
+      </div>
+      <table id="table-publicacoes" class="d-none table table-hover">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Conteúdo</th>
+            <!--<th>Obras</th>--> <!--TODO-->
+
+            <!--TODO quando tivermos publicações nas redes sociais, trocar por data de publicação-->
+            <th>Data atualização</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-publicacoes">
+        </tbody>
+      </table>
+    </div>
+  </div>
+
 </main>
 
 <?php require('../scripts.php') ?>
@@ -86,7 +111,7 @@ require('../header.php');
   }
 
   request
-  .authFetch(`artworks/${slug}`)
+  .authFetch(`artworks/${slug}?with=publications`)
   .then(res => {
     console.log(res)
     if (res.status != 200 && res.status != 304) {
@@ -125,12 +150,38 @@ require('../header.php');
     // } else {
       // desabilitarBotoes();
     // }
+  
+    carregarPublicacoes(obra.publications);
   }
 
   function carregarTags(tags) {
     const containerTags = q.id('tags-container');
     for (const { name } of tags) {
       q.make('span', ['badge', 'text-bg-primary', 'me-1'], containerTags, { innerText: name });
+    }
+  }
+
+  function carregarPublicacoes(pubs) {
+    if (pubs.length == 0) {
+      q.show(q.id('msg-sem-publicacoes'));
+      return;
+    }
+    q.show(q.id('table-publicacoes'));
+    const tbody = q.id('tbody-publicacoes');
+    for (const pub of pubs) {
+      const tr = q.make('tr', [], tbody);
+
+      const tdTitulo = q.make('td', [], tr);
+      q.make('a', [], tdTitulo, {
+        innerText: pub.title,
+        href: '/publicacoes/detalhe.php?publicacao=' + pub.slug
+      });
+
+      q.make('td', [], tr, { innerText: pub.text });
+      // TODO obras
+      // TODO vvv GMT-0300
+      const dataAtualizacao = new Date(pub.createdAt);
+      q.make('td', [], tr, { innerText: formatarData(dataAtualizacao) });
     }
   }
 
