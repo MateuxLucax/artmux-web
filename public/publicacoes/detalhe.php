@@ -71,16 +71,14 @@
     }
 
     const gridObras = new ArtworkGrid((artwork, element) => {
-
-      // TODO! o link só não funciona, tem que passar o token de alguma forma
-
-      const linkTamanhoOriginal = q.make('a', [], null, {
-        href: request.baseUrl + artwork.imagePaths.original,
+      element.style['cursor'] = 'pointer';
+      const linkObra = q.make('a', [], null, {
+        href: '/obras/detalhe.php?obra=' + artwork.slug,
         title: 'Ver no tamanho original'
       });
       const img = q.tagIn('img', element)[0];
-      q.replace(img, linkTamanhoOriginal)
-      linkTamanhoOriginal.append(img);
+      q.replace(img, linkObra)
+      linkObra.append(img);
     }, { emptyMessage: 'A publicação não foi feita com nenhuma obra' });
 
     gridObras.display(pub.artworks);

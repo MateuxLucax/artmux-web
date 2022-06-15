@@ -9,20 +9,25 @@ class Pagination {
     'last':  '<i class="fas fa-angle-double-right"></i>'
   };
 
-  constructor(container, onClickPage) {
-    this.onClickPage = onClickPage;
-    this.ulPagination = q.make(
-      'ul', ['pagination', 'justify-content-end', 'mb-0'], container
+  #onClickPage;
+  #ulPagination;
+
+  constructor(onClickPage) {
+    this.#onClickPage = onClickPage;
+    this.#ulPagination = q.make(
+      'ul', ['pagination', 'justify-content-end', 'mb-0']
     );
   }
 
   refresh(currentPage, resultsPerPage, totalResults) {
     if (totalResults <= resultsPerPage) {
-      q.hide(this.ulPagination);
+      q.hide(this.#ulPagination);
       return;
+    } else {
+      q.show(this.#ulPagination);
     }
 
-    q.empty(this.ulPagination);
+    q.empty(this.#ulPagination);
 
     const lastPage = Math.ceil(totalResults / resultsPerPage);
 
@@ -37,7 +42,7 @@ class Pagination {
         onclick: ev => {
           if (ev.button != 0) return;
           ev.preventDefault();
-          if (!this.onClickPage) return;
+          if (!this.#onClickPage) return;
           let pagenum;
           switch (page) {
             case 'first': pagenum = 1; break;
@@ -46,29 +51,133 @@ class Pagination {
             case 'last':  pagenum = lastPage; break;
             default:      pagenum = Number(page); break;
           }
-          this.onClickPage(pagenum);
+          this.#onClickPage(pagenum);
         }
       });
       return li;
     };
 
-    this.ulPagination.append(makeLi('first', currentPage <= 1));
-    this.ulPagination.append(makeLi('prev',  currentPage <= 1));
+    this.#ulPagination.append(makeLi('first', currentPage <= 1));
+    this.#ulPagination.append(makeLi('prev',  currentPage <= 1));
 
     for (
       let i = Math.max(1, currentPage - 2);
       i <= Math.min(currentPage + 2, lastPage);
       i++
-    ) this.ulPagination.append(makeLi(i));
+    ) this.#ulPagination.append(makeLi(i));
 
-    this.ulPagination.append(makeLi('next', currentPage >= lastPage));
-    this.ulPagination.append(makeLi('last', currentPage >= lastPage));
+    this.#ulPagination.append(makeLi('next', currentPage >= lastPage));
+    this.#ulPagination.append(makeLi('last', currentPage >= lastPage));
+  }
 
-    q.show(this.ulPagination);
+  get element() {
+    return this.#ulPagination;
   }
 
 }
 
+
+class ListingParameters {
+
+  #parameterRowElement;
+  #pagination;
+
+  #currentPerPage;
+  #direction = 'desc';
+  #orderSelect;
+  #perPageInput;
+  #searchFunction;
+
+  constructor(orderOptions, perPageLabel, searchFunction) {
+    const row = q.make('div', ['row'], null);
+
+    const orderCol = q.make('div', ['col-10', 'col-lg-5', 'mb-3', 'mb-lg-0'], row);
+    q.make('label', ['form-label'], orderCol, { innerText: 'Ordernar por '});
+    const orderSelect = q.make('select', ['form-control'], orderCol);
+    for (const option of orderOptions) {
+      q.make('option', [], orderSelect, {
+        value: option.value,
+        innerText: option.title
+      });
+    }
+
+    const directionCol = q.make('div', ['col-2', 'col-lg-1'], row);
+    q.make('label', ['form-label'], directionCol, { innerText: '\xA0' });
+    const directionButton = q.make(
+      'button',
+      ['btn', 'btn-outline-secondary', 'form-control'], 
+      directionCol,
+      { title: 'Descrescente', type: 'button' }
+    );
+    const iconAsc = q.make('i', ['d-none', 'fas', 'fa-sort-amount-down-alt'], directionButton);
+    const iconDesc = q.make('i', ['fas', 'fa-sort-amount-down'], directionButton);
+    directionButton.onclick = ev => {
+      if (this.#direction == 'asc') {
+        q.hide(iconAsc);
+        q.show(iconDesc);
+        this.#direction = 'desc';
+        directionButton.title = 'Decrescente';
+      } else {
+        q.show(iconAsc);
+        q.hide(iconDesc);
+        this.#direction = 'asc';
+        directionButton.title = 'Crescente';
+      }
+    };
+
+    const perPageCol = q.make('div', ['col-lg-4'], row);
+    q.make('label', ['form-label'], perPageCol, { innerText: perPageLabel });
+    const perPageInput = q.make(
+      'input',
+      ['form-control'],
+      perPageCol,
+      { type: 'number', min: 3, max: 999, step: 3, value: 6 }
+    );
+    this.#currentPerPage = 6;
+    perPageInput.onchange = () => {
+      perPageInput.value = clamp(3 * Math.floor(Number(perPageInput.value) / 3), 3, 999)
+    };
+
+    const buttonCol = q.make('div', ['col-lg-2'], row);
+    q.make('label', ['form-label'], buttonCol, { innerText: '\xA0' });
+    const searchButton = q.make('button', ['btn', 'btn-success', 'form-control'], buttonCol, { type: 'submit', innerText: 'Buscar' });
+
+    searchButton.onclick = ev => {
+      if (ev.buttons != 0) return;
+      ev.preventDefault();
+      searchFunction(orderSelect.value, this.#direction, perPageInput.value, 1, numResults => {
+        this.#pagination.refresh(1, perPageInput.value, numResults);
+      });
+      this.#currentPerPage = perPageInput.value;
+    };
+
+    this.#pagination = new Pagination(newPageNum => {
+      searchFunction(orderSelect.value, this.#direction, this.#currentPerPage, newPageNum, numResults => {
+        this.#pagination.refresh(newPageNum, this.#currentPerPage, numResults);
+      });
+    });
+    this.#parameterRowElement = row;
+
+    this.#orderSelect = orderSelect;
+    this.#perPageInput = perPageInput;
+    this.#searchFunction = searchFunction;
+  }
+
+  get parameterRowElement() {
+    return this.#parameterRowElement;
+  }
+
+  get paginationElement() {
+    return this.#pagination.element;
+  }
+
+  triggerFirstSearch() {
+    this.#searchFunction(this.#orderSelect.value, this.#direction, this.#perPageInput.value, 1, numResults => {
+      this.#pagination.refresh(1, this.#perPageInput.value, numResults);
+    });
+  }
+
+}
 
 
 class TagInput {

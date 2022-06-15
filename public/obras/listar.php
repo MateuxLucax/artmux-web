@@ -31,46 +31,8 @@ require('../header.php');
   <div class="mb-3 card" id="card-busca">
     <div class="card-body">
       <form id="form-busca">
-
         <div id="container-filtros"></div>
-
-        <div class="row">
-          <div class="col-10 col-lg-5 mb-3 mb-lg-0">
-            <label class="form-label" for="ordenacao">Ordenar por</label>
-            <select name="ordenacao" id="ordenacao" class="form-control">
-              <option value="created_at">
-                Data de criação
-              </option>
-              <option value="updated_at">
-                Data de atualização
-              </option>
-              <option value="title">
-                Título
-              </option>
-            </select>
-          </div>
-          <div class="col-2 col-lg-1">
-            <label for="direcao-btn" class="form-label">&nbsp;</label>
-            <input type="hidden" id="direcao" name="direcao" value="desc">
-            <button id="direcao-btn" class="btn btn-outline-secondary form-control" onclick="trocarDirecao()" title="" type="button">
-              <i id="icon-asc" class="fas fa-sort-amount-down-alt d-none"></i>
-              <i id="icon-desc" class="fas fa-sort-amount-down"></i>
-            </button>
-          </div>
-          <div class="col-lg-4">
-            <label for="obras-por-pagina" class="form-label">Obras por página</label>
-            <input id="obras-por-pagina" name="obras-por-pagina" class="form-control"
-                   type="number" min="3" max="999" step="3" value="6">
-            <input type="hidden" name="obras-por-pagina-anterior" id="obras-por-pagina-anterior" value="6">
-          </div>
-          <div class="col-lg-2">
-            <label for="btn-buscar" class="form-label">&nbsp;</label>
-            <button id="btn-buscar" type="submit" class="btn btn-success form-control">
-              Buscar
-            </button>
-          </div>
-        </div>
-
+        <div id="container-parametros"></div>
       </form>
     </div>
   </div>
@@ -96,7 +58,6 @@ require('../header.php');
       </div>
 
       <div id="container-obras">
-
       </div>
     </div>
   </div>
@@ -116,21 +77,34 @@ require('../header.php');
   const filtroDataCriacao = new DateSearchFilter('created_at', 'Data de criação')
   const filtroDataAtualizacao = new DateSearchFilter('updated_at', 'Data de atualização')
 
-  const filtros = [filtroTitulo, filtroDataCriacao, filtroDataAtualizacao];
+  const filtrosTodos = [filtroTitulo, filtroDataCriacao, filtroDataAtualizacao];
 
   const containerFiltros = q.id('container-filtros')
 
-  for (const { element } of filtros) {
+  for (const { element } of filtrosTodos) {
     element.classList.add('mb-3');
     containerFiltros.append(element);
   }
 
-  const paginacao = new Pagination(q.id('container-paginacao'), newPageNum => {
-    const busca = getBuscaFormulario();
-    busca.pagina = newPageNum;
-    busca.obrasPorPagina = formBusca['obras-por-pagina-anterior'].value
-    fazerBusca(busca);
-  });
+  const opcoesOrdenacao = [
+    { title: 'Data de criação', value: 'created_at' },
+    { title: 'Data de atualização', value: 'updated_at' },
+    { title: 'Título', value: 'title' }
+  ];
+  const parametrosListagem = new ListingParameters(
+    opcoesOrdenacao,
+    'Obras por página',
+    (ordenacao, direcao, obrasPorPagina, pagina, callbackNumResultados) => {
+      fazerBusca(
+        ordenacao, direcao, obrasPorPagina, pagina,
+        filtrosTodos.flatMap(({ value }) => value ?? []),
+        num => callbackNumResultados(num)
+      );
+    }
+  );
+
+  q.id('container-parametros').append(parametrosListagem.parameterRowElement);
+  q.id('container-paginacao').append(parametrosListagem.paginationElement);
 
   //
   // Formulário de busca
@@ -139,20 +113,7 @@ require('../header.php');
   const formBusca = q.id('form-busca');
 
   // Busca inicial
-  fazerBusca(getBuscaFormulario());
-
-  /**
-   * Retorna representação atual do formulário de busca como objeto
-   */
-  function getBuscaFormulario() {
-    return {
-      ordenacao: formBusca.ordenacao.value,
-      direcao: formBusca.direcao.value,
-      obrasPorPagina: Number(formBusca['obras-por-pagina'].value),
-      pagina: 1,
-      filtros: filtros.flatMap(({ value }) => value ?? [])
-    }
-  }
+  parametrosListagem.triggerFirstSearch();
 
   /**
    * Carrega uma obra recebida da API no DOM dentro do #container-obras
@@ -169,54 +130,21 @@ require('../header.php');
     q.id('container-obras').append(elemObra)
   }
 
-  q.id('direcao-btn').onclick = ev => {
-    ev.preventDefault()
-    const dir = q.id('direcao')
-    const btn = q.id('direcao-btn')
-    if (dir.value == 'asc') {
-      q.show(q.id('icon-asc'))
-      q.hide(q.id('icon-desc'))
-      dir.value = 'desc'
-      btn.title = 'Decrescente'
-    } else {
-      q.hide(q.id('icon-asc'))
-      q.show(q.id('icon-desc'))
-      dir.value = 'asc'
-      btn.title = 'Crescente'
-    }
-  }
-
-  q.id('obras-por-pagina').onchange = ev => {
-    const input = ev.target
-    const val = Number(input.value)
-    input.value = clamp(3 * Math.floor(val / 3), input.getAttribute('min'), input.getAttribute('max'))
-  }
-
-  formBusca.onsubmit = ev => {
-    ev.preventDefault()
-    const busca = getBuscaFormulario();
-    if (formBusca['obras-por-pagina'].value != formBusca['obras-por-pagina-anterior'].value) {
-      busca.pagina = 1;
-      // Por exemplo: usuário tem 5 obras, atualmente listando 3 obras por página, na página 2.
-      // Se ele trocar para 6 obras por página, não podemos ficar na página 2, porque só tem uma página agora.
-    }
-    fazerBusca(busca);
-  }
-
   /**
    * Realiza a busca na API conforme os parâmetros fornecido no objeto 'busca' fornecido,
    * atualizando o DOM na página quando obtém uma resposta.
    * 
-   * @param {object} busca
+   * TODO refazer doc parametros
+   * @param
    * @return void
    */
-  function fazerBusca(busca) {
+  function fazerBusca(ordenacao, direcao, obrasPorPagina, pagina, filtros, callbackNumResultados) {
     const buscaAPI = new URLSearchParams();
-    buscaAPI.append('order', busca.ordenacao)
-    buscaAPI.append('direction', busca.direcao)
-    buscaAPI.append('perPage', busca.obrasPorPagina)
-    buscaAPI.append('page', busca.pagina)
-    busca.filtros.forEach(filtro => buscaAPI.append('filters', JSON.stringify(filtro)))
+    buscaAPI.append('order', ordenacao)
+    buscaAPI.append('direction', direcao)
+    buscaAPI.append('perPage', obrasPorPagina)
+    buscaAPI.append('page', pagina)
+    filtros.forEach(filtro => buscaAPI.append('filters', JSON.stringify(filtro)))
     
     const msgSemObras = q.id('msg-sem-obras');
     const cardObras = q.id('card-obras');
@@ -238,11 +166,9 @@ require('../header.php');
         q.show(cardObras);
         q.hide(msgSemObras);
 
-        q.id('obras-por-pagina-anterior').value = busca.obrasPorPagina;
-
         obras.forEach(carregarObra);
 
-        paginacao.refresh(busca.pagina, busca.obrasPorPagina, totalObras);
+        callbackNumResultados(totalObras);
       }
     })
     .catch(err => {

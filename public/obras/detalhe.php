@@ -82,8 +82,6 @@ require('../header.php');
           <tr>
             <th>Título</th>
             <th>Conteúdo</th>
-            <!--<th>Obras</th>--> <!--TODO-->
-
             <!--TODO quando tivermos publicações nas redes sociais, trocar por data de publicação-->
             <th>Data atualização</th>
           </tr>
