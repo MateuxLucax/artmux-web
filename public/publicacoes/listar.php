@@ -104,6 +104,7 @@
       q.show(cardPublicacoes);
 
       const tbody = q.id('tbody-publicacoes');
+      q.empty(tbody);
       for (const publicacao of publicacoes) {
         const tr = q.make('tr', [], tbody);
         const tdTitulo = q.make('td', [], tr);
