@@ -138,10 +138,11 @@ const q = {
 
 /**
  * Recebe objeto Date e retorna como string no formato DD/MM/YYYY HH:ii
- * @param {Date} data 
+ * @param {Date|string} data Objeto Date ou string representando data (nvdd qlqr valor aceitado no construtor Date())
  * @returns string
  */
 function formatarData(data) {
+  data = new Date(data);
   const pad = (n, s) => String(s).padStart(n, '0');
   const d = pad(2, data.getDate())
   const m = pad(2, data.getMonth())

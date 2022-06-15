@@ -79,10 +79,13 @@ class Pagination {
 
 class ListingParameters {
 
+  // Maybe "SearchParameters" would make more sense, but there's already
+  // a class called URLSearchParams with a very similar name
+
   #parameterRowElement;
   #pagination;
 
-  #currentPerPage;
+  #currentPerPage;  // Stays the same even if the user changes the <input> text
   #direction = 'desc';
   #orderSelect;
   #perPageInput;
@@ -145,10 +148,11 @@ class ListingParameters {
     searchButton.onclick = ev => {
       if (ev.buttons != 0) return;
       ev.preventDefault();
-      searchFunction(orderSelect.value, this.#direction, perPageInput.value, 1, numResults => {
-        this.#pagination.refresh(1, perPageInput.value, numResults);
+      const perPage = Number(perPageInput.value);
+      searchFunction(orderSelect.value, this.#direction, perPage, 1, numResults => {
+        this.#pagination.refresh(1, perPage, numResults);
       });
-      this.#currentPerPage = perPageInput.value;
+      this.#currentPerPage = perPage;
     };
 
     this.#pagination = new Pagination(newPageNum => {
@@ -172,8 +176,9 @@ class ListingParameters {
   }
 
   triggerFirstSearch() {
-    this.#searchFunction(this.#orderSelect.value, this.#direction, this.#perPageInput.value, 1, numResults => {
-      this.#pagination.refresh(1, this.#perPageInput.value, numResults);
+    const perPage = Number(this.#perPageInput.value);
+    this.#searchFunction(this.#orderSelect.value, this.#direction, perPage, 1, numResults => {
+      this.#pagination.refresh(1, perPage, numResults);
     });
   }
 

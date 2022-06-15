@@ -96,11 +96,11 @@ class DateSearchFilter extends SearchFilter {
     this.inputTo = q.make('input', ['form-control'], this.intervalInputGroup, { type: 'date' })
 
     this.operatorSelect.onchange = ev => {
-      this._toggleIntervalInput(ev.target.value)
+      this.#toggleIntervalInput(ev.target.value)
     }
   }
 
-  _toggleIntervalInput(operator) {
+  #toggleIntervalInput(operator) {
     if (operator == 'between') {
       q.hide(this.input)
       q.show(this.intervalInputGroup)
@@ -114,7 +114,7 @@ class DateSearchFilter extends SearchFilter {
     if (value == null) {
       return;
     }
-    this._toggleIntervalInput(value.operator);
+    this.#toggleIntervalInput(value.operator);
     if (value.operator == 'between') {
       this.inputFrom.value = value.value[0]
       this.inputTo.value = value.value[1]
