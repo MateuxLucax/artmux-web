@@ -80,7 +80,7 @@
     busca.append('direction', direcao);
     busca.append('perPage', pubPorPagina);
     busca.append('page', pagina);
-    filtros.map(JSON.stringify).forEach(f => busca.append('page', f));
+    filtros.map(JSON.stringify).forEach(f => busca.append('filters', f));
     const url = 'publications?' + busca.toString();
     
     request.authFetch(url, { headers: {'Accept': 'application/json'} })
