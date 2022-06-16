@@ -66,8 +66,7 @@ const request = {
      * and resolve/reject response.
      */ 
     if (response.status == 401) {
-      storage.removeToken();
-      window.location.replace('/entrar');
+      logout();
       return null;
     }
     return response;

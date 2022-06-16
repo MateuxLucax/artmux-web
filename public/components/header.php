@@ -3,7 +3,7 @@
 
     <nav>
         <a href="/publicacoes" class="btn btn-outline-primary <?= $titulo == 'publicações' ? 'disabled' : '' ?>">publicações</a>
-        <a href="/catalogo" class="btn btn-outline-primary <?= $titulo == 'catálogo' ? 'disabled' : '' ?>">catálogo</a>
+        <a href="/obras" class="btn btn-outline-primary <?= $titulo == 'obras' ? 'disabled' : '' ?>">obras</a>
         <a href="/perfil" class="btn btn-outline-primary <?= $titulo == 'perfil' ? 'disabled' : '' ?>">perfil</a>
         <button onclick="logout()" type="button" href="/sair" class="btn btn-outline-primary">sair</button>
     </nav>

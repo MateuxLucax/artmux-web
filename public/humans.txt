@@ -7,11 +7,7 @@
 
     Mateus Lucas Cruz Brandt -- dev -- github.com/MateuxLucax
 
-# THANKS
-
-    <name>
-
 # TECHNOLOGY COLOPHON
 
-    CSS3, HTML5, PHP, JavaScript
-    Apache Server Configs, jQuery, Bootstrap 5, Normalize.css
+    CSS3, HTML5, JavaScript, PHP
+    Apache Server Configs, Bootstrap 5, Normalize.css

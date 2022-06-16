@@ -41,9 +41,9 @@
         </p>
     </form>
 
-    <section class="mx-auto my-4 nunito">
+    <footer class="mx-auto my-4 nunito">
         <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
-    </section>
+    </footer>
 </main>
 
 <?php require('../components/scripts.php'); ?>
@@ -99,7 +99,7 @@
                 password
             });
             const body = await response.json();
-            if (response.status === 200) {
+            if (response.status === 201) {
                 window.location.href = '/entrar';
             } else {
                 Swal.fire({

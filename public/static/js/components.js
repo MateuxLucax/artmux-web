@@ -3,10 +3,10 @@
 class Pagination {
 
   #pageToHtml =  {
-    'first': '<i class="fas fa-angle-double-left"></i>',
-    'prev':  '<i class="fas fa-angle-left"></i>',
-    'next':  '<i class="fas fa-angle-right"></i>',
-    'last':  '<i class="fas fa-angle-double-right"></i>'
+    'first': '<i class="bi bi-chevron-double-left"></i>',
+    'prev':  '<i class="bi bi-chevron-left"></i>',
+    'next':  '<i class="bi bi-chevron-right"></i>',
+    'last':  '<i class="bi bi-chevron-double-right"></i>'
   };
 
   #onClickPage;
@@ -112,9 +112,10 @@ class ListingParameters {
       directionCol,
       { title: 'Descrescente', type: 'button' }
     );
-    const iconAsc = q.make('i', ['d-none', 'fas', 'fa-sort-amount-down-alt'], directionButton);
-    const iconDesc = q.make('i', ['fas', 'fa-sort-amount-down'], directionButton);
-    directionButton.onclick = ev => {
+
+    const iconAsc = q.make('i', ['d-none', 'bi','bi-sort-up'], directionButton);
+    const iconDesc = q.make('i', ['bi', 'bi-sort-down'], directionButton);
+    directionButton.onclick = _ev => {
       if (this.#direction == 'asc') {
         q.hide(iconAsc);
         q.show(iconDesc);
@@ -143,7 +144,7 @@ class ListingParameters {
 
     const buttonCol = q.make('div', ['col-lg-2'], row);
     q.make('label', ['form-label'], buttonCol, { innerText: '\xA0' });
-    const searchButton = q.make('button', ['btn', 'btn-success', 'form-control'], buttonCol, { type: 'submit', innerText: 'Buscar' });
+    const searchButton = q.make('button', ['btn', 'btn-primary', 'form-control'], buttonCol, { type: 'submit', innerText: 'Buscar' });
 
     searchButton.onclick = ev => {
       if (ev.buttons != 0) return;
@@ -184,7 +185,6 @@ class ListingParameters {
 
 }
 
-
 class TagInput {
 
   // working around a silly naming convention mismatch
@@ -215,7 +215,6 @@ class TagInput {
     return this.tagify.value.map(this.#tagify2our);
   }
 }
-
 
 class ArtworkGrid {
 
@@ -281,9 +280,7 @@ class ArtworkGrid {
   get element() {
     return this.#element;
   }
-
 }
-
 
 class ArtworksInput {
 
@@ -342,7 +339,7 @@ class ArtworksInput {
 
     const inputGroup = q.make('div', ['input-group', 'mb-3'], modalBody)
     const searchIconSpan = q.make('span', ['input-group-text'], inputGroup);
-    q.make('i', ['fas', 'fa-search'], searchIconSpan);
+    q.make('i', ['bi', 'bi-search'], searchIconSpan);
     const searchBar = q.make('input', ['form-control'], inputGroup);
     
     this.#foundArtworksGrid = new ArtworkGrid((artwork, element) => {

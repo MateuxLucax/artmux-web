@@ -28,9 +28,9 @@
         </p>
     </form>
 
-    <section class="mx-auto my-4 nunito">
+    <footer class="mx-auto my-4 nunito">
         <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
-    </section>
+    </footer>
 </main>
 
 <?php require('../components/scripts.php'); ?>
@@ -40,7 +40,7 @@
     const loginButton = q.id('login-btn');
     let loading = false;
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async e => {
         e.preventDefault();
 
         if (!loading) {
@@ -59,7 +59,7 @@
                 const body = await response.json();
                 if (response.status === 200) {
                     storage.setToken(body.token, keepLoggedIn);
-                    window.location.href = '/me';
+                    window.location.href = '/publicacoes';
                 } else {
                     Swal.fire({
                         title: 'Não foi possível autenticar',

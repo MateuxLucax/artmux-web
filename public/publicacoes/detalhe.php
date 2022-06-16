@@ -6,9 +6,11 @@
   <div class="card">
     <div class="card-header" style="text-align: right">
       <button id="btn-excluir" class="btn btn-danger">
+        <!-- TODO: migrate to bootstrap icons -->
         <i class="fas fa-trash"></i>
       </button>
       <a id="link-alterar" class="btn btn-primary" href="#">
+        <!-- TODO: migrate to bootstrap icons -->
         <i class="fas fa-edit"></i>
       </a>
     </div>
