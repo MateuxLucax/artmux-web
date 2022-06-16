@@ -42,8 +42,10 @@
 
   const filtroConteudo = new StringSearchFilter('text', 'Conteúdo');
   const filtroTitulo = new StringSearchFilter('title', 'Título');
+  const filtroDataCriacao = new DateSearchFilter('created_at', 'Data de Criação');
+  const filtroDataAtualizacao = new DateSearchFilter('created_at', 'Data de Atualização');
 
-  const filtrosTodos = [ filtroConteudo, filtroTitulo ];
+  const filtrosTodos = [ filtroConteudo, filtroTitulo, filtroDataCriacao, filtroDataAtualizacao ];
 
   const containerFiltros = q.id('container-filtros');
   for (const filtro of filtrosTodos) {
