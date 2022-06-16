@@ -1,4 +1,4 @@
-<?php $titulo = 'Listar publicações'; require('../header.php') ?>
+<?php $titulo = 'Listar publicações'; require('../components/head.php') ?>
 
 <main class="container">
   <?php $pagMenu = 'listar'; require('menu.php'); ?>
@@ -36,7 +36,7 @@
 
 </main>
 
-<?php require('../scripts.php') ?>
+<?php require('../components/scripts.php') ?>
 
 <script>
 
@@ -128,4 +128,4 @@
 
 </script>
 
-<?php require('../footer.php') ?>
+<?php require('../components/footer.php') ?>

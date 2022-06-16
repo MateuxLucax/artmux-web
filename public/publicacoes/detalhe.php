@@ -1,4 +1,4 @@
-<?php $titulo = 'Publicação'; require('../header.php') ?>
+<?php $titulo = 'Publicação'; require('../components/head.php') ?>
 
 <main class="container">
   <?php $pagMenu = ''; require('menu.php'); ?>
@@ -51,7 +51,7 @@
   </div>
 </main>
 
-<?php require('../scripts.php') ?>
+<?php require('../components/scripts.php') ?>
 
 <script>
   function carregarPublicacao(pub) {
@@ -132,5 +132,4 @@
 
 </script>
 
-<?php require('../footer.php') ?>
-
+<?php require('../components/footer.php') ?>

@@ -1,8 +1,8 @@
-<?php $titulo = 'entrar'; require('../header.php'); ?>
+<?php $titulo = 'entrar'; require('../components/head.php'); ?>
 
 <main class="container-fluid min-vh-100 d-flex flex-column max-width-480">
     <section class="mt-auto mb-4 mx-auto">
-        <img src="/static/img/artmux.svg" alt="artmux logo">
+        <img src="/static/img/artmux.svg" alt="artmux logo" />
         <h1 class="text-primary text-center nunito-black">entrar</h1>
     </section>
     <form class="mb-auto" method="POST">
@@ -33,7 +33,7 @@
     </section>
 </main>
 
-<?php require('../scripts.php'); ?>
+<?php require('../components/scripts.php'); ?>
 
 <script>
     const form  = q.sel('form');
@@ -86,4 +86,4 @@
     });
 </script>
 
-<?php require('../footer.php') ?>
+<?php require('../components/footer.php') ?>

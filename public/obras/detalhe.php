@@ -1,6 +1,6 @@
 <?php
 $titulo = 'Obra';
-require('../header.php');
+require('../components/head.php');
 ?>
 
 <main class="container">
@@ -94,7 +94,7 @@ require('../header.php');
 
 </main>
 
-<?php require('../scripts.php') ?>
+<?php require('../components/scripts.php') ?>
 
 <script>
   const params = new URLSearchParams(location.search)
@@ -222,4 +222,4 @@ require('../header.php');
   }
 </script>
 
-<?php require('../footer.php') ?>
+<?php require('../components/footer.php') ?>

@@ -1,4 +1,4 @@
-<?php $titulo = 'Nova publicação'; require('../header.php') ?>
+<?php $titulo = 'Nova publicação'; require('../components/head.php') ?>
 
 <main class="container">
   <?php $pagMenu = 'nova'; require('menu.php'); ?>
@@ -37,7 +37,7 @@
 
 </main>
 
-<?php require('../scripts.php') ?>
+<?php require('../components/scripts.php') ?>
 
 <script>
   const artworksInput = new ArtworksInput();
@@ -75,4 +75,4 @@
   }
 </script>
 
-<?php require('../footer.php') ?>
+<?php require('../components/footer.php') ?>

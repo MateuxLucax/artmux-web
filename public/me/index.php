@@ -1,5 +1,5 @@
-<?php $titulo = 'me'; require('../header.php'); ?>
-<?php require('../scripts.php'); ?>
+<?php $titulo = 'me'; require('../components/head.php'); ?>
+<?php require('../components/scripts.php'); ?>
 
 <main>
     <h1 class="text-center" id="me"></h1>

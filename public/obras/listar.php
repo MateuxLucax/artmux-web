@@ -1,6 +1,6 @@
 <?php
 $titulo = 'Listar obras';
-require('../header.php');
+require('../components/head.php');
 ?>
 
 <!-- TODO duas visualizações,
@@ -64,7 +64,7 @@ require('../header.php');
 
 </main>
 
-<?php require('../scripts.php') ?>
+<?php require('../components/scripts.php') ?>
 
 <script>
   'use strict';
@@ -179,4 +179,4 @@ require('../header.php');
   }
 </script>
 
-<?php require('../footer.php') ?>
+<?php require('../components/footer.php') ?>

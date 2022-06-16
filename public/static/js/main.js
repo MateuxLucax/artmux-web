@@ -15,7 +15,7 @@ const storage = {
   },
 
   removeToken: () => {
-    store.user.token;
+    store.user.token = null;
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
   },
@@ -59,6 +59,12 @@ const request = {
       'Authorization': `Bearer ${storage.getToken()}` 
     });
     const response = request.fetch(url, init);
+    /**
+     * TODO: fix this, response is a Promise, so we can't use status.
+     * Maybe migrate this to the auth methods below?
+     * And make a custom Promise, with resolve/reject adding status code validation, 
+     * and resolve/reject response.
+     */ 
     if (response.status == 401) {
       storage.removeToken();
       window.location.replace('/entrar');
@@ -69,8 +75,7 @@ const request = {
 
   treatResponse: async (response) => {
     if (response.status === 401) {
-      storage.removeToken();
-      window.location.replace('/entrar');
+      logout();
       return null;
     }
     return await response.json();
@@ -114,4 +119,9 @@ const request = {
       }));
     }
   }
+}
+
+const logout = () => {
+  storage.removeToken();
+  window.location.replace('/entrar');
 }
