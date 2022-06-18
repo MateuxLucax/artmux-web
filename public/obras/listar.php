@@ -74,22 +74,18 @@ require('../components/head.php');
     { title: 'Data de atualização', value: 'updated_at' },
     { title: 'Título', value: 'title' }
   ];
-  const parametrosListagem = new ListingParameters(
-    opcoesOrdenacao,
-    'Obras por página',
-    fazerBusca
-  );
+  const formBusca = new SearchForm(opcoesOrdenacao, 'Obras por página', fazerBusca);
 
-  parametrosListagem
+  formBusca
   .addFilter(new StringSearchFilter('title', 'Título'))
   .addFilter(new DateSearchFilter('created_at', 'Data de criação'))
   .addFilter(new DateSearchFilter('updated_at', 'Data de atualização'));
 
-  q.id('container-parametros').append(parametrosListagem.element);
-  q.id('container-paginacao').append(parametrosListagem.paginationElement);
+  q.id('container-parametros').append(formBusca.element);
+  q.id('container-paginacao').append(formBusca.paginationElement);
 
   // Busca inicial
-  parametrosListagem.triggerFirstSearch();
+  formBusca.triggerFirstSearch();
 
   /**
    * Carrega uma obra recebida da API no DOM dentro do #container-obras

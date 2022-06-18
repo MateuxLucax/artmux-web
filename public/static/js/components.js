@@ -77,10 +77,7 @@ class Pagination {
 }
 
 
-class ListingParameters {
-
-  // Maybe "SearchParameters" would make more sense, but there's already
-  // a built-in class with a very similar name, URLSearchParams
+class SearchForm {
 
   #container;
   #filtersContainer;
@@ -99,7 +96,6 @@ class ListingParameters {
     const paramsRow = q.make('div', ['row'], this.#container);
 
     this.#filtersContainer = q.make('div', ['d-none'], this.#container);
-
 
     const orderCol = q.make('div', ['col-10', 'col-lg-5', 'mb-3', 'mb-lg-0'], paramsRow);
     q.make('label', ['form-label'], orderCol, { innerText: 'Ordenar por '});

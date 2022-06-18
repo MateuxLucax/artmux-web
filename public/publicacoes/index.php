@@ -61,22 +61,18 @@ require_once('../components/header.php')
     { value: 'title', title: 'Título' },
     { value: 'text', title: 'Conteúdo' },
   ];
-  const parametrosListagem = new ListingParameters(
-    opcoesOrdenacao,
-    'Publicações por página',
-    fazerBusca
-  );
+  const formBusca = new SearchForm(opcoesOrdenacao, 'Publicações por página', fazerBusca);
 
-  parametrosListagem
+  formBusca
   .addFilter(new StringSearchFilter('text', 'Conteúdo'))
   .addFilter(new StringSearchFilter('title', 'Título'))
   .addFilter(new DateSearchFilter('created_at', 'Data de Criação'))
   .addFilter(new DateSearchFilter('created_at', 'Data de Atualização'));
 
-  q.id('container-parametros').append(parametrosListagem.element);
-  q.id('container-paginacao').append(parametrosListagem.paginationElement);
+  q.id('container-parametros').append(formBusca.element);
+  q.id('container-paginacao').append(formBusca.paginationElement);
 
-  parametrosListagem.triggerFirstSearch();
+  formBusca.triggerFirstSearch();
 
   const msgSemPublicacoes = q.id('msg-sem-publicacoes');
   const cardPublicacoes = q.id('card-publicacoes');
