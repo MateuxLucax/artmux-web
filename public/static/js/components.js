@@ -159,19 +159,14 @@ class ListingParameters {
     btnGroup.style['width'] = '100%';
 
     const searchButton = q.make('button', ['btn', 'btn-primary'], btnGroup, { type: 'button', innerText: 'Buscar' });
-    const dropdownButton = q.make('button', ['btn', 'btn-primary', 'dropdown-toggle', 'dropdown-toggle-split'], btnGroup);
-    dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
-    const dropdownUl = q.make('ul', ['dropdown-menu'], btnGroup);
-    const dropdownLi = q.make('li', [], dropdownUl);
-    const lnToggleFiltros = q.make('a', ['dropdown-item'], dropdownLi, {
-      type: 'button',
-      innerText: 'Mostrar filtros'
-    });
+    const toggleFiltersButton = q.make('button', ['btn', 'btn-primary'], btnGroup, { type: 'button', title: 'Mostrar filtros' });
+    const iconPlus = q.make('i', ['bi', 'bi-plus-lg'], toggleFiltersButton);
+    const iconMinus = q.make('i', ['bi', 'bi-dash-lg', 'd-none'], toggleFiltersButton);
 
-    lnToggleFiltros.onclick = ev => {
-      if (ev.buttons != 0) return;
-      console.log(this.#filtersContainer);
-      lnToggleFiltros.innerText = q.toggle(this.#filtersContainer) ? 'Esconder filtros' : 'Mostrar filtros';
+    toggleFiltersButton.onclick = ev => {
+      q.toggle(iconPlus);
+      q.toggle(iconMinus);
+      toggleFiltersButton.title = q.toggle(this.#filtersContainer) ? 'Esconder filtros' : 'Mostrar filtros';
     }
 
     searchButton.onclick = ev => {
