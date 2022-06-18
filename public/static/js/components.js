@@ -80,11 +80,13 @@ class Pagination {
 class ListingParameters {
 
   // Maybe "SearchParameters" would make more sense, but there's already
-  // a class called URLSearchParams with a very similar name
+  // a built-in class with a very similar name, URLSearchParams
 
-  #parameterRowElement;
+  #container;
+  #filtersContainer;
   #pagination;
 
+  #filters = [];
   #currentPerPage;  // Stays the same even if the user changes the <input> text
   #direction = 'desc';
   #orderSelect;
@@ -92,10 +94,15 @@ class ListingParameters {
   #searchFunction;
 
   constructor(orderOptions, perPageLabel, searchFunction) {
-    const row = q.make('div', ['row'], null);
+    this.#container = q.make('div');
 
-    const orderCol = q.make('div', ['col-10', 'col-lg-5', 'mb-3', 'mb-lg-0'], row);
-    q.make('label', ['form-label'], orderCol, { innerText: 'Ordernar por '});
+    const paramsRow = q.make('div', ['row'], this.#container);
+
+    this.#filtersContainer = q.make('div', ['d-none'], this.#container);
+
+
+    const orderCol = q.make('div', ['col-10', 'col-lg-5', 'mb-3', 'mb-lg-0'], paramsRow);
+    q.make('label', ['form-label'], orderCol, { innerText: 'Ordenar por '});
     const orderSelect = q.make('select', ['form-control'], orderCol);
     for (const option of orderOptions) {
       q.make('option', [], orderSelect, {
@@ -104,7 +111,7 @@ class ListingParameters {
       });
     }
 
-    const directionCol = q.make('div', ['col-2', 'col-lg-1'], row);
+    const directionCol = q.make('div', ['col-2', 'col-lg-1'], paramsRow);
     q.make('label', ['form-label'], directionCol, { innerText: '\xA0' });
     const directionButton = q.make(
       'button',
@@ -129,7 +136,7 @@ class ListingParameters {
       }
     };
 
-    const perPageCol = q.make('div', ['col-lg-4'], row);
+    const perPageCol = q.make('div', ['col-lg-4'], paramsRow);
     q.make('label', ['form-label'], perPageCol, { innerText: perPageLabel });
     const perPageInput = q.make(
       'input',
@@ -142,34 +149,70 @@ class ListingParameters {
       perPageInput.value = clamp(3 * Math.floor(Number(perPageInput.value) / 3), 3, 999)
     };
 
-    const buttonCol = q.make('div', ['col-lg-2'], row);
-    q.make('label', ['form-label'], buttonCol, { innerText: '\xA0' });
-    const searchButton = q.make('button', ['btn', 'btn-primary', 'form-control'], buttonCol, { type: 'submit', innerText: 'Buscar' });
+    // 
+    // Botão de buscar + de mostrar/esconder filtros
+    //
+
+    const btnCol = q.make('div', ['col-lg-2'], paramsRow);
+    q.make('label', ['form-label', 'd-block'], btnCol, { innerText: '\xA0' });
+    const btnGroup = q.make('div', ['btn-group'], btnCol);
+    btnGroup.style['width'] = '100%';
+
+    const searchButton = q.make('button', ['btn', 'btn-primary'], btnGroup, { type: 'button', innerText: 'Buscar' });
+    const dropdownButton = q.make('button', ['btn', 'btn-primary', 'dropdown-toggle', 'dropdown-toggle-split'], btnGroup);
+    dropdownButton.setAttribute('data-bs-toggle', 'dropdown');
+    const dropdownUl = q.make('ul', ['dropdown-menu'], btnGroup);
+    const dropdownLi = q.make('li', [], dropdownUl);
+    const lnToggleFiltros = q.make('a', ['dropdown-item'], dropdownLi, {
+      type: 'button',
+      innerText: 'Mostrar filtros'
+    });
+
+    lnToggleFiltros.onclick = ev => {
+      if (ev.buttons != 0) return;
+      console.log(this.#filtersContainer);
+      lnToggleFiltros.innerText = q.toggle(this.#filtersContainer) ? 'Esconder filtros' : 'Mostrar filtros';
+    }
 
     searchButton.onclick = ev => {
       if (ev.buttons != 0) return;
-      ev.preventDefault();
       const perPage = Number(perPageInput.value);
-      searchFunction(orderSelect.value, this.#direction, perPage, 1, numResults => {
-        this.#pagination.refresh(1, perPage, numResults);
-      });
+      searchFunction(
+        orderSelect.value,
+        this.#direction,
+        perPage,
+        1,
+        this.#filters.flatMap(({value}) => value ?? []),
+        numResults => { this.#pagination.refresh(1, perPage, numResults) }
+      );
       this.#currentPerPage = perPage;
     };
 
     this.#pagination = new Pagination(newPageNum => {
-      searchFunction(orderSelect.value, this.#direction, this.#currentPerPage, newPageNum, numResults => {
-        this.#pagination.refresh(newPageNum, this.#currentPerPage, numResults);
-      });
+      searchFunction(
+        orderSelect.value,
+        this.#direction,
+        this.#currentPerPage,
+        newPageNum,
+        this.#filters.flatMap(({value}) => value ?? []),
+        numResults => { this.#pagination.refresh(newPageNum, this.#currentPerPage, numResults) }
+      );
     });
-    this.#parameterRowElement = row;
 
     this.#orderSelect = orderSelect;
     this.#perPageInput = perPageInput;
     this.#searchFunction = searchFunction;
   }
 
-  get parameterRowElement() {
-    return this.#parameterRowElement;
+  addFilter(filter) {
+    this.#filters.push(filter);
+    filter.element.classList.add('mt-3');
+    this.#filtersContainer.append(filter.element);
+    return this;
+  }
+
+  get element() {
+    return this.#container;
   }
 
   get paginationElement() {
@@ -178,9 +221,14 @@ class ListingParameters {
 
   triggerFirstSearch() {
     const perPage = Number(this.#perPageInput.value);
-    this.#searchFunction(this.#orderSelect.value, this.#direction, perPage, 1, numResults => {
-      this.#pagination.refresh(1, perPage, numResults);
-    });
+    this.#searchFunction(
+      this.#orderSelect.value,
+      this.#direction,
+      perPage,
+      1,
+      this.#filters.flatMap(({value}) => value ?? []),
+      numResults => { this.#pagination.refresh(1, perPage, numResults); }
+    );
   }
 
 }

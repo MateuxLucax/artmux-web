@@ -29,11 +29,7 @@ require('../components/head.php');
 
 
   <div class="mb-3 card" id="card-busca">
-    <div class="card-body">
-      <form id="form-busca">
-        <div id="container-filtros"></div>
-        <div id="container-parametros"></div>
-      </form>
+    <div class="card-body" id="container-parametros">
     </div>
   </div>
 
@@ -73,19 +69,6 @@ require('../components/head.php');
   // Inicialização dos componentes
   //
 
-  const filtroTitulo = new StringSearchFilter('title', 'Título')
-  const filtroDataCriacao = new DateSearchFilter('created_at', 'Data de criação')
-  const filtroDataAtualizacao = new DateSearchFilter('updated_at', 'Data de atualização')
-
-  const filtrosTodos = [filtroTitulo, filtroDataCriacao, filtroDataAtualizacao];
-
-  const containerFiltros = q.id('container-filtros')
-
-  for (const { element } of filtrosTodos) {
-    element.classList.add('mb-3');
-    containerFiltros.append(element);
-  }
-
   const opcoesOrdenacao = [
     { title: 'Data de criação', value: 'created_at' },
     { title: 'Data de atualização', value: 'updated_at' },
@@ -94,23 +77,16 @@ require('../components/head.php');
   const parametrosListagem = new ListingParameters(
     opcoesOrdenacao,
     'Obras por página',
-    (ordenacao, direcao, obrasPorPagina, pagina, callbackNumResultados) => {
-      fazerBusca(
-        ordenacao, direcao, obrasPorPagina, pagina,
-        filtrosTodos.flatMap(({ value }) => value ?? []),
-        num => callbackNumResultados(num)
-      );
-    }
+    fazerBusca
   );
 
-  q.id('container-parametros').append(parametrosListagem.parameterRowElement);
+  parametrosListagem
+  .addFilter(new StringSearchFilter('title', 'Título'))
+  .addFilter(new DateSearchFilter('created_at', 'Data de criação'))
+  .addFilter(new DateSearchFilter('updated_at', 'Data de atualização'));
+
+  q.id('container-parametros').append(parametrosListagem.element);
   q.id('container-paginacao').append(parametrosListagem.paginationElement);
-
-  //
-  // Formulário de busca
-  //
-
-  const formBusca = q.id('form-busca');
 
   // Busca inicial
   parametrosListagem.triggerFirstSearch();
@@ -174,7 +150,7 @@ require('../components/head.php');
     .catch(err => {
       console.error(err)
       alertarErroSistema('Não conseguimos carregar as suas obras. Tente novamente mais tarde.')
-      .then(() => history.back())
+      .then(history.back)
     })
   }
 </script>
