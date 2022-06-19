@@ -51,6 +51,8 @@ html {
 /* This makes the tagify input look like a bootstrap input */
 
 .tagify.form-control {
+  padding: 0;
+  --tag-pad: 2.5px;  /* This makes the height equal to other (bootstrap) inputs */
   --tags-border-color: var(--bs-gray-400);
   --tags-hover-border-color: var(--bs-gray-400);
   --tags-focus-border-color: #86b7fe;
@@ -62,7 +64,6 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .tagify,
   .tagify.tagify--focus {
     transition: none;
