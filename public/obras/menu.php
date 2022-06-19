@@ -3,8 +3,7 @@
     <a href="/obras/nova.php"
        class="nav-link <?= $pagMenu == 'nova' ? 'disabled': '' ?>"
     >
-      <!-- TODO: migrate to bootstrap icons -->
-      <i class="fas fa-plus-circle"></i>&nbsp;
+      <i class="bi bi-plus-circle"></i>&nbsp;
       Nova obra
     </a>
   </li>
@@ -12,8 +11,7 @@
     <a href="/obras/listar.php"
        class="nav-link <?= $pagMenu == 'listar' ? 'disabled' : '' ?>"
     >
-      <!-- TODO: migrate to bootstrap icons -->
-      <i class="fas fa-image"></i>&nbsp;
+      <i class="bi bi-card-image"></i>&nbsp;
       Listar obras
     </a>
   </li>
@@ -21,8 +19,7 @@
     <a href="/obras/tags.php"
        class="nav-link <?= $pagMenu == 'tags' ? 'disabled' : '' ?>"
     >
-      <!-- TODO: migrate to bootstrap icons -->
-      <i class="fas fa-tags"></i>&nbsp;
+      <i class="bi bi-tag"></i>&nbsp;
       Tags
     </a>
   </li>

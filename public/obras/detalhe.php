@@ -10,18 +10,13 @@ require('../components/head.php');
   <div class="card mb-3">
     <div class="card-header" style="text-align: right;">
       <button id="btn-excluir" class="btn btn-danger">
-        <!-- TODO: migrate to bootstrap icons -->
-        <i class="fas fa-trash"></i>
+        <i class="bi bi-trash-fill"></i>
       </button>
       <a id="link-alterar" class="btn btn-primary" href="#">
-        <!-- TODO: migrate to bootstrap icons -->
-        <i class="fas fa-edit"></i>
+        <i class="bi bi-pencil-fill"></i>
       </a>
     </div>
     <div class="card-body">
-
-      <!-- TODO animação? -->
-      <p id="loading">Carregando...</p>
 
       <div class="mb-4 text-center">
         <a id="obra-img-link-full" title="Ver no tamanho original">
@@ -127,7 +122,6 @@ require('../components/head.php');
   })
 
   async function carregarObra(obra) {
-    q.hide(q.id('loading'));
     q.id('obra-titulo').value = obra.title
     if (obra.observations != '') {
       q.show(q.id('obra-observacoes-container'))
@@ -178,7 +172,6 @@ require('../components/head.php');
       });
 
       q.make('td', [], tr, { innerText: pub.text });
-      // TODO obras
       // TODO vvv GMT-0300
       const dataAtualizacao = new Date(pub.createdAt);
       q.make('td', [], tr, { innerText: formatarData(dataAtualizacao) });
