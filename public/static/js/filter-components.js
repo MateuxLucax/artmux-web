@@ -139,3 +139,26 @@ class DateSearchFilter extends SearchFilter {
     }
   }
 }
+
+class TagSearchFilter extends SearchFilter {
+  constructor(name, label, whitelist) {
+    super(
+      name,
+      label,
+      { 'tagsAllOf': 'Contém todas',
+        'tagsAnyOf': 'Contém alguma' },
+      'text',
+      { operator: 'allOf',
+        value: '' }
+    );
+
+    this.tagInput = new TagInput(this.input, { enforceWhitelist: true });
+    this.tagInput.whitelist = whitelist;
+  }
+
+  get value() {
+    let obj = super.value;
+    if (obj != null) obj.value = this.tagInput.value.map(({id}) => id);
+    return obj;
+  }
+}

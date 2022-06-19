@@ -238,8 +238,8 @@ class TagInput {
     return obj;
   }
 
-  constructor(input) {
-    this.tagify = new Tagify(input);
+  constructor(input, options={}) {
+    this.tagify = new Tagify(input, { ...options });
   }
 
   set whitelist(tags) {

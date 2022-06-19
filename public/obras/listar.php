@@ -81,6 +81,10 @@ require('../components/head.php');
   .addFilter(new DateSearchFilter('created_at', 'Data de criação'))
   .addFilter(new DateSearchFilter('updated_at', 'Data de atualização'));
 
+  request.authFetch('tags').then(tags => tags.json()).then(tags => {
+    formBusca.addFilter(new TagSearchFilter('tags', 'Tags', tags));
+  });
+
   q.id('container-parametros').append(formBusca.element);
   q.id('container-paginacao').append(formBusca.paginationElement);
 
