@@ -1,8 +1,10 @@
-<?php $titulo = 'Publicação'; require('../components/head.php') ?>
+<?php
+$titulo = "";
+require_once('../components/head.php');
+require_once('../components/header.php');
+?>
 
-<main class="container">
-  <?php $pagMenu = ''; require('menu.php'); ?>
-
+<main class="container py-5 px-4">
   <div class="card">
     <div class="card-header" style="text-align: right">
       <button id="btn-excluir" class="btn btn-danger">
@@ -17,7 +19,7 @@
       <div class="mb-3 row">
         <label class="col-sm-2 form-label">Título</label>
         <div class="col-sm-10">
-          <input readonly type="text" name="titulo" class="form-control-plaintext">
+          <input readonly type="text" name="titulo" class="form-control-plaintext" />
         </div>
       </div>
 
@@ -36,14 +38,14 @@
       <div class="row">
         <label class="col-sm-2">Publicada em</label>
         <div class="col-sm-10">
-          <input readonly type="text" name="data-publicacao" class="form-control-plaintext text-muted">
+          <input readonly type="text" name="data-publicacao" class="form-control-plaintext text-muted" />
         </div>
       </div>
 
       <div class="row mt-3 d-none" id="container-data-atualizacao">
         <label class="col-sm-2">Atualizada em</label>
         <div class="col-sm-10">
-          <input readonly type="text" name="data-atualizacao" class="form-control-plaintext text-muted">
+          <input readonly type="text" name="data-atualizacao" class="form-control-plaintext text-muted" />
         </div>
       </div>
 
@@ -51,12 +53,19 @@
   </div>
 </main>
 
+<footer class="mx-auto my-4 nunito text-center">
+  <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
+</footer>
+
 <?php require('../components/scripts.php') ?>
 
 <script>
   function carregarPublicacao(pub) {
+    document.title = `${document.title} ${pub.title}`;
     q.id('link-alterar').href = '/publicacoes/alterar.php?publicacao=' + pub.slug;
-    q.id('btn-excluir').onclick = e => { handleExclusaoPublicacao(e, pub.slug) }
+    q.id('btn-excluir').onclick = e => {
+      handleExclusaoPublicacao(e, pub.slug)
+    }
 
     const dataPublicacao = new Date(pub.createdAt);
     const dataAtualizacao = new Date(pub.updatedAt);
@@ -79,7 +88,9 @@
       const img = q.tagIn('img', element)[0];
       q.replace(img, linkObra)
       linkObra.append(img);
-    }, { emptyMessage: 'A publicação não foi feita com nenhuma obra' });
+    }, {
+      emptyMessage: 'A publicação foi feita com nenhuma obra'
+    });
 
     gridObras.display(pub.artworks);
 
@@ -91,45 +102,50 @@
     event.preventDefault();
     pedirConfirmacaoExclusao(
       'Tem certeza de que deseja excluir essa publicação?',
-      () => { excluirPublicacao(slug); }
+      () => {
+        excluirPublicacao(slug);
+      }
     );
   }
 
   function excluirPublicacao(slug) {
-    request.authFetch('publications/' + slug, { method: 'DELETE'})
-    .then(res => {
-      if (!res.ok) throw new ['Resposta não-ok', res];
-      agendarAlertaSucesso('Publicação excluída com sucesso');
-      location.assign('/publicacoes/listar.php');
-    })
-    .catch(err => {
-      console.error(err);
-      alertarErroSistema('Ocorreu um erro e não foi possível excluir a publicação. Tente novamente mais tarde.');
-    })
+    request.authFetch('publications/' + slug, {
+        method: 'DELETE'
+      })
+      .then(res => {
+        if (!res.ok) throw new ['Resposta não-ok', res];
+        agendarAlertaSucesso('Publicação excluída com sucesso');
+        location.assign('/publicacoes/listar.php');
+      })
+      .catch(err => {
+        console.error(err);
+        alertarErroSistema('Ocorreu um erro e não foi possível excluir a publicação. Tente novamente mais tarde.');
+      })
   }
-
-
 
   const params = new URLSearchParams(location.search);
   if (!params.has('publicacao')) {
     alertarErroSistema('Página de detalhe de publicação acessada incorretamente')
-    .then(() => { history.back() })
+      .then(() => {
+        history.back()
+      })
   }
 
   const slugPublicacao = params.get('publicacao');
 
   request.authFetch('publications/' + slugPublicacao)
-  .then(res => {
-    if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
-    return res.json();
-  })
-  .then(carregarPublicacao)
-  .catch(err => {
-    console.error(err);
-    alertarErroSistema('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
-    .then(() => { history.back(); })
-  });
-
+    .then(res => {
+      if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
+      return res.json();
+    })
+    .then(carregarPublicacao)
+    .catch(err => {
+      console.error(err);
+      alertarErroSistema('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
+        .then(() => {
+          history.back();
+        })
+    });
 </script>
 
 <?php require('../components/footer.php') ?>

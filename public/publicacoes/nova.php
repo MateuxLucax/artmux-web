@@ -1,8 +1,10 @@
-<?php $titulo = 'Nova publicação'; require('../components/head.php') ?>
+<?php
+$titulo = "nova publicação";
+require_once('../components/head.php');
+require_once('../components/header.php');
+?>
 
-<main class="container">
-  <?php $pagMenu = 'nova'; require('menu.php'); ?>
-
+<main class="container py-5 px-4">
   <form method="" action="">
     <div class="card">
       <div class="card-body">
@@ -37,6 +39,10 @@
 
 </main>
 
+<footer class="mx-auto my-4 nunito text-center">
+  <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
+</footer>
+
 <?php require('../components/scripts.php') ?>
 
 <script>
@@ -51,27 +57,35 @@
     if (title == '') title = 'Sem título';
     const text = form.text.value.trim();
     const artworks = artworksInput.value;
-    const body = { title, text, artworks };
+    const body = {
+      title,
+      text,
+      artworks
+    };
 
     request
-    .authFetch('publications', {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(res => {
-      if (res.status != 201) throw ['Resposta não-ok', res];
-      return res.json();
-    })
-    .then(json => {
-      const { slug } = json;
-      agendarAlertaSucesso('Publicação criada com sucesso');
-      location.assign(`/publicacoes/detalhe.php?publicacao=${slug}`);
-    })
-    .catch(err => {
-      console.error(err);
-      alertarErroSistema('Ocorreu um erro ao criar a publicação. Tente novamente mais tarde.');
-    })
+      .authFetch('publications', {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        if (res.status != 201) throw ['Resposta não-ok', res];
+        return res.json();
+      })
+      .then(json => {
+        const {
+          slug
+        } = json;
+        agendarAlertaSucesso('Publicação criada com sucesso');
+        location.assign(`/publicacoes/detalhe.php?publicacao=${slug}`);
+      })
+      .catch(err => {
+        console.error(err);
+        alertarErroSistema('Ocorreu um erro ao criar a publicação. Tente novamente mais tarde.');
+      })
   }
 </script>
 

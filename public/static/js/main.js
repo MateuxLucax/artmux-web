@@ -58,18 +58,13 @@ const request = {
     Object.assign(init.headers, {
       'Authorization': `Bearer ${storage.getToken()}` 
     });
-    const response = request.fetch(url, init);
     /**
      * TODO: fix this, response is a Promise, so we can't use status.
      * Maybe migrate this to the auth methods below?
      * And make a custom Promise, with resolve/reject adding status code validation, 
      * and resolve/reject response.
      */ 
-    if (response.status == 401) {
-      logout();
-      return null;
-    }
-    return response;
+    return request.fetch(url, init);
   },
 
   treatResponse: async (response) => {
@@ -124,3 +119,8 @@ const logout = () => {
   storage.removeToken();
   window.location.replace('/entrar');
 }
+
+window.onload = async () => {
+  const safePages = ['/', '/entrar/', '/cadastrar/'];
+  if (!safePages.includes(window.location.pathname)) await request.auth.get('users/me');
+};

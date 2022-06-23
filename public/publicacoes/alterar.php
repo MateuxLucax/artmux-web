@@ -1,8 +1,10 @@
-<?php $titulo = 'Alterar publicação'; require('../components/head.php') ?>
+<?php
+$titulo = "alterar publicação";
+require_once('../components/head.php');
+require_once('../components/header.php');
+?>
 
-<main class="container">
-  <?php $pagMenu = ''; require('menu.php'); ?>
-
+<main class="container py-5 px-4">
   <form id="form-alterar-publicacao">
 
     <input type="hidden" name="slug">
@@ -42,10 +44,13 @@
 
 </main>
 
+<footer class="mx-auto my-4 nunito text-center">
+  <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
+</footer>
+
 <?php require('../components/scripts.php') ?>
 
 <script>
-
   let artworksInput;
 
   function carregarPublicacao(pub) {
@@ -62,20 +67,20 @@
   const slugPublicacao = params.get('publicacao');
   if (!slugPublicacao) {
     alertarErroSistema('Erro ao carregar a publicação. A URL não foi acessada corretamente.')
-    .then(() => history.back());
+      .then(() => history.back());
   }
 
   request.authFetch('publications/' + slugPublicacao)
-  .then(res => {
-    if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
-    return res.json();
-  })
-  .then(carregarPublicacao)
-  .catch(err => {
-    console.error(err);
-    alertarErroSistema('Erro ao carregar a publicação. Tente novamente mais tarde')
-    .then(() => history.back());
-  });
+    .then(res => {
+      if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
+      return res.json();
+    })
+    .then(carregarPublicacao)
+    .catch(err => {
+      console.error(err);
+      alertarErroSistema('Erro ao carregar a publicação. Tente novamente mais tarde')
+        .then(() => history.back());
+    });
 
   const form = q.id('form-alterar-publicacao');
 
@@ -88,26 +93,33 @@
     const text = form.text.value.trim();
     const artworks = artworksInput.value;
 
-    const payload = { title, text, artworks };
+    const payload = {
+      title,
+      text,
+      artworks
+    };
 
     console.log('payload', payload);
 
     request.authFetch('publications/' + slug, {
-      method: 'PATCH',
-      body: JSON.stringify(payload),
-      headers: { 'Content-Type': 'application/json' }
-    })
-    .then(res => {
-      if (!res.ok) throw ['Resposta não-ok', res];
-      return res.json();
-    })
-    .then(ret => {
-      const { slug } = ret;
-      agendarAlertaSucesso('A publicação foi alterada com sucesso');
-      location.assign('/publicacoes/detalhe.php?publicacao=' + slug);
-    })
+        method: 'PATCH',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        if (!res.ok) throw ['Resposta não-ok', res];
+        return res.json();
+      })
+      .then(ret => {
+        const {
+          slug
+        } = ret;
+        agendarAlertaSucesso('A publicação foi alterada com sucesso');
+        location.assign('/publicacoes/detalhe.php?publicacao=' + slug);
+      })
   };
-
 </script>
 
 <?php require('../components/footer.php') ?>

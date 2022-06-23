@@ -1,3 +1,5 @@
+<!-- TODO: rework component -->
+
 <ul class="nav mb-3">
   <li class="nav-item">
     <a href="/publicacoes/nova.php" class="nav-link <?= $pagMenu == 'nova' ? 'disabled' : '' ?>">
