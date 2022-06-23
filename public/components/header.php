@@ -1,4 +1,4 @@
-<header class="header">
+<header class="header px-5">
     <img src="/static/img/artmux-full-logo.svg" alt="artmux logo" height="48" width="188" />
 
     <nav>

@@ -1,11 +1,10 @@
 <?php
-$titulo = 'Obra';
-require('../components/head.php');
+$titulo = "";
+require_once('../components/head.php');
+require_once('../components/header.php');
 ?>
 
-<main class="container">
-
-  <?php require('menu.php') ?>
+<main class="container py-5 px-4">
 
   <div class="card mb-3">
     <div class="card-header" style="text-align: right;">
@@ -20,10 +19,10 @@ require('../components/head.php');
 
       <div class="mb-4 text-center">
         <a id="obra-img-link-full" title="Ver no tamanho original">
-          <img id="obra-img"/>
+          <img id="obra-img" />
         </a>
       </div>
-    
+
       <div class="mb-3 row">
         <label for="title" class="col-sm-2 form-label">Título</label>
         <div class="col-sm-10">
@@ -91,6 +90,10 @@ require('../components/head.php');
 
 </main>
 
+<footer class="mx-auto my-4 nunito text-center">
+  <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
+</footer>
+
 <?php require('../components/scripts.php') ?>
 
 <script>
@@ -106,52 +109,57 @@ require('../components/head.php');
   }
 
   request
-  .authFetch(`artworks/${slug}?with=publications`)
-  .then(res => {
-    console.log(res)
-    if (res.status != 200 && res.status != 304) {
-      throw 'Resposta não-ok'
-    }
-    return res.json()
-  })
-  .then(carregarObra)
-  .catch(err => {
-    console.error(err)
-    alertarErroSistema('Erro ao carregar a obra. Tente novamente mais tarde.')
-    .then(() => history.back())
-  })
+    .authFetch(`artworks/${slug}?with=publications`)
+    .then(res => {
+      console.log(res)
+      if (res.status != 200 && res.status != 304) {
+        throw 'Resposta não-ok'
+      }
+      return res.json()
+    })
+    .then(carregarObra)
+    .catch(err => {
+      console.error(err)
+      alertarErroSistema('Erro ao carregar a obra. Tente novamente mais tarde.')
+        .then(() => history.back())
+    })
 
   async function carregarObra(obra) {
-    q.id('obra-titulo').value = obra.title
+    document.title = `${document.title} ${obra.title}`;
+    q.id('obra-titulo').value = obra.title;
     if (obra.observations != '') {
-      q.show(q.id('obra-observacoes-container'))
-      q.id('obra-observacoes').value = obra.observations
+      q.show(q.id('obra-observacoes-container'));
+      q.id('obra-observacoes').value = obra.observations;
     }
     if (obra.tags.length > 0) {
-      q.show(q.id('obra-tags-container'))
-      carregarTags(obra.tags)
+      q.show(q.id('obra-tags-container'));
+      carregarTags(obra.tags);
     }
     q.id('obra-img').src = await imageBlobUrl(obra.imagePaths.medium);
     q.id('obra-img-link-full').href = await imageBlobUrl(obra.imagePaths.original);
-    q.id('obra-data-criacao').value = formatarData(new Date(obra.createdAt))
-    q.id('obra-data-atualizacao').value = formatarData(new Date(obra.updatedAt))
+    q.id('obra-data-criacao').value = formatarData(new Date(obra.createdAt));
+    q.id('obra-data-atualizacao').value = formatarData(new Date(obra.updatedAt));
     if (obra.createdAt != obra.updatedAt) {
       q.show(q.id('obra-data-atualizacao-container'));
     }
 
     // if (obra.editable) {
-      habilitarBotoes(slug);
+    habilitarBotoes(slug);
     // } else {
-      // desabilitarBotoes();
+    // desabilitarBotoes();
     // }
-  
+
     carregarPublicacoes(obra.publications);
   }
 
   function carregarTags(tags) {
     const containerTags = q.id('tags-container');
-    for (const { name } of tags) {
-      q.make('span', ['badge', 'text-bg-primary', 'me-1'], containerTags, { innerText: name });
+    for (const {
+        name
+      } of tags) {
+      q.make('span', ['badge', 'text-bg-primary', 'me-1'], containerTags, {
+        innerText: name
+      });
     }
   }
 
@@ -171,10 +179,14 @@ require('../components/head.php');
         href: '/publicacoes/detalhe.php?publicacao=' + pub.slug
       });
 
-      q.make('td', [], tr, { innerText: pub.text });
+      q.make('td', [], tr, {
+        innerText: pub.text
+      });
       // TODO vvv GMT-0300
       const dataAtualizacao = new Date(pub.createdAt);
-      q.make('td', [], tr, { innerText: formatarData(dataAtualizacao) });
+      q.make('td', [], tr, {
+        innerText: formatarData(dataAtualizacao)
+      });
     }
   }
 
@@ -185,7 +197,9 @@ require('../components/head.php');
       if (ev.button != 0) return;
       pedirConfirmacaoExclusao(
         'Tem certeza de que deseja excluir essa obra?',
-        () => { fazerExclusao(slug) }
+        () => {
+          fazerExclusao(slug)
+        }
       );
     }
   }
@@ -200,20 +214,22 @@ require('../components/head.php');
 
   function fazerExclusao(slug) {
     request
-    .authFetch(`artworks/${slug}`, { method: 'DELETE' })
-    .then(res => {
-      if (!res.ok) throw 'Resposta não-ok'
-      agendarAlertaSucesso('Obra excluída com sucesso');
-      location.assign('/obras/listar.php')
-    })
-    .catch(err => {
-      console.error(err)
-      Swal.fire({
-        title: 'Erro do sistem',
-        text: 'Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.',
-        icon: 'error'
+      .authFetch(`artworks/${slug}`, {
+        method: 'DELETE'
       })
-    })
+      .then(res => {
+        if (!res.ok) throw 'Resposta não-ok'
+        agendarAlertaSucesso('Obra excluída com sucesso');
+        location.assign('/obras/')
+      })
+      .catch(err => {
+        console.error(err)
+        Swal.fire({
+          title: 'Erro do sistem',
+          text: 'Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.',
+          icon: 'error'
+        })
+      })
   }
 </script>
 

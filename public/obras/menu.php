@@ -1,3 +1,5 @@
+<!-- TODO: refazer componente -->
+
 <ul class="nav mb-3">
   <li class="nav-item">
     <a href="/obras/nova.php"
@@ -8,7 +10,7 @@
     </a>
   </li>
   <li class="nav-item">
-    <a href="/obras/listar.php"
+    <a href="/obras/"
        class="nav-link <?= $pagMenu == 'listar' ? 'disabled' : '' ?>"
     >
       <i class="bi bi-card-image"></i>&nbsp;

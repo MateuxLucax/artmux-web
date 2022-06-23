@@ -1,19 +1,17 @@
 <?php
-$titulo = 'Alterar obra';
-require('../components/head.php');
+$titulo = "alterar obra";
+require_once('../components/head.php');
+require_once('../components/header.php');
 ?>
 
-<main class="container">
-
-  <?php require('menu.php') ?>
-
+<main class="container py-5 px-4">
   <div class="card">
     <form id="form-alterar-obra" onsubmit="submitFormAlterarObra">
       <div class="card-body">
         <div class="mb-3 row">
           <label for="titulo" class="col-sm-2 form-label">Título</label>
           <div class="col-sm-10">
-            <input type="text" name="title" class="form-control" id="titulo" placeholder="Sem título"/>
+            <input type="text" name="title" class="form-control" id="titulo" placeholder="Sem título" />
           </div>
         </div>
         <div class="mb-3 row">
@@ -36,20 +34,24 @@ require('../components/head.php');
           </div>
           <div class="col-sm-10">
             <a href="#" id="link-obra-full" title="Ver no tamanho original">
-              <img id="img-obra"/>
+              <img id="img-obra" />
             </a>
-            <input type="file" id="input-imagem" class="form-control d-none"/>
+            <input type="file" id="input-imagem" class="form-control d-none" />
           </div>
         </div>
       </div>
       <div class="card-footer text-center">
         <button type="submit" class="btn btn-success"">Alterar</button>
-        <button class="btn btn-secondary" onclick="history.back()">Cancelar</button>
+        <button class=" btn btn-secondary" onclick="history.back()">Cancelar</button>
       </div>
     </form>
   </div>
 
 </main>
+
+<footer class="mx-auto my-4 nunito text-center">
+  <h6 class="text-black-50 mb-0">© <?= date("Y") ?> - artmux</h5>
+</footer>
 
 <?php require('../components/scripts.php') ?>
 
@@ -58,29 +60,29 @@ require('../components/head.php');
   const slug = params.get('obra')
   if (!slug) {
     alertarErroSistema('Erro ao carregar a obra. A URL não foi acessada corretamente. Tente novamente mais tarde.')
-    .then(() => history.back());
+      .then(() => history.back());
   }
 
   const tagInput = new TagInput(q.id('tags'));
 
   request
-  .authFetch('tags')
-  .then(res => res.json())
-  .then(tags => tagInput.whitelist = tags);
+    .authFetch('tags')
+    .then(res => res.json())
+    .then(tags => tagInput.whitelist = tags);
 
 
   request
-  .authFetch(`artworks/${slug}`)
-  .then(res => {
-    if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
-    return res.json();
-  })
-  .then(carregarObra)
-  .catch(err => {
-    console.error(err)
-    alertarErroSistema( 'Erro ao carregar a obra. Tente novamente mais tarde.')
-    .then(() => history.back());
-  })
+    .authFetch(`artworks/${slug}`)
+    .then(res => {
+      if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
+      return res.json();
+    })
+    .then(carregarObra)
+    .catch(err => {
+      console.error(err)
+      alertarErroSistema('Erro ao carregar a obra. Tente novamente mais tarde.')
+        .then(() => history.back());
+    })
 
   async function carregarObra(obra) {
     q.id('titulo').value = obra.title
@@ -98,17 +100,23 @@ require('../components/head.php');
   lnRemoverImagem.onclick = ev => {
     if (ev.button != 0) return
     ev.preventDefault()
-    q.hide(lnRemoverImagem); q.hide(elemImagem)
-    q.show(lnRestaurImagem); q.show(inputImagem)
-    inputImagem.setAttribute('name', 'image'); inputImagem.setAttribute('required', 'required')
+    q.hide(lnRemoverImagem);
+    q.hide(elemImagem)
+    q.show(lnRestaurImagem);
+    q.show(inputImagem)
+    inputImagem.setAttribute('name', 'image');
+    inputImagem.setAttribute('required', 'required')
   }
 
   lnRestaurImagem.onclick = ev => {
     if (ev.button != 0) return
     ev.preventDefault()
-    q.show(lnRemoverImagem); q.show(elemImagem)
-    q.hide(lnRestaurImagem); q.hide(inputImagem)
-    inputImagem.removeAttribute('name'); inputImagem.removeAttribute('required')
+    q.show(lnRemoverImagem);
+    q.show(elemImagem)
+    q.hide(lnRestaurImagem);
+    q.hide(inputImagem)
+    inputImagem.removeAttribute('name');
+    inputImagem.removeAttribute('required')
   }
 
   const form = q.id('form-alterar-obra')
@@ -126,20 +134,25 @@ require('../components/head.php');
 
   function submitAlterarObra(formData) {
     request
-    .authFetch(`artworks/${slug}`, { method:'PATCH', body:formData, })
-    .then(res => {
-      if (res.status != 200) throw ['Resposta não-ok', res];
-      return res.json();
-    })
-    .then(json => {
-      const { slug } = json;
-      agendarAlertaSucesso('A obra foi alterada com sucesso.');
-      location.assign(`/obras/detalhe.php?obra=${slug}`)
-    })
-    .catch(err => {
-      console.error(err)
-      alertarErroSistema( 'Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.');
-    })
+      .authFetch(`artworks/${slug}`, {
+        method: 'PATCH',
+        body: formData,
+      })
+      .then(res => {
+        if (res.status != 200) throw ['Resposta não-ok', res];
+        return res.json();
+      })
+      .then(json => {
+        const {
+          slug
+        } = json;
+        agendarAlertaSucesso('A obra foi alterada com sucesso.');
+        location.assign(`/obras/detalhe.php?obra=${slug}`)
+      })
+      .catch(err => {
+        console.error(err)
+        alertarErroSistema('Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.');
+      })
   }
 </script>
 

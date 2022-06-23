@@ -44,8 +44,8 @@ require_once('../components/header.php');
   }
 </style>
 
-<main class="container-fluid">
-  <section class="page-title px-4 py-5">
+<main class="container-fluid px-5">
+  <section class="page-title py-5">
     <h3 class="text-primary mb-0">publicações</h3>
 
     <div>
@@ -54,14 +54,14 @@ require_once('../components/header.php');
     </div>
   </section>
 
-  <section class="px-4 d-none" id="section-filtros">
+  <section class="d-none" id="section-filtros">
     <div class="mb-3 card">
       <div class="card-body" id="container-parametros">
       </div>
     </div>
   </section>
 
-  <section class="px-4" id="card-publicacoes">
+  <section id="card-publicacoes">
     <div id="msg-sem-publicacoes" class="alert alert-info d-none">
       Nenhuma das publicações cadastradas satisfaz os critérios de busca informados (ou não há publicações cadastradas).
     </div>
@@ -164,7 +164,7 @@ require_once('../components/header.php');
             `<div 
               id="publication-${publication.id}"
               class="publications-card"
-              title="${publication.text}"
+              title="Conteúdo:  ${publication.text}"
               onclick="location.href='/publicacoes/detalhe.php?publicacao=${publication.slug}'"
               style="background: linear-gradient(transparent, rgba(0, 0, 0, 0.5)), url(${images[0]});"
             >

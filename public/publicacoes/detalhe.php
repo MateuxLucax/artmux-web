@@ -115,7 +115,7 @@ require_once('../components/header.php');
       .then(res => {
         if (!res.ok) throw new ['Resposta não-ok', res];
         agendarAlertaSucesso('Publicação excluída com sucesso');
-        location.assign('/publicacoes/listar.php');
+        location.assign('/publicacoes/');
       })
       .catch(err => {
         console.error(err);

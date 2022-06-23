@@ -1,4 +1,5 @@
-<?php $titulo = 'entrar'; require('../components/head.php'); ?>
+<?php $titulo = 'entrar';
+require('../components/head.php'); ?>
 
 <main class="container-fluid min-vh-100 d-flex flex-column max-width-480">
     <section class="mt-auto mb-4 mx-auto">
@@ -13,7 +14,7 @@
         <div class="form-group mt-2">
             <label for="password" class="form-label">senha</label>
             <input type="password" class="form-control" id="password" placeholder="********" required />
-        </div> 
+        </div>
         <div class="form-check my-4">
             <input type="checkbox" class="form-check-input" id="keepLoggedIn" />
             <label class="form-check-label" for="keepLoggedIn">manter conectado</label>
@@ -23,8 +24,8 @@
         </div>
 
         <p class="align-center mt-4 text-center">
-            não possui cadastro? 
-           <a href="/cadastrar#" class="link-dark"><strong>clique aqui!</strong></a>
+            não possui cadastro?
+            <a href="/cadastrar#" class="link-dark"><strong>clique aqui!</strong></a>
         </p>
     </form>
 
@@ -36,7 +37,13 @@
 <?php require('../components/scripts.php'); ?>
 
 <script>
-    const form  = q.sel('form');
+    window.onload = async () => {
+        if (storage.getToken() !== null) {
+            window.location = '/publicacoes';
+        }
+    };
+
+    const form = q.sel('form');
     const loginButton = q.id('login-btn');
     let loading = false;
 
@@ -48,7 +55,11 @@
             loginButton.disabled = true;
             loginButton.innerText = `entrando...`;
 
-            const { username, password, keepLoggedIn } = form;
+            const {
+                username,
+                password,
+                keepLoggedIn
+            } = form;
 
             try {
                 const response = await request.post('auth/signin', {
