@@ -222,11 +222,7 @@ require_once('../components/header.php');
       })
       .catch(err => {
         console.error(err)
-        Swal.fire({
-          title: 'Erro do sistem',
-          text: 'Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.',
-          icon: 'error'
-        })
+        $message.error('Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.');
       })
   }
 </script>
