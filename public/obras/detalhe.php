@@ -10,17 +10,22 @@ require_once('../components/header.php');
   </section>
 
   <div class="card mb-3">
-    <div class="card-header" style="text-align: right;">
-      <button id="btn-excluir" class="btn btn-danger">
-        <i class="bi bi-trash-fill"></i>
+    <div class="card-header d-flex justify-content-between">
+      <button id="toggle-artwork-btn" onclick="toggleArtworkImg()" class="btn btn-secondary" title="Ocultar imagem">
+        <i class="bi bi-eye-slash"></i>
       </button>
-      <a id="link-alterar" class="btn btn-primary" href="#">
-        <i class="bi bi-pencil-fill"></i>
-      </a>
+      <div>
+        <button id="btn-excluir" class="btn btn-danger me-2">
+          <i class="bi bi-trash-fill"></i>
+        </button>
+        <a id="link-alterar" class="btn btn-primary" href="#">
+          <i class="bi bi-pencil-fill"></i>
+        </a>
+      </div>
     </div>
     <div class="card-body">
 
-      <div class="mb-4 text-center">
+      <div class="mb-4 text-center" id="artwork-img-container">
         <a id="obra-img-link-full" title="Ver no tamanho original">
           <img id="obra-img" />
         </a>
@@ -226,6 +231,21 @@ require_once('../components/header.php');
         console.error(err)
         $message.error('Ocorreu um erro ao excluir essa obra. Tente novamente mais tarde.');
       })
+  }
+
+  const toggleArtworkImg = () => {
+    const btnEl = q.id('toggle-artwork-btn');
+    if (q.sel('#toggle-artwork-btn .bi-eye-slash')) {
+      q.hide(q.id('artwork-img-container'));
+      q.empty(btnEl);
+      q.make('i', ['bi', 'bi-eye'], btnEl);
+      btnEl.title = 'Mostrar imagem';
+    } else {
+      q.show(q.id('artwork-img-container'));
+      q.empty(btnEl);
+      q.make('i', ['bi', 'bi-eye-slash'], btnEl);
+      btnEl.title = 'Ocultar imagem';
+    }
   }
 </script>
 
