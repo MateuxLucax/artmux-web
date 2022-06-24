@@ -4,7 +4,10 @@ require_once('../components/head.php');
 require_once('../components/header.php');
 ?>
 
-<main class="container py-5 px-4">
+<main class="container px-4">
+  <section class="page-title py-5">
+    <h3 class="text-primary mb-0">detalhes da obra</h3>
+  </section>
 
   <div class="card mb-3">
     <div class="card-header" style="text-align: right;">
