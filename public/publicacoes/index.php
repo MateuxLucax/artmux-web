@@ -65,12 +65,13 @@ require_once('../components/header.php');
     <div id="msg-sem-publicacoes" class="alert alert-info d-none">
       Nenhuma das publicações cadastradas satisfaz os critérios de busca informados (ou não há publicações cadastradas).
     </div>
-
-    <div id="container-paginacao"></div>
     <div id="loading" class="loading-container">
       <div class="spinner-border text-primary" role="status"></div>
     </div>
-    <section id="publications-container"></section>
+    <section>
+      <div id="container-paginacao" class="mb-3"></div>
+      <section id="publications-container"></section>
+    </section>
   </section>
 
 </main>
@@ -116,6 +117,7 @@ require_once('../components/header.php');
   const cardPublicacoes = q.id('card-publicacoes');
 
   async function fazerBusca(ordenacao, direcao, pubPorPagina, pagina, filtros, cbNumResultados) {
+    q.show(q.id('loading'));
     const busca = new URLSearchParams();
     busca.append('order', ordenacao);
     busca.append('direction', direcao);

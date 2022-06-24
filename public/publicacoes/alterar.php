@@ -99,8 +99,6 @@ require_once('../components/header.php');
       artworks
     };
 
-    console.log('payload', payload);
-
     request.authFetch('publications/' + slug, {
         method: 'PATCH',
         body: JSON.stringify(payload),

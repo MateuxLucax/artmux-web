@@ -111,7 +111,6 @@ require_once('../components/header.php');
   request
     .authFetch(`artworks/${slug}?with=publications`)
     .then(res => {
-      console.log(res)
       if (res.status != 200 && res.status != 304) {
         throw 'Resposta não-ok'
       }

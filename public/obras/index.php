@@ -86,10 +86,11 @@ require_once('../components/header.php');
         <div id="msg-sem-obras" class="alert alert-info d-none">
             Nenhuma das obras cadastradas satisfaz os critérios de busca informados.
         </div>
-
+        <div id="loading" class="loading-container">
+            <div class="spinner-border text-primary" role="status"></div>
+        </div>
         <section>
             <nav id="container-paginacao" class="mb-3"></nav>
-
             <section id="artworks-container"></section>
         </section>
     </section>
@@ -171,6 +172,7 @@ require_once('../components/header.php');
      * @return void
      */
     function fazerBusca(ordenacao, direcao, obrasPorPagina, pagina, filtros, callbackNumResultados) {
+        q.show(q.id('loading'));
         const buscaAPI = new URLSearchParams();
         buscaAPI.append('order', ordenacao)
         buscaAPI.append('direction', direcao)
@@ -200,6 +202,7 @@ require_once('../components/header.php');
                     q.empty(containerObras);
                     q.show(cardObras);
                     q.hide(msgSemObras);
+                    q.hide(q.id('loading'));
 
                     obras.forEach(carregarObra);
 
