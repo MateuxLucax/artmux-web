@@ -73,7 +73,6 @@ const request = {
       return null;
     }
 
-    console.log(response)
     return {
       response,
       json: await response.json()
