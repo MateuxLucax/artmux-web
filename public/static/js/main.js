@@ -98,6 +98,30 @@ const request = {
     });
   },
 
+  patch: (url, data, headers = {}) => {
+    return fetch(request.baseUrl + url, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...headers
+      }
+    });
+  },
+
+  delete: (url, headers = {}) => {
+    return fetch(request.baseUrl + url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...headers
+      }
+    });
+  },
+
+
   auth: {
     get: async (url, headers = {}) => {
       return request.treatResponse(await request.get(url, {
@@ -111,7 +135,21 @@ const request = {
         'Authorization': `Bearer ${storage.getToken()}`,
         ...headers
       }));
-    }
+    },
+
+    patch: async (url, data, headers = {}) => {
+      return request.treatResponse(await request.patch(url, data, {
+        'Authorization': `Bearer ${storage.getToken()}`,
+        ...headers
+      }));
+    },
+
+    delete: async (url, headers = {}) => {
+      return request.treatResponse(await request.delete(url, {
+        'Authorization': `Bearer ${storage.getToken()}`,
+        ...headers
+      }));
+    },
   }
 }
 

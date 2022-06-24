@@ -69,6 +69,7 @@ require_once('../components/header.php');
         <h3 class="text-primary mb-0">obras</h3>
 
         <div>
+            <a class="btn btn-outline-primary me-3" href="/tags/">tags</a>
             <button onclick="q.toggle(q.id('card-busca'))" class="btn btn-outline-primary me-3">filtrar obras</button>
             <a class="btn btn-primary" href="/obras/nova.php">nova obra</a>
         </div>

@@ -204,3 +204,36 @@ function alertarErroSistema(msg) {
     text: msg
   });
 }
+
+const $message = {
+  warn: (message, title = 'Ops!') => {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'warning',
+      confirmButtonText: 'ok',
+      confirmButtonColor: '#0d6efd'
+    });
+  },
+
+  success: (message, title = 'Yaaaay!') => {
+    Swal.fire({
+      title: title,
+      text: message,
+      icon: 'success',
+      timer: 1500
+    });
+  },
+
+  confirm: (message, title = 'Tem certeza?') => Swal.fire({
+    title: title,
+    text: message,
+    icon: 'warning',
+    cancelButtonText: 'Cancelar',
+    confirmButtonColor: '#0d6efd',
+    showCancelButton: true,
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sim, remover!'
+  }),
+
+}
