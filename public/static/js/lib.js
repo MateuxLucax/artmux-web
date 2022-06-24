@@ -182,6 +182,7 @@ const imageBlobUrl = (function() {
 })();
 
 const $message = {
+  // TODO: make params as obj, making possible to pass more shit to obj, and maybe, customize even more if necessary
   warn: (message, title = 'Ops!') => Swal.fire({
     title: title,
     text: message,
@@ -203,9 +204,9 @@ const $message = {
     text: message,
     icon: 'warning',
     cancelButtonText: 'Cancelar',
-    confirmButtonColor: '#0d6efd',
+    confirmButtonColor: '#d33',
     showCancelButton: true,
-    cancelButtonColor: '#d33',
+    cancelButtonColor: '#0d6efd',
     confirmButtonText: 'Sim, remover!'
   }),
 

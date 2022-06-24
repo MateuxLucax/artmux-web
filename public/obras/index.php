@@ -56,7 +56,7 @@ require_once('../components/header.php');
 
     .artwork-tags {
         display: flex;
-        flex-direction: row;
+    flex-direction: row;
     }
 
     .artwork-tags span:not(:last-child) {
@@ -66,7 +66,7 @@ require_once('../components/header.php');
 
 <main class="container-fluid px-5">
     <section class="page-title py-5">
-        <h3 class="text-primary mb-0">obras</h3>
+        <h3 class="text-primary mb-0"><?= $titulo ?></h3>
 
         <div>
             <a class="btn btn-outline-primary me-3" href="/tags/">tags</a>
@@ -82,12 +82,13 @@ require_once('../components/header.php');
         </div>
     </div>
 
+    <div id="loading" class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
     <section class="d-none" id="card-obras">
         <div id="msg-sem-obras" class="alert alert-info d-none">
             Nenhuma das obras cadastradas satisfaz os critérios de busca informados.
-        </div>
-        <div id="loading" class="loading-container">
-            <div class="spinner-border text-primary" role="status"></div>
         </div>
         <section>
             <nav id="container-paginacao" class="mb-3"></nav>
@@ -160,7 +161,7 @@ require_once('../components/header.php');
               </div>
               <p>${artwork.title}</p>
            </div>`;
-        q.id('artworks-container').insertAdjacentHTML('beforeend', card);
+        return card;
     }
 
     /**
@@ -190,7 +191,7 @@ require_once('../components/header.php');
                 if (res.status != 200 && res.status != 304) throw res;
                 return res.json();
             })
-            .then(ret => {
+            .then(async ret => {
                 const {
                     total: totalObras,
                     artworks: obras
@@ -202,9 +203,16 @@ require_once('../components/header.php');
                     q.empty(containerObras);
                     q.show(cardObras);
                     q.hide(msgSemObras);
-                    q.hide(q.id('loading'));
 
-                    obras.forEach(carregarObra);
+                    const cards = [];
+                    for (const obra of obras) {
+                        cards.push(await carregarObra(obra));
+                    }
+                    console.log(cards);
+                    q.hide(q.id('loading'));
+                    for (const card of cards) {
+                        q.id('artworks-container').insertAdjacentHTML('beforeend', card);
+                    }
 
                     callbackNumResultados(totalObras);
                 }

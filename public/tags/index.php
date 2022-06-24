@@ -4,10 +4,13 @@ require_once('../components/head.php');
 require_once('../components/header.php');
 ?>
 
+<!-- TODO: avaliar necessidade de adicionar paginacao, 
+           filtros etc assim como os demais componentes -->
+
 <style>
     #tags-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
         grid-gap: 24px;
     }
 
@@ -28,10 +31,15 @@ require_once('../components/header.php');
 
 <main class="container-fluid px-5">
     <section class="page-title py-5">
-        <h3 class="text-primary mb-0">tags</h3>
+        <h3 class="text-primary mb-0"><?= $titulo ?></h3>
     </section>
 
-    <section id="tags-container"></section>
+    <div id="loading" class="loading-container">
+        <div class="spinner-border text-primary" role="status"></div>
+    </div>
+
+    <section id="tags-container">
+    </section>
 </main>
 
 <footer class="mx-auto my-4 nunito text-center">
@@ -48,6 +56,7 @@ require_once('../components/header.php');
 
     const loadTags = async () => {
         q.empty(tagsContainer);
+        q.show(q.id('loading'));
 
         try {
             const {
@@ -57,6 +66,7 @@ require_once('../components/header.php');
 
             if (response.status !== 200) throw response.status;
 
+            const cards = [];
             for (const tag of tags) {
                 let artworksWithTag;
                 if (tag.artworks.length) {
@@ -83,8 +93,12 @@ require_once('../components/header.php');
                                 </div>
                                 ${artworksWithTag || ''}
                             </div>`;
-                tagsContainer.insertAdjacentHTML('beforeend', tagCard);
+                cards.push(tagCard);
             }
+            q.hide(q.id('loading'));
+            for (const card of cards) {
+                tagsContainer.insertAdjacentHTML('beforeend', card)
+            };
         } catch (error) {
             console.error(error);
             $message.warn('Não foi possível carregar as tags')

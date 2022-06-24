@@ -300,7 +300,7 @@ class ArtworkGrid {
     img.style['max-width'] = 'min(100%, 256px)';
     img.style['max-height'] = 'min(100%, 256px)';
     img.style['object-fit'] = 'contain';
-    q.make('p', [], element, { innerText: artwork.title });
+    q.make('p', [], element, { innerText: artwork.title, style: 'margin-bottom: 0;' });
     element.addEventListener('mouseenter', () => {
       element.style['filter'] = 'brightness(0.95)';
       img.style['filter'] = 'brightness(calc(1/0.95))';

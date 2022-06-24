@@ -4,7 +4,10 @@ require_once('../components/head.php');
 require_once('../components/header.php');
 ?>
 
-<main class="container py-5 px-4">
+<main class="container px-4">
+  <section class="page-title py-5">
+    <h3 class="text-primary mb-0"><?= $titulo ?></h3>
+  </section>
   <form id="form-alterar-publicacao">
 
     <input type="hidden" name="slug">
@@ -35,8 +38,8 @@ require_once('../components/header.php');
 
       </div>
       <div class="card-footer text-center">
-        <button id="btn-alterar" disabled type="submit" class="btn btn-success">Alterar</button>
-        <button class="btn btn-secondary" onclick="history.back()">Cancelar</button>
+        <button class="btn btn-secondary me-4" onclick="history.back()">Cancelar</button>
+        <button id="btn-alterar" disabled type="submit" class="btn btn-primary">Alterar</button>
       </div>
     </div>
 

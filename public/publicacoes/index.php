@@ -46,7 +46,7 @@ require_once('../components/header.php');
 
 <main class="container-fluid px-5">
   <section class="page-title py-5">
-    <h3 class="text-primary mb-0">publicações</h3>
+    <h3 class="text-primary mb-0"><?= $titulo ?></h3>
 
     <div>
       <button onclick="q.toggle(q.id('section-filtros'))" class="btn btn-outline-primary me-3">filtrar publicações</button>
@@ -155,7 +155,7 @@ require_once('../components/header.php');
 
         const publictaionsContainer = q.id('publications-container');
         q.empty(publictaionsContainer);
-        q.hide(q.id('loading'));
+        const cards = [];
         for (const publication of publications) {
           const images = [];
           // TODO: maybe something better, limit images, Promise.all or something else...
@@ -173,7 +173,7 @@ require_once('../components/header.php');
               <div class="published-at-tags"></div> <!-- TODO: add tags for published at -->
               <p>${publication.title}</p>
            </div>`;
-          publictaionsContainer.insertAdjacentHTML('beforeend', card);
+          cards.push(card);
           setInterval(() => {
             const publicationImages = images;
             const updateCard = q.id(`publication-${publication.id}`);
@@ -181,6 +181,11 @@ require_once('../components/header.php');
             updateCard.style.background = `linear-gradient(transparent, rgba(0, 0, 0, 0.5)), url(${publicationImages[random]})`;
           }, 5000);
         }
+        q.hide(q.id('loading'));
+        for (const card of cards) {
+          publictaionsContainer.insertAdjacentHTML('beforeend', card);
+        }
+
       })
       .catch(err => {
         console.error(err);
