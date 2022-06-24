@@ -84,7 +84,7 @@ require_once('../components/header.php');
       })
       .catch(err => {
         console.error(err);
-        alertarErroSistema('Ocorreu um erro ao criar a publicação. Tente novamente mais tarde.');
+        $message.error('Ocorreu um erro ao criar a publicação. Tente novamente mais tarde.');
       })
   }
 </script>

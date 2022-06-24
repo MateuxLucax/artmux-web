@@ -100,12 +100,10 @@ require_once('../components/header.php');
   function handleExclusaoPublicacao(event, slug) {
     if (event.buttons != 0) return;
     event.preventDefault();
-    pedirConfirmacaoExclusao(
-      'Tem certeza de que deseja excluir essa publicação?',
-      () => {
-        excluirPublicacao(slug);
-      }
-    );
+    $message.confirm('Tem certeza de que deseja excluir essa publicação?')
+      .then(result => {
+        if (result.isConfirmed) excluirPublicacao(slug);
+      });
   }
 
   function excluirPublicacao(slug) {
@@ -119,13 +117,13 @@ require_once('../components/header.php');
       })
       .catch(err => {
         console.error(err);
-        alertarErroSistema('Ocorreu um erro e não foi possível excluir a publicação. Tente novamente mais tarde.');
+        $message.error('Ocorreu um erro e não foi possível excluir a publicação. Tente novamente mais tarde.');
       })
   }
 
   const params = new URLSearchParams(location.search);
   if (!params.has('publicacao')) {
-    alertarErroSistema('Página de detalhe de publicação acessada incorretamente')
+    $message.error('Página de detalhe de publicação acessada incorretamente')
       .then(() => {
         history.back()
       })
@@ -141,7 +139,7 @@ require_once('../components/header.php');
     .then(carregarPublicacao)
     .catch(err => {
       console.error(err);
-      alertarErroSistema('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
+      $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
         .then(() => {
           history.back();
         })

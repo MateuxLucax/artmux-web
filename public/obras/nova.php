@@ -63,7 +63,7 @@ require_once('../components/header.php');
     .then(tags => tagInput.whitelist = tags)
     .catch(err => {
       console.error(err)
-      alertarErroSistema('Não foi possível carregar as suas tags. Tente novamente mais tarde.');
+      $message.error('Não foi possível carregar as suas tags. Tente novamente mais tarde.');
     });
 
   const form = document.getElementById('form-nova-obra')
@@ -98,7 +98,7 @@ require_once('../components/header.php');
       })
       .catch(err => {
         console.error(err)
-        alertarErroSistema('Não conseguimos incluir a obra. Tente novamente mais tarde.')
+        $message.error('Não conseguimos incluir a obra. Tente novamente mais tarde.')
       })
   }
 </script>

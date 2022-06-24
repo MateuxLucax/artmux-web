@@ -181,49 +181,22 @@ const imageBlobUrl = (function() {
   }
 })();
 
-function pedirConfirmacaoExclusao(mensagem, callbackExclusao) {
-  Swal.fire({
-    text: mensagem,
-    icon: 'question',
-    showConfirmButton: true,
-    confirmButtonText: 'Excluir',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar'
-  })
-  .then(result => {
-    if (result.isConfirmed) {
-      callbackExclusao();
-    }
-  })
-}
-
-function alertarErroSistema(msg) {
-  return Swal.fire({
-    icon: 'error',
-    title: 'Erro do sistema',
-    text: msg
-  });
-}
-
 const $message = {
-  warn: (message, title = 'Ops!') => {
-    Swal.fire({
-      title: title,
-      text: message,
-      icon: 'warning',
-      confirmButtonText: 'ok',
-      confirmButtonColor: '#0d6efd'
-    });
-  },
+  warn: (message, title = 'Ops!') => Swal.fire({
+    title: title,
+    text: message,
+    icon: 'warning',
+    confirmButtonText: 'ok',
+    confirmButtonColor: '#0d6efd'
+  }),
 
-  success: (message, title = 'Yaaaay!') => {
-    Swal.fire({
-      title: title,
-      text: message,
-      icon: 'success',
-      timer: 1500
-    });
-  },
+  success: (message, title = 'Yaaaay!') => Swal.fire({
+    title: title,
+    text: message,
+    icon: 'success',
+    timer: 1500,
+    showConfirmButton: false
+  }),
 
   confirm: (message, title = 'Tem certeza?') => Swal.fire({
     title: title,
@@ -236,4 +209,11 @@ const $message = {
     confirmButtonText: 'Sim, remover!'
   }),
 
+  error: (message, title = 'Erro!') => Swal.fire({
+    title: title,
+    text: message,
+    icon: 'error',
+    confirmButtonText: 'ok',
+    confirmButtonColor: '#0d6efd'
+  })
 }

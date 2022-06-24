@@ -208,7 +208,7 @@ require_once('../components/header.php');
             })
             .catch(err => {
                 console.error(err)
-                alertarErroSistema('Não conseguimos carregar as suas obras. Tente novamente mais tarde.')
+                $message.error('Não conseguimos carregar as suas obras. Tente novamente mais tarde.')
                     .then(history.back)
             })
     }

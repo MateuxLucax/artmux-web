@@ -1,4 +1,5 @@
-<?php $titulo = 'cadastrar'; require('../components/head.php'); ?>
+<?php $titulo = 'cadastrar';
+require('../components/head.php'); ?>
 
 <main class="container-fluid min-vh-100 d-flex flex-column max-width-480">
     <section class="mt-auto mb-4 mx-auto">
@@ -36,8 +37,8 @@
         </div>
 
         <p class="align-center mt-4 text-center">
-            já possui cadastro? 
-           <a href="/entrar" class="link-dark"><strong>clique aqui!</strong></a>
+            já possui cadastro?
+            <a href="/entrar" class="link-dark"><strong>clique aqui!</strong></a>
         </p>
     </form>
 
@@ -49,7 +50,7 @@
 <?php require('../components/scripts.php'); ?>
 
 <script>
-    const form  = q.sel('form');
+    const form = q.sel('form');
     const submitButton = q.id('submit-btn');
     let loading = false;
 
@@ -60,7 +61,12 @@
             loading = true;
             let valid = true;
 
-            const { username, email, password, passwordConfirmation } = form;
+            const {
+                username,
+                email,
+                password,
+                passwordConfirmation
+            } = form;
 
             if (password.value !== passwordConfirmation.value) {
                 passwordConfirmation.classList.add('is-invalid');
@@ -102,24 +108,13 @@
             if (response.status === 201) {
                 window.location.href = '/entrar';
             } else {
-                Swal.fire({
-                    title: 'Não foi possível cadastrar',
-                    text: body.message,
-                    icon: 'warning',
-                    confirmButtonText: 'ok',
-                    confirmButtonColor: '#0d6efd'
-                });
+                $message.warn(body.message, 'Não foi possível cadastrar!');
             }
         } catch (error) {
-            Swal.fire({
-                title: 'Erro',
-                text: error.message,
-                icon: 'error',
-                confirmButtonText: 'ok',
-                confirmButtonColor: '#0d6efd'
-            });
+            $message.error(error.message);
         } finally {
-            submitButton.disabled = false;1
+            submitButton.disabled = false;
+            1
             submitButton.innerText = 'cadastrar';
         }
     }

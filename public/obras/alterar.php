@@ -59,7 +59,7 @@ require_once('../components/header.php');
   const params = new URLSearchParams(location.search)
   const slug = params.get('obra')
   if (!slug) {
-    alertarErroSistema('Erro ao carregar a obra. A URL não foi acessada corretamente. Tente novamente mais tarde.')
+    $message.error('Erro ao carregar a obra. A URL não foi acessada corretamente. Tente novamente mais tarde.')
       .then(() => history.back());
   }
 
@@ -80,7 +80,7 @@ require_once('../components/header.php');
     .then(carregarObra)
     .catch(err => {
       console.error(err)
-      alertarErroSistema('Erro ao carregar a obra. Tente novamente mais tarde.')
+      $message.error('Erro ao carregar a obra. Tente novamente mais tarde.')
         .then(() => history.back());
     })
 
@@ -151,7 +151,7 @@ require_once('../components/header.php');
       })
       .catch(err => {
         console.error(err)
-        alertarErroSistema('Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.');
+        $message.error('Ocorreu um erro e não foi possível alterar a obra. Tente novamente mais tarde.');
       })
   }
 </script>

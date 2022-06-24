@@ -72,22 +72,10 @@ require('../components/head.php'); ?>
                     storage.setToken(body.token, keepLoggedIn);
                     window.location.href = '/publicacoes';
                 } else {
-                    Swal.fire({
-                        title: 'Não foi possível autenticar',
-                        text: body.message,
-                        icon: 'warning',
-                        confirmButtonText: 'ok',
-                        confirmButtonColor: '#0d6efd'
-                    });
+                    $message.warn(body.message, 'Não foi possível autenticar!');
                 }
             } catch (error) {
-                Swal.fire({
-                    title: 'Erro',
-                    text: error.message,
-                    icon: 'error',
-                    confirmButtonText: 'ok',
-                    confirmButtonColor: '#0d6efd'
-                });
+                $message.error(error.message);
             } finally {
                 loading = false;
                 loginButton.disabled = false;

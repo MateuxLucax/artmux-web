@@ -120,7 +120,7 @@ require_once('../components/header.php');
     .then(carregarObra)
     .catch(err => {
       console.error(err)
-      alertarErroSistema('Erro ao carregar a obra. Tente novamente mais tarde.')
+      $message.error('Erro ao carregar a obra. Tente novamente mais tarde.')
         .then(() => history.back())
     })
 
@@ -195,12 +195,10 @@ require_once('../components/header.php');
 
     q.id('btn-excluir').onclick = ev => {
       if (ev.button != 0) return;
-      pedirConfirmacaoExclusao(
-        'Tem certeza de que deseja excluir essa obra?',
-        () => {
-          fazerExclusao(slug)
-        }
-      );
+      $message.confirm('Tem certeza de que deseja excluir essa obra?')
+        .then(result => {
+          if (result.isConfirmed) fazerExclusao(slug);
+        });
     }
   }
 

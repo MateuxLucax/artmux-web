@@ -66,7 +66,7 @@ require_once('../components/header.php');
   const params = new URLSearchParams(location.search);
   const slugPublicacao = params.get('publicacao');
   if (!slugPublicacao) {
-    alertarErroSistema('Erro ao carregar a publicação. A URL não foi acessada corretamente.')
+    $message.error('Erro ao carregar a publicação. A URL não foi acessada corretamente.')
       .then(() => history.back());
   }
 
@@ -78,7 +78,7 @@ require_once('../components/header.php');
     .then(carregarPublicacao)
     .catch(err => {
       console.error(err);
-      alertarErroSistema('Erro ao carregar a publicação. Tente novamente mais tarde')
+      $message.error('Erro ao carregar a publicação. Tente novamente mais tarde')
         .then(() => history.back());
     });
 

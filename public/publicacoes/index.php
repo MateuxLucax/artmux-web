@@ -182,7 +182,7 @@ require_once('../components/header.php');
       })
       .catch(err => {
         console.error(err);
-        alertarErroSistema('Ocorreu um erro ao fazer a busca pelas publicações');
+        $message.error('Ocorreu um erro ao fazer a busca pelas publicações');
       });
   }
 </script>
