@@ -72,7 +72,12 @@ const request = {
       logout();
       return null;
     }
-    return await response.json();
+
+    console.log(response)
+    return {
+      response,
+      json: await response.json()
+    }
   },
 
   get: (url, headers = {}) => {

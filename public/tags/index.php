@@ -50,7 +50,12 @@ require_once('../components/header.php');
         q.empty(tagsContainer);
 
         try {
-            const tags = await request.auth.get('tags');
+            const {
+                json: tags,
+                response
+            } = await request.auth.get('tags');
+
+            if (response.status !== 200) throw response.status;
 
             for (const tag of tags) {
                 let artworksWithTag;
@@ -99,8 +104,9 @@ require_once('../components/header.php');
 
         if (name.length) {
             try {
-
-                const response = await request.auth.patch(`tags/${id}`, {
+                const {
+                    json: response
+                } = await request.auth.patch(`tags/${id}`, {
                     id,
                     name
                 });
@@ -108,7 +114,7 @@ require_once('../components/header.php');
                 if (response.updated) {
                     $message.success('Nome alterado com sucesso!')
                     loadTags();
-                };
+                } else throw new Exception();
             } catch (_) {
                 console.error(_);
                 $message.warn('Não foi possível alterar o nome da tag :(');
@@ -122,12 +128,14 @@ require_once('../components/header.php');
         } = await $message.confirm(`Você quer mesmo remover a tag <${tagName}>`)
         if (isConfirmed) {
             try {
-                const response = await request.auth.delete(`tags/${id}`);
+                const {
+                    json: response
+                } = await request.auth.delete(`tags/${id}`);
 
                 if (response.deleted) {
                     $message.success('Tag removida com sucesso!')
                     loadTags();
-                };
+                } else throw new Exception();
             } catch (_) {
                 console.error(_);
                 $message.warn('Não foi possível remover a tag :(');
