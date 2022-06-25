@@ -94,13 +94,14 @@ const q = {
 
   /**
    * Toggles element between visible and not visible using the d-none class.
-   * Returns whether the element has been shown (true) or hidden (false).
+   * Also returns whether the element ended up being shown or not.
    * 
-   * @param {HTMLElement} e 
+   * @param {HTMLElement} e
+   * @param {boolean} b
    * @return {boolean}
    */
-  toggle: function(e) {
-    const show = e.classList.contains('d-none');
+  toggle: function(e, b) {
+    const show = b || (b != undefined && e.classList.contains('d-none'));
     if (show) q.show(e); else q.hide(e);
     return show;
   },
