@@ -164,5 +164,8 @@ const logout = () => {
 
 window.onload = async () => {
   const safePages = ['/', '/entrar/', '/cadastrar/'];
-  if (!safePages.includes(window.location.pathname)) await request.auth.get('users/me');
+  if (!safePages.includes(window.location.pathname)) {
+    if (storage.getToken()) await request.auth.get('users/me');
+    else logout(); 
+  }
 };
