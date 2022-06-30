@@ -61,7 +61,7 @@ require_once('../components/header.php');
         </section>
         <section class="tab-pane fade" id="accounts-tab-pane" role="tabpanel" aria-labelledby="account-tab" tabindex="0">
             <section class="card p-4">
-                <button class="btn btn-primary">Conectar Twitter <i class="bi bi-twitter"></i></button>
+                <button onclick="connectNewTwitterAccount()" class="btn btn-primary">Conectar Twitter <i class="bi bi-twitter"></i></button>
             </section>
         </section>
     </section>
@@ -203,6 +203,16 @@ require_once('../components/header.php');
     const openAccountsTab = () => {
         const tabEl = document.querySelector('button[data-bs-target="#accounts-tab-pane"]');
         new bootstrap.Tab(tabEl).show();
+    }
+
+    const connectNewTwitterAccount = async () => {
+        try {
+            const { json } = await request.auth.get('twitter/link/v1/generate');
+            if (json.url) window.location.replace(json.url);
+            else throw new Exception();
+        } catch (_) {
+            $message.warn('Não é possível conectar uma nova conta no momento. Tente novamente mais tarde');
+        }
     }
 </script>
 
