@@ -20,7 +20,7 @@ require_once('../components/header.php');
             <button class="nav-link" id="passwords-tab" data-bs-toggle="tab" data-bs-target="#passwords-tab-pane" type="button" role="tab" aria-controls="passwords-tab-pane" aria-selected="false">Senha</button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Contas</button>
+            <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#accounts-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Contas</button>
         </li>
     </ul>
 
@@ -40,7 +40,7 @@ require_once('../components/header.php');
                 </div>
             </form>
         </section>
-        <section class="tab-pane fade" id="passwords-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+        <section class="tab-pane fade" id="passwords-tab-pane" role="tabpanel" aria-labelledby="passwords-tab" tabindex="0">
             <form class="card p-4" method="POST" id="user-password-form">
                 <div class="form-group mt-2">
                     <label for="password" class="form-label">senha atual</label>
@@ -58,6 +58,11 @@ require_once('../components/header.php');
                     <button class="btn btn-primary" id="update-password-btn" type="submit">alterar senha</button>
                 </div>
             </form>
+        </section>
+        <section class="tab-pane fade" id="accounts-tab-pane" role="tabpanel" aria-labelledby="account-tab" tabindex="0">
+            <section class="card p-4">
+                <button class="btn btn-primary">Conectar Twitter <i class="bi bi-twitter"></i></button>
+            </section>
         </section>
     </section>
 </main>
@@ -89,6 +94,8 @@ require_once('../components/header.php');
 
         userInfoForm.addEventListener('submit', updateUserInfo);
         userPasswordForm.addEventListener('submit', updateUserPassword);
+
+        if (window.location.hash.substr(1) == 'accounts') openAccountsTab();
     };
 
 
@@ -191,6 +198,11 @@ require_once('../components/header.php');
         updateInfoBtn.innerText = 'alterar dados';
         updatePassword.disabled = false;
         updatePassword.innerText = 'alterar senha';
+    }
+
+    const openAccountsTab = () => {
+        const tabEl = document.querySelector('button[data-bs-target="#accounts-tab-pane"]');
+        new bootstrap.Tab(tabEl).show();
     }
 </script>
 
