@@ -114,9 +114,10 @@ const request = {
     });
   },
 
-  delete: (url, headers = {}) => {
+  delete: (url, data, headers = {}) => {
     return fetch(request.baseUrl + url, {
       method: 'DELETE',
+      body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -148,8 +149,8 @@ const request = {
       }));
     },
 
-    delete: async (url, headers = {}) => {
-      return request.treatResponse(await request.delete(url, {
+    delete: async (url, data, headers = {}) => {
+      return request.treatResponse(await request.delete(url, data, {
         'Authorization': `Bearer ${storage.getToken()}`,
         ...headers
       }));

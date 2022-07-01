@@ -236,12 +236,45 @@ require_once('../components/header.php');
         }
     }
 
-    const removeAccess = async (access, socialMedia) => {
+    const removeAccess = async (access, socialMediaId, username) => {
         if (loading) return;
         try {
             loading = true;
-            console.log([access, socialMedia])
-        } catch (_) {
+
+            const {
+                remove
+            } = await $message.confirm(`Você quer mesmo o seu acesso?  <${username}>`)
+            if (remove) {
+                const {
+                    response,
+                    json
+                } = await request.auth.delete(`accesses/${access}`, {
+                    socialMediaId
+                });
+                if (response.status !== 200) {
+                    $message.warn(json.message);
+                } else {
+                    const {
+                        isConfirmed
+                    } = await Swal.fire({
+                        title: 'Aceso removido!',
+                        text: json.message,
+                        icon: 'success',
+                        cancelButtonText: 'fechar',
+                        confirmButtonColor: '#0d6efd',
+                        showCancelButton: true,
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'ok!'
+                    });
+                    if (isConfirmed) {
+                        window.open(json.redirect, '_blank').focus();
+    
+                        q.id(`access-${access}`).remove();
+                    }
+                }
+            }
+        } catch (e) {
+            console.log(e);
             $message.warn('Não foi possível remover seu acesso. Tente novamente mais tarde.');
         } finally {
             loading = false;
@@ -274,15 +307,14 @@ require_once('../components/header.php');
 
                 <div class="social-media-btns">
                     ${accesses.map(access => 
-                        `<div class="btn-group mb-4" role="group">
+                        `<div class="btn-group mb-4" role="group" id="access-${access.id}">
                             <a href="${access.profilePage}" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">${access.username} ${config.btnIcon}</a>
                             <button title="remover acesso" onclick="removeAccess(${access.id}, ${socialMedia.id})" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                         </div>`
                     ).join('')}
                     <button onclick="createAccess(${socialMedia.id})" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">conectar nova conta ${config.btnIcon}</button>
                 </div>
-            </section>
-        `;
+            </section>`;
 
         accountsContainer.insertAdjacentHTML('beforeend', container);
     }
