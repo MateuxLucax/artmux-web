@@ -8,6 +8,17 @@ require_once('../components/header.php');
     .nav-item:not(:last-child) {
         margin-right: 24px;
     }
+
+    .social-media-btns {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .social-media-btns a,
+    .social-media-btns button {
+        border: none;
+    }
 </style>
 
 <main class="container-fluid d-flex flex-column max-width-480">
@@ -60,9 +71,7 @@ require_once('../components/header.php');
             </form>
         </section>
         <section class="tab-pane fade" id="accounts-tab-pane" role="tabpanel" aria-labelledby="account-tab" tabindex="0">
-            <section class="card p-4">
-                <button onclick="connectNewTwitterAccount()" class="btn btn-primary">Conectar Twitter <i class="bi bi-twitter"></i></button>
-            </section>
+
         </section>
     </section>
 </main>
@@ -89,6 +98,10 @@ require_once('../components/header.php');
     let currentUsername;
     let currentEmail;
 
+    let accountsContainer = q.id('accounts-tab-pane');
+
+    let loading = false;
+
     window.onload = async () => {
         await loadUser();
 
@@ -96,6 +109,8 @@ require_once('../components/header.php');
         userPasswordForm.addEventListener('submit', updateUserPassword);
 
         if (window.location.hash.substr(1) == 'accounts') openAccountsTab();
+
+        await myAccesses();
     };
 
 
@@ -205,14 +220,71 @@ require_once('../components/header.php');
         new bootstrap.Tab(tabEl).show();
     }
 
-    const connectNewTwitterAccount = async () => {
+    const createAccess = async (socialMediaId) => {
+        if (loading) return;
         try {
-            const { json } = await request.auth.get('twitter/link/v1/generate');
+            loading = true;
+            const {
+                json
+            } = await request.auth.get(`accesses/create/${socialMediaId}`);
             if (json.url) window.location.replace(json.url);
             else throw new Exception();
         } catch (_) {
+            $message.warn('Não é possível conectar uma nova conta no momento. Tente novamente mais tarde.');
+        } finally {
+            loading = false;
+        }
+    }
+
+    const removeAccess = async (access, socialMedia) => {
+        if (loading) return;
+        try {
+            loading = true;
+            console.log([access, socialMedia])
+        } catch (_) {
+            $message.warn('Não foi possível remover seu acesso. Tente novamente mais tarde.');
+        } finally {
+            loading = false;
+        }
+    }
+
+    const myAccesses = async () => {
+        try {
+            const {
+                response,
+                json
+            } = await request.auth.get('accesses/all');
+
+            if (response.status !== 200) {
+                $message.warn(json.message);
+            } else {
+                json.forEach(createCardBySocialMedia)
+            }
+        } catch (_) {
             $message.warn('Não é possível conectar uma nova conta no momento. Tente novamente mais tarde');
         }
+    }
+
+    const createCardBySocialMedia = (socialMedia) => {
+        const config = socialMedia.config
+        const accesses = socialMedia.accesses
+        const container = `
+            <section class="card p-4 mb-4">
+                <h2 class="text-center mb-4" style="color: ${config.btnBgColor}">${socialMedia.name}</h2>
+
+                <div class="social-media-btns">
+                    ${accesses.map(access => 
+                        `<div class="btn-group mb-4" role="group">
+                            <a href="${access.profilePage}" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">${access.username} ${config.btnIcon}</a>
+                            <button title="remover acesso" onclick="removeAccess(${access.id}, ${socialMedia.id})" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                        </div>`
+                    ).join('')}
+                    <button onclick="createAccess(${socialMedia.id})" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">conectar nova conta ${config.btnIcon}</button>
+                </div>
+            </section>
+        `;
+
+        accountsContainer.insertAdjacentHTML('beforeend', container);
     }
 </script>
 
