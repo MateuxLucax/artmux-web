@@ -242,7 +242,7 @@ require_once('../components/header.php');
             loading = true;
 
             const {
-                remove
+                isConfirmed: remove
             } = await $message.confirm(`Você quer mesmo o seu acesso?  <${username}>`)
             if (remove) {
                 const {
@@ -309,7 +309,7 @@ require_once('../components/header.php');
                     ${accesses.map(access => 
                         `<div class="btn-group mb-4" role="group" id="access-${access.id}">
                             <a href="${access.profilePage}" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">${access.username} ${config.btnIcon}</a>
-                            <button title="remover acesso" onclick="removeAccess(${access.id}, ${socialMedia.id})" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
+                            <button title="remover acesso" onclick="removeAccess(${access.id}, ${socialMedia.id}, '${access.username}')" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                         </div>`
                     ).join('')}
                     <button onclick="createAccess(${socialMedia.id})" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">conectar nova conta ${config.btnIcon}</button>
