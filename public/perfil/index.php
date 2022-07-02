@@ -308,7 +308,7 @@ require_once('../components/header.php');
                 <div class="social-media-btns">
                     ${accesses.map(access => 
                         `<div class="btn-group mb-4" role="group" id="access-${access.id}">
-                            <a href="${access.profilePage}" style="background-color: ${config.btnBgColor}; color: ${config.btnTextColor};" class="btn btn-primary">${access.username} ${config.btnIcon}</a>
+                            <a href="${access.profilePage}" style="background-color: ${config.btnTextColor}; color: ${config.btnBgColor}; border: 1px solid ${config.btnBgColor}; flex: 20 1 auto;" class="btn btn-primary">${access.username} ${config.btnIcon}</a>
                             <button title="remover acesso" onclick="removeAccess(${access.id}, ${socialMedia.id}, '${access.username}')" type="button" class="btn btn-danger"><i class="bi bi-trash"></i></button>
                         </div>`
                     ).join('')}
