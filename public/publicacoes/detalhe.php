@@ -9,7 +9,7 @@ require_once('../components/header.php');
     <h3 class="text-primary mb-0">detalhes da publicação</h3>
   </section>
 
-  <div class="card">
+  <section class="card">
     <div class="card-header" style="text-align: right">
       <button id="btn-excluir" class="btn btn-danger">
         <i class="bi bi-trash-fill"></i>
@@ -52,9 +52,11 @@ require_once('../components/header.php');
           <input readonly type="text" name="data-atualizacao" class="form-control-plaintext text-muted" />
         </div>
       </div>
-
     </div>
-  </div>
+    <div class="card-footer text-center">
+      <button class="btn btn-primary">Publicar</button>
+    </div>
+  </section>
 </main>
 
 <footer class="mx-auto my-4 nunito text-center">
@@ -66,7 +68,7 @@ require_once('../components/header.php');
 <script>
   function carregarPublicacao(pub) {
     document.title = `${document.title} ${pub.title}`;
-    q.id('link-alterar').href = '/publicacoes/alterar.php?publicacao=' + pub.slug;
+    q.id('link-alterar').href = `/publicacoes/alterar.php?publicacao=${pub.slug}`;
     q.id('btn-excluir').onclick = e => {
       handleExclusaoPublicacao(e, pub.slug)
     }
@@ -86,7 +88,7 @@ require_once('../components/header.php');
     const gridObras = new ArtworkGrid((artwork, element) => {
       element.style['cursor'] = 'pointer';
       const linkObra = q.make('a', [], null, {
-        href: '/obras/detalhe.php?obra=' + artwork.slug,
+        href: `/obras/detalhe.php?obra=${artwork.slug}`,
         title: 'Ver no tamanho original'
       });
       const img = q.tagIn('img', element)[0];
@@ -126,6 +128,7 @@ require_once('../components/header.php');
   }
 
   const params = new URLSearchParams(location.search);
+  console.log([params.get("publicar")]);
   if (!params.has('publicacao')) {
     $message.error('Página de detalhe de publicação acessada incorretamente')
       .then(() => {
@@ -135,7 +138,7 @@ require_once('../components/header.php');
 
   const slugPublicacao = params.get('publicacao');
 
-  request.authFetch('publications/' + slugPublicacao)
+  request.authFetch(`publications/${slugPublicacao}`)
     .then(res => {
       if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
       return res.json();

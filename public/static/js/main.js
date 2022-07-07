@@ -67,6 +67,9 @@ const request = {
     return request.fetch(url, init);
   },
 
+  /**
+   * @param {Response} response
+   */
   treatResponse: async (response) => {
     if (response.status === 401) {
       logout();
@@ -169,4 +172,25 @@ window.onload = async () => {
     if (storage.getToken()) await request.auth.get('users/me');
     else logout(); 
   }
+
+  const _alertaSwal = JSON.parse(sessionStorage.getItem('artmux-alerta-swal'));
+  if (_alertaSwal !== null) {
+    sessionStorage.removeItem('artmux-alerta-swal');
+    document.addEventListener('DOMContentLoaded', () => Swal.fire(_alertaSwal));
+  }
 };
+
+const agendarAlerta = (obj) =>  {
+  Object.assign(obj, {
+    toast: true,
+    position: 'top-end'
+  });
+  sessionStorage.setItem('artmux-alerta-swal', JSON.stringify(obj));
+}
+
+const agendarAlertaSucesso = (msg) => {
+  agendarAlerta({
+    icon: 'success',
+    text: msg
+  });
+}

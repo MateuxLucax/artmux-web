@@ -164,7 +164,7 @@ function clamp(x, min, max) {
 }
 
 const imageBlobUrl = (function() {
-  // TODO: can be used with localStorage?
+  // TODO: can be used with localStorage? indexedDb?
   // With the cache, reloading an image inside a page won't create a new blob for it
   const cache = {};
   return async function(imageEndpoint) {

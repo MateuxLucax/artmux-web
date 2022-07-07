@@ -227,7 +227,7 @@ require_once('../components/header.php');
             const {
                 json
             } = await request.auth.get(`accesses/create/${socialMediaId}`);
-            if (json.url) window.location.replace(json.url);
+            if (json.redirect) window.location.replace(json.redirect);
             else throw new Exception();
         } catch (_) {
             $message.warn('Não é possível conectar uma nova conta no momento. Tente novamente mais tarde.');
@@ -243,7 +243,7 @@ require_once('../components/header.php');
 
             const {
                 isConfirmed: remove
-            } = await $message.confirm(`Você quer mesmo o seu acesso?  <${username}>`)
+            } = await $message.confirm(`Você quer mesmo remover o acesso à ${username}?`)
             if (remove) {
                 const {
                     response,
@@ -257,7 +257,7 @@ require_once('../components/header.php');
                     const {
                         isConfirmed
                     } = await Swal.fire({
-                        title: 'Aceso removido!',
+                        title: 'Acesso removido!',
                         text: json.message,
                         icon: 'success',
                         cancelButtonText: 'fechar',
@@ -268,7 +268,7 @@ require_once('../components/header.php');
                     });
                     if (isConfirmed) {
                         window.open(json.redirect, '_blank').focus();
-    
+
                         q.id(`access-${access}`).remove();
                     }
                 }
@@ -299,8 +299,8 @@ require_once('../components/header.php');
     }
 
     const createCardBySocialMedia = (socialMedia) => {
-        const config = socialMedia.config
-        const accesses = socialMedia.accesses
+        const config = socialMedia.config;
+        const accesses = socialMedia.accesses;
         const container = `
             <section class="card p-4 mb-4">
                 <h2 class="text-center mb-4" style="color: ${config.btnBgColor}">${socialMedia.name}</h2>

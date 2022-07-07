@@ -160,9 +160,18 @@ class SearchForm {
     const iconMinus = q.make('i', ['bi', 'bi-dash-lg', 'd-none'], toggleFiltersButton);
 
     toggleFiltersButton.onclick = ev => {
-      q.toggle(iconPlus);
-      q.toggle(iconMinus);
-      toggleFiltersButton.title = q.toggle(this.#filtersContainer) ? 'Esconder filtros' : 'Mostrar filtros';
+      if (iconPlus.classList.contains('d-none')) {
+        q.show(iconPlus);
+        q.hide(iconMinus);
+        toggleFiltersButton.title = "Mostrar filtros";
+        q.hide(this.#filtersContainer);
+      } else {
+        q.show(iconMinus);
+        q.hide(iconPlus);
+        toggleFiltersButton.title = "Esconder filtros";
+        q.show(this.#filtersContainer);
+      }
+
     }
 
     searchButton.onclick = ev => {
@@ -300,6 +309,7 @@ class ArtworkGrid {
     img.style['max-width'] = 'min(100%, 256px)';
     img.style['max-height'] = 'min(100%, 256px)';
     img.style['object-fit'] = 'contain';
+    img.style['border-radius'] = '4px';
     q.make('p', [], element, { innerText: artwork.title, style: 'margin-bottom: 0;' });
     element.addEventListener('mouseenter', () => {
       element.style['filter'] = 'brightness(0.95)';

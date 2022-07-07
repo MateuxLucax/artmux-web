@@ -56,7 +56,7 @@ require_once('../components/header.php');
 
     .artwork-tags {
         display: flex;
-    flex-direction: row;
+        flex-direction: row;
     }
 
     .artwork-tags span:not(:last-child) {
@@ -70,7 +70,7 @@ require_once('../components/header.php');
 
         <div>
             <a class="btn btn-outline-primary me-3" href="/tags/">tags</a>
-            <button onclick="q.toggle(q.id('card-busca'))" class="btn btn-outline-primary me-3">filtrar obras</button>
+            <button onclick="toggleArtworksFilterBtn()" class="btn btn-outline-primary me-3">filtrar obras</button>
             <a class="btn btn-primary" href="/obras/nova.php">nova obra</a>
         </div>
     </section>
@@ -222,6 +222,12 @@ require_once('../components/header.php');
                 $message.error('Não conseguimos carregar as suas obras. Tente novamente mais tarde.')
                     .then(history.back)
             })
+    }
+
+    const toggleArtworksFilterBtn = () => {
+        const el = q.id('card-busca');
+        if (el.classList.contains('d-none')) q.show(el);
+        else q.hide(el);
     }
 </script>
 
