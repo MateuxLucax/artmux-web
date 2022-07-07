@@ -27,7 +27,7 @@ require_once('../components/header.php');
 
       <div class="mb-4 text-center" id="artwork-img-container">
         <a id="obra-img-link-full" title="Ver no tamanho original">
-          <img id="obra-img" />
+          <img id="obra-img" style="border-radius: 4px;" />
         </a>
       </div>
 

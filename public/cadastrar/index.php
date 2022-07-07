@@ -9,25 +9,25 @@ require('../components/head.php'); ?>
     <form class="mb-auto" method="POST" novalidate>
         <div class="form-group my-auto">
             <label for="username" class="form-label">usuário</label>
-            <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
+            <input class="form-control" id="username" autocomplete="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
         </div>
         <div class="form-group mt-2">
             <label for="email" class="form-label">email</label>
-            <input class="form-control" id="email" type="email" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
+            <input class="form-control" id="email" type="email" autocomplete="email" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
             <div class="invalid-feedback">
                 Seu email está incorreto.
             </div>
         </div>
         <div class="form-group mt-2">
             <label for="password" class="form-label">senha</label>
-            <input type="password" class="form-control" id="password" placeholder="********" required />
+            <input type="password" class="form-control" autocomplete="current-password" id="password" placeholder="********" required />
             <div class="invalid-feedback">
                 As senhas não são compatíveis.
             </div>
         </div>
         <div class="form-group mt-2 mb-4">
             <label for="passwordConfirmation" class="form-label">confirme a senha</label>
-            <input type="password" class="form-control" id="passwordConfirmation" placeholder="********" required />
+            <input type="password" class="form-control" autocomplete="current-password" id="passwordConfirmation" placeholder="********" required />
             <div class="invalid-feedback">
                 As senhas não são compatíveis.
             </div>

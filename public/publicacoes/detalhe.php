@@ -54,9 +54,32 @@ require_once('../components/header.php');
       </div>
     </div>
     <div class="card-footer text-center">
-      <button class="btn btn-primary">Publicar</button>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#publishModal">Publicar</button>
     </div>
   </section>
+
+  <section id="publishedAtContainer">
+
+  </section>
+
+  <div class="modal fade" id="publishModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Publicar em:</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form class="modal-body">
+          <ul class="list-group" id="publishAccessesList"></ul>
+        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" style="margin-right: auto;" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" id="publishBtn" class="btn btn-primary" onclick="submitPublish()">Publicar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <footer class="mx-auto my-4 nunito text-center">
@@ -66,7 +89,42 @@ require_once('../components/header.php');
 <?php require('../components/scripts.php') ?>
 
 <script>
+  var publishedAccesses = new Set();
+  var publishedSocialMedias = new Set();
+  var publication;
+  var accesses;
+
+  window.onload = async () => {
+    const params = new URLSearchParams(location.search);
+    if (!params.has('publicacao')) {
+      $message.error('Página de detalhe de publicação acessada incorretamente')
+        .then(() => {
+          history.back()
+        })
+    }
+
+    const slugPublicacao = params.get('publicacao');
+
+    const {
+      response,
+      json
+    } = await request.auth.get(`publications/${slugPublicacao}`);
+
+    if (response.status != 200 && response.status != 304) {
+      $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
+      history.back();
+    } else {
+      carregarPublicacao(json);
+    }
+
+    accesses = await myAccesses();
+    await getPublishedAt(publication.id);
+
+    accesses.forEach(createSocialMediaListItem);
+  }
+
   function carregarPublicacao(pub) {
+    publication = pub;
     document.title = `${document.title} ${pub.title}`;
     q.id('link-alterar').href = `/publicacoes/alterar.php?publicacao=${pub.slug}`;
     q.id('btn-excluir').onclick = e => {
@@ -127,30 +185,132 @@ require_once('../components/header.php');
       })
   }
 
-  const params = new URLSearchParams(location.search);
-  console.log([params.get("publicar")]);
-  if (!params.has('publicacao')) {
-    $message.error('Página de detalhe de publicação acessada incorretamente')
-      .then(() => {
-        history.back()
-      })
+  const myAccesses = async () => {
+    try {
+      const {
+        response,
+        json
+      } = await request.auth.get('accesses/all');
+
+      if (response.status !== 200) {
+        $message.warn(json.message);
+      } else {
+        return json;
+      }
+    } catch (_) {
+      $message.warn('Não é possível conectar uma nova conta no momento. Tente novamente mais tarde');
+    }
   }
 
-  const slugPublicacao = params.get('publicacao');
+  const createSocialMediaListItem = (socialMedia) => {
+    const config = socialMedia.config;
+    const accesses = socialMedia.accesses;
+    console.log(publishedAccesses);
+    const container = `${accesses.map(access => 
+                          `<li class="list-group-item" style="user-select: none;">
+                            <div class="form-check" style="color: ${config.btnBgColor};">
+                              <input class="form-check-input" type="checkbox" ${publishedAccesses.has(access.id) && 'disabled'} value="${socialMedia.id}-${access.id}" id="checkbox-access-${access.id}">
+                              <label class="form-check-label" style="cursor: pointer;" for="checkbox-access-${access.id}">
+                                ${access.username} ${config.btnIcon}
+                              </label>
+                            </div>
+                          </li>`
+                      ).join('')}`;
 
-  request.authFetch(`publications/${slugPublicacao}`)
-    .then(res => {
-      if (res.status != 200 && res.status != 304) throw ['Resposta não-ok', res];
-      return res.json();
-    })
-    .then(carregarPublicacao)
-    .catch(err => {
-      console.error(err);
-      $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
-        .then(() => {
-          history.back();
-        })
+    q.id("publishAccessesList").insertAdjacentHTML("beforeend", container);
+  }
+
+  const submitPublish = async () => {
+    try {
+      const checkboxes = q.all('#publishModal form input:checked');
+      if (!checkboxes) return;
+
+      q.id('publishBtn').disabled = true;
+
+      for (let i = 0; i < checkboxes.length; i++) {
+        let checkbox = checkboxes[i];
+        const [socialMediaId, accessId] = checkbox.value.split("-");
+
+        // TODO: avaliar constraints
+        await publish(parseInt(socialMediaId),
+          parseInt(accessId),
+          publication.id,
+          publication.text,
+          publication.artworks.map(artwork => artwork.slug)
+        );
+      };
+
+      const publishModal = bootstrap.Modal.getInstance(q.id('publishModal'))
+      publishModal.hide();
+
+      q.id('publishBtn').disabled = false;
+    } catch (_) {
+      $message.warn('Não foi possível realizar a publicação no momento. Tente novamente mais tarde');
+    }
+  }
+
+  const publish = async (socialMediaId, accessId, publicationId, description, media) => {
+    const {
+      response,
+      json
+    } = await request.auth.post(`publications/${publicationId}/publish`, {
+      socialMediaId,
+      accessId,
+      description,
+      media
     });
+
+    if (response.status !== 200) {
+      $message.warn(json.message);
+    } else {
+      $message.success(json.message);
+    }
+  }
+
+  const getPublishedAt = async (publicationId) => {
+    try {
+      q.empty(q.id('publishedAtContainer'));
+      const header = ``
+      const {
+        response,
+        json
+      } = await request.auth.get(`publications/${publicationId}/published`);
+
+      if (response.status == 200) {
+        json.publishedAt.forEach(publishedAt => {
+          publishedAccesses.add(publishedAt.access_id);
+          publishedSocialMedias.add(publishedAt.social_media_id);
+        });
+
+        if (publishedSocialMedias.size > 0) {
+
+        }
+
+        publishedSocialMedias.forEach(createCardBySocialMedia)
+      } else throw {
+        message: "oopsie"
+      }
+    } catch (error) {
+      console.log(error)
+      $message.warn("Não foi possível consultar em quais redes sociais a publicação foi feita.");
+    }
+  }
+
+  const createCardBySocialMedia = (socialMediaId) => {
+    const socialMedia = accesses.find(socialMedia => socialMedia.id === socialMediaId);
+    const config = socialMedia.config;
+    const socialMediaAccesses = socialMedia.accesses;
+    const container = `
+            <section class="card p-4 max-width-480 mt-4 mx-auto">
+                <h2 class="text-center mb-4" style="color: ${config.btnBgColor}">${socialMedia.name}</h2>
+
+                ${socialMediaAccesses.map(access => 
+                    `<a href="${access.profilePage}" style="background-color: ${config.btnTextColor}; color: ${config.btnBgColor}; border: 1px solid ${config.btnBgColor}; flex: 20 1 auto;" class="btn btn-primary">${access.username} ${config.btnIcon}</a>`
+                ).join('')}
+            </section>`;
+
+    q.id('publishedAtContainer').insertAdjacentHTML('beforeend', container);
+  }
 </script>
 
 <?php require('../components/footer.php') ?>

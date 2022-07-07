@@ -9,11 +9,11 @@ require('../components/head.php'); ?>
     <form class="mb-auto" method="POST">
         <div class="form-group my-auto">
             <label for="username" class="form-label">usuário</label>
-            <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
+            <input class="form-control" autocomplete="username" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
         </div>
         <div class="form-group mt-2">
             <label for="password" class="form-label">senha</label>
-            <input type="password" class="form-control" id="password" placeholder="********" required />
+            <input type="password" autocomplete="current-password" class="form-control" id="password" placeholder="********" required />
         </div>
         <div class="form-check my-4">
             <input type="checkbox" class="form-check-input" id="keepLoggedIn" />
