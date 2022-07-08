@@ -277,7 +277,8 @@ class ArtworkGrid {
     this.#element = q.make('div');
     this.#artworksContainer = q.make('div', [], this.#element);
     this.#artworksContainer.style['display'] = 'grid';
-    this.#artworksContainer.style['grid-template-columns'] = '1fr 1fr 1fr';
+    this.#artworksContainer.style['grid-template-columns'] = 'repeat(auto-fill, minmax(256px, 1fr))';
+    this.#artworksContainer.style['grid-auto-rows'] = '256px';
     this.#artworksContainer.style['grid-gap'] = '20px';
     this.#emptyMessage = q.make('div', ['alert', 'alert-info', 'd-none', 'mb-0'], this.#element, {
       innerText: options.emptyMessage ?? 'Nenhuma das obras cadastradas satisfaz os critérios de busca informados.'
@@ -300,24 +301,36 @@ class ArtworkGrid {
     }
   }
 
+  // TODO: deixar igual aos outros cards de imagens
   #makeArtworkElement(artwork) {
-    const element = q.make('div', ['card', 'text-center'], null);
-    element.style['padding'] = '10px';
-    const div = q.make('div', ['text-center'], element);
-    const img = q.make('img', [], div);
+    const element = q.make('div', [], null);
+    element.style['min-width'] = '256px';
+    element.style['max-width'] = '100%';
+    element.style['min-height'] = '256px';
+    element.style['max-height'] = '100%';
+    element.style['position'] = 'relative';
+    element.style['overflow'] = 'hidden';
+    element.style['transition'] = 'all .2s ease';
+    element.style['border-radius'] = '8px';
+    const img = q.make('img', [], element);
     imageBlobUrl(artwork.imagePaths.thumbnail).then(url => img.src = url);
-    img.style['max-width'] = 'min(100%, 256px)';
-    img.style['max-height'] = 'min(100%, 256px)';
-    img.style['object-fit'] = 'contain';
+    img.style['width'] = '100%';
+    img.style['height'] = '100%';
+    img.style['object-fit'] = 'cover';
     img.style['border-radius'] = '4px';
-    q.make('p', [], element, { innerText: artwork.title, style: 'margin-bottom: 0;' });
+    const bg = q.make('div', [], element, { style: 'position: absolute; width: 100%; height: 100%; top: 0; left: 0;' });
+    bg.style['background'] = 'linear-gradient(transparent, rgba(0, 0, 0, 0.5))';
+    const p = q.make('p', [], element, { innerText: artwork.title, style: 'margin-bottom: 0;' });
+    p.style['position'] = 'absolute';
+    p.style['bottom'] = '8px';
+    p.style['left'] = '8px';
+    p.style['font-size'] = '24px';
+    p.style['color'] = '#FFF';
     element.addEventListener('mouseenter', () => {
-      element.style['filter'] = 'brightness(0.95)';
-      img.style['filter'] = 'brightness(calc(1/0.95))';
+      element.style['opacity'] = '.75';
     });
     element.addEventListener('mouseleave', () => {
-      element.style['filter'] = 'brightness(1)';
-      img.style['filter'] = 'brightness(1)';
+      element.style['opacity'] = '1';
     });
     return element;
   }

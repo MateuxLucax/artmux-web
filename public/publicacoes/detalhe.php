@@ -159,9 +159,9 @@ require_once('../components/header.php');
         href: `/obras/detalhe.php?obra=${artwork.slug}`,
         title: 'Ver no tamanho original'
       });
-      const img = q.tagIn('img', element)[0];
-      q.replace(img, linkObra)
-      linkObra.append(img);
+      const div = q.tagIn('div', element)[0];
+      q.replace(div, linkObra)
+      linkObra.append(div);
     }, {
       emptyMessage: 'A publicação foi feita com nenhuma obra'
     });
