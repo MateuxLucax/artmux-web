@@ -190,6 +190,7 @@ require_once('../components/header.php');
         const cardObras = q.id('card-obras');
         const containerObras = q.id('artworks-container');
 
+        // TODO: converter para try catch async await pq eh mais bonito fodace
         request
             .authFetch(`artworks/?${buscaAPI.toString()}`)
             .then(res => {
@@ -213,7 +214,6 @@ require_once('../components/header.php');
                     for (const obra of obras) {
                         cards.push(await carregarObra(obra));
                     }
-                    console.log(cards);
                     q.hide(q.id('loading'));
                     for (const card of cards) {
                         q.id('artworks-container').insertAdjacentHTML('beforeend', card);

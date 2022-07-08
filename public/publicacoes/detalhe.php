@@ -104,10 +104,9 @@ require_once('../components/header.php');
     try {
       const params = new URLSearchParams(location.search);
       if (!params.has('publicacao')) {
-        $message.error('Página de detalhe de publicação acessada incorretamente')
-          .then(() => {
-            history.back()
-          })
+        q.hide(q.sel('.loading-screen'));
+        await $message.error('Página de detalhe de publicação acessada incorretamente')
+        history.back();
       }
 
       const slugPublicacao = params.get('publicacao');
@@ -118,8 +117,7 @@ require_once('../components/header.php');
       } = await request.auth.get(`publications/${slugPublicacao}`);
 
       if (response.status != 200 && response.status != 304) {
-        $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
-        history.back();
+        throw "Resposta nao ok"
       } else {
         carregarPublicacao(json);
       }
@@ -128,7 +126,12 @@ require_once('../components/header.php');
       await getPublishedAt(publication.id);
 
       accesses.forEach(createSocialMediaListItem);
-    } catch (_) {} finally {
+      // TODO: abrir modal para fazer publicacao se o parametro publicar existir
+    } catch (_) {
+      q.hide(q.sel('.loading-screen'));
+      await $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.');
+      history.back();
+    } finally {
       q.hide(q.sel('.loading-screen'));
     }
   }
@@ -215,7 +218,6 @@ require_once('../components/header.php');
   const createSocialMediaListItem = (socialMedia) => {
     const config = socialMedia.config;
     const accesses = socialMedia.accesses;
-    console.log(publishedAccesses);
     const container = `${accesses.map(access => 
                           `<li class="list-group-item" style="user-select: none;">
                             <div class="form-check" style="color: ${config.btnBgColor};">
@@ -293,15 +295,15 @@ require_once('../components/header.php');
         });
 
         if (publishedSocialMedias.size > 0) {
-
+          publishedSocialMedias.forEach(createCardBySocialMedia)
+        } else {
+          // TODO: adicionar uma msg dizendo que ainda nao foi publicada
         }
 
-        publishedSocialMedias.forEach(createCardBySocialMedia)
       } else throw {
         message: "oopsie"
       }
-    } catch (error) {
-      console.log(error)
+    } catch (_) {
       $message.warn("Não foi possível consultar em quais redes sociais a publicação foi feita.");
     }
   }

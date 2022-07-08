@@ -193,8 +193,7 @@ require_once('../components/header.php');
                     $message.error('Não foi possível alterar sua senha!');
                 }
             }
-        } catch (e) {
-            console.log(e);
+        } catch (_) {
             $message.warn('Não foi possível alterar a senha!');
         } finally {
             enableBtn();
@@ -273,8 +272,7 @@ require_once('../components/header.php');
                     }
                 }
             }
-        } catch (e) {
-            console.log(e);
+        } catch (_) {
             $message.warn('Não foi possível remover seu acesso. Tente novamente mais tarde.');
         } finally {
             loading = false;

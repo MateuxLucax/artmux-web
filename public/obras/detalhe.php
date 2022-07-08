@@ -4,6 +4,12 @@ require_once('../components/head.php');
 require_once('../components/header.php');
 ?>
 
+<div class="loading-screen">
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
 <main class="container px-4">
   <section class="page-title py-5">
     <h3 class="text-primary mb-0">detalhes da obra</h3>
@@ -107,31 +113,39 @@ require_once('../components/header.php');
 <?php require('../components/scripts.php') ?>
 
 <script>
-  const params = new URLSearchParams(location.search)
-  const slug = params.get('obra')
-  if (!slug) {
-    agendarAlerta({
-      title: 'Erro',
-      icon: 'warning',
-      text: 'Não conseguimos abrir a página de detalhe da obra porque a URL estava incompleta'
-    })
-    history.back()
-  }
+  var slug;
 
-  request
-    .authFetch(`artworks/${slug}?with=publications`)
-    .then(res => {
-      if (res.status != 200 && res.status != 304) {
-        throw 'Resposta não-ok'
+  window.onload = async () => {
+    try {
+      const params = new URLSearchParams(location.search)
+      slug = params.get('obra')
+
+      if (!slug) {
+        agendarAlerta({
+          title: 'Erro',
+          icon: 'warning',
+          text: 'Não conseguimos abrir a página de detalhe da obra porque a URL estava incompleta'
+        })
+        history.back()
       }
-      return res.json()
-    })
-    .then(carregarObra)
-    .catch(err => {
-      console.error(err)
-      $message.error('Erro ao carregar a obra. Tente novamente mais tarde.')
-        .then(() => history.back())
-    })
+
+      const {
+        response,
+        json
+      } = await request.auth.get(`artworks/${slug}?with=publications`);
+
+      if (response.status != 200 && response.status != 304) {
+        throw 'Resposta não-ok';
+      } else {
+        carregarObra(json);
+      }
+    } catch (_) {
+      await $message.error('Erro ao carregar a obra. Tente novamente mais tarde.')
+      history.back();
+    } finally {
+      q.hide(q.sel('.loading-screen'));
+    }
+  }
 
   async function carregarObra(obra) {
     document.title = `${document.title} ${obra.title}`;
