@@ -40,11 +40,11 @@ require_once('../components/header.php');
             <form class="card p-4" method="POST" id="user-info-form">
                 <div class=" form-group my-auto">
                     <label for="username" class="form-label">usuário</label>
-                    <input class="form-control" id="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
+                    <input class="form-control" id="username" autocomplete="username" aria-describedby="zecaurubu" placeholder="zecaurubu" required />
                 </div>
                 <div class="form-group mt-2">
                     <label for="email" class="form-label">email</label>
-                    <input type="email" class="form-control" id="email" placeholder="zecaurubu@artmux.dev" required />
+                    <input type="email" class="form-control" id="email" autocomplete="email" placeholder="zecaurubu@artmux.dev" required />
                 </div>
                 <div class="d-grid mt-4 mx-auto">
                     <button class="btn btn-primary" id="update-info-btn" type="submit">alterar dados</button>
@@ -55,15 +55,15 @@ require_once('../components/header.php');
             <form class="card p-4" method="POST" id="user-password-form">
                 <div class="form-group mt-2">
                     <label for="password" class="form-label">senha atual</label>
-                    <input type="password" class="form-control" id="password" placeholder="********" required />
+                    <input type="password" class="form-control" autocomplete="current-password" id="password" placeholder="********" required />
                 </div>
                 <div class="form-group mt-2">
                     <label for="newPassword" class="form-label">nova senha</label>
-                    <input type="password" class="form-control" id="newPassword" placeholder="********" required />
+                    <input type="password" class="form-control" autocomplete="new-password" id="newPassword" placeholder="********" required />
                 </div>
                 <div class="form-group mt-2">
                     <label for="newPasswordConfirmation" class="form-label">confirmação da nova senha</label>
-                    <input type="password" class="form-control" id="newPasswordConfirmation" placeholder="********" required />
+                    <input type="password" class="form-control" autocomplete="new-password" id="newPasswordConfirmation" placeholder="********" required />
                 </div>
                 <div class="d-grid mt-4 mx-auto">
                     <button class="btn btn-primary" id="update-password-btn" type="submit">alterar senha</button>

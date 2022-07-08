@@ -40,7 +40,22 @@ require_once('../components/header.php');
     }
 
     .published-at-tags {
-        height: 24px;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .social-media-tag {
+        border-radius: 50%;
+        font-size: 16px;
+        height: 32px;
+        width: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .published-at-tags span:not(:last-child) {
+        margin-right: 8px;
     }
 </style>
 
@@ -159,21 +174,22 @@ require_once('../components/header.php');
                 const cards = [];
                 for (const publication of publications) {
                     const images = [];
-                    // TODO: maybe something better, limit images, Promise.all or something else...
                     for (const artwork of publication.artworks) {
                         images.push(await imageBlobUrl(artwork.imagePaths.medium));
                     }
                     const card =
                         `<div 
-              id="publication-${publication.id}"
-              class="publications-card"
-              title="Conteúdo:  ${publication.text}"
-              onclick="location.href='/publicacoes/detalhe.php?publicacao=${publication.slug}'"
-              style="background: linear-gradient(transparent, rgba(0, 0, 0, 0.5)), url(${images[0]});"
-            >
-              <div class="published-at-tags"></div> <!-- TODO: add tags for published at -->
-              <p>${publication.title}</p>
-           </div>`;
+                            id="publication-${publication.id}"
+                            class="publications-card"
+                            title="Conteúdo:  ${publication.text}"
+                            onclick="location.href='/publicacoes/detalhe.php?publicacao=${publication.slug}'"
+                            style="background: linear-gradient(transparent, rgba(0, 0, 0, 0.5)), url(${images[0]});"
+                        >
+                            <div class="published-at-tags">
+                                ${publication.socialMedias.map(socialMedia => `<span class="social-media-tag" style="background-color:${socialMedia.config.btnBgColor}; color: ${socialMedia.config.btnTextColor};" title="publicada em ${socialMedia.name}">${socialMedia.config.btnIcon}</span>`).join('')}
+                            </div>
+                            <p>${publication.title}</p>
+                        </div>`;
                     cards.push(card);
                     setInterval(() => {
                         const publicationImages = images;
