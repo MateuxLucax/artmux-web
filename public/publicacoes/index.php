@@ -42,6 +42,7 @@ require_once('../components/header.php');
     .published-at-tags {
         display: flex;
         flex-direction: row;
+        overflow: hidden;
     }
 
     .social-media-tag {
