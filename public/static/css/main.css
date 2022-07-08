@@ -1,5 +1,6 @@
 html {
   font-family: 'Nunito Sans', sans-serif;
+  position: relative;
 }
 
 .max-width-480 {
@@ -52,6 +53,19 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.loading-screen {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(52, 58, 64, 0.75);
+  z-index: 100000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* This makes the tagify input look like a bootstrap input */

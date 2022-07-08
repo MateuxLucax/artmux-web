@@ -57,6 +57,11 @@ require_once('../components/header.php');
     .artwork-tags {
         display: flex;
         flex-direction: row;
+        overflow: hidden;
+    }
+
+    .artwork-tags:hover {
+        overflow-x: scroll;
     }
 
     .artwork-tags span:not(:last-child) {
@@ -157,7 +162,7 @@ require_once('../components/header.php');
               style="background: linear-gradient(transparent, rgba(0, 0, 0, 0.5)), url(${image});"
             >
               <div class="artwork-tags">
-                ${artwork.tags.map(tag => `<span class="badge text-bg-primary">${tag.name}</span>`).join('')}
+                ${artwork.tags.map(tag => `<span class="badge text-bg-primary" title="${tag.name}">${tag.name}</span>`).join('')}
               </div>
               <p>${artwork.title}</p>
            </div>`;
