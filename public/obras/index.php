@@ -60,6 +60,10 @@ require_once('../components/header.php');
         overflow: hidden;
     }
 
+    .artwork-tags:hover {
+        overflow-x: scroll;
+    }
+
     .artwork-tags span:not(:last-child) {
         margin-right: 8px;
     }

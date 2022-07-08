@@ -4,6 +4,12 @@ require_once('../components/head.php');
 require_once('../components/header.php');
 ?>
 
+<div class="loading-screen">
+  <div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
 <main class="container px-4">
   <section class="page-title py-5">
     <h3 class="text-primary mb-0">detalhes da publicação</h3>
@@ -95,32 +101,36 @@ require_once('../components/header.php');
   var accesses;
 
   window.onload = async () => {
-    const params = new URLSearchParams(location.search);
-    if (!params.has('publicacao')) {
-      $message.error('Página de detalhe de publicação acessada incorretamente')
-        .then(() => {
-          history.back()
-        })
+    try {
+      const params = new URLSearchParams(location.search);
+      if (!params.has('publicacao')) {
+        $message.error('Página de detalhe de publicação acessada incorretamente')
+          .then(() => {
+            history.back()
+          })
+      }
+
+      const slugPublicacao = params.get('publicacao');
+
+      const {
+        response,
+        json
+      } = await request.auth.get(`publications/${slugPublicacao}`);
+
+      if (response.status != 200 && response.status != 304) {
+        $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
+        history.back();
+      } else {
+        carregarPublicacao(json);
+      }
+
+      accesses = await myAccesses();
+      await getPublishedAt(publication.id);
+
+      accesses.forEach(createSocialMediaListItem);
+    } catch (_) {} finally {
+      q.hide(q.sel('.loading-screen'));
     }
-
-    const slugPublicacao = params.get('publicacao');
-
-    const {
-      response,
-      json
-    } = await request.auth.get(`publications/${slugPublicacao}`);
-
-    if (response.status != 200 && response.status != 304) {
-      $message.error('Ocorreu um erro ao buscar a publicação. Tente novamente mais tarde.')
-      history.back();
-    } else {
-      carregarPublicacao(json);
-    }
-
-    accesses = await myAccesses();
-    await getPublishedAt(publication.id);
-
-    accesses.forEach(createSocialMediaListItem);
   }
 
   function carregarPublicacao(pub) {
