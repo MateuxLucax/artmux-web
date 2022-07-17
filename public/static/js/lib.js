@@ -200,6 +200,14 @@ const $message = {
     showConfirmButton: false
   }),
 
+  successOk: (message, title = 'Yaaaay!') => Swal.fire({
+    title: title,
+    text: message,
+    icon: 'success',
+    confirmButtonText: 'ok',
+    confirmButtonColor: '#0d6efd'
+  }),
+
   confirm: (message, title = 'Tem certeza?') => Swal.fire({
     title: title,
     text: message,

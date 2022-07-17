@@ -227,8 +227,9 @@ require_once('../components/header.php');
                 json
             } = await request.auth.get(`accesses/create/${socialMediaId}`);
             if (json.redirect) window.location.replace(json.redirect);
-            else throw new Exception();
-        } catch (_) {
+            else throw 'Endpoint não retornou redirect';
+        } catch (err) {
+            console.error(err);
             $message.warn('Não é possível conectar uma nova conta no momento. Tente novamente mais tarde.');
         } finally {
             loading = false;
