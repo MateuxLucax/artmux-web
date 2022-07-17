@@ -10,7 +10,7 @@ require_once('../components/header.php');
   const params = new URLSearchParams(location.search);
   if (!params.has('state') || !params.has('code')) {
     $message.error('Redirect URI acessada incorretamente', 'Erro do sistema')
-            .then(() => { location.assign('/perfil') })
+            .then(() => { location.assign('/perfil#accounts') })
   } else {
 
     const state = params.get('state');
@@ -18,7 +18,7 @@ require_once('../components/header.php');
     request.auth.post('reddit/callback', { state, code })
     .then(() => {
       $message.successOk('Conta do Reddit vinculada com sucesso')
-              .then(() => { location.assign('/perfil') })
+              .then(() => { location.assign('/perfil#accounts') })
     })
     .catch(err => {
       console.error(err)
